@@ -10,7 +10,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
+version = mod_version + "+" + minecraft_version
 group = mod_group_id
 
 sourceSets.main.resources {
@@ -92,8 +92,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("mezz.jei:jei-26.1.2-neoforge-api:${jei_version}")
-    runtimeOnly("mezz.jei:jei-26.1.2-neoforge:${jei_version}")
+    compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-26.1.2-neoforge:${jei_version}"
 
     implementation "maven.modrinth:jade:${jade_version}"
 }
@@ -121,14 +121,14 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             from components.java
-            groupId = mod_group_id
-            artifactId = mod_id
-            version = mod_version
+            groupId = project.mod_group_id
+            artifactId = project.mod_id
+            version = project.version
         }
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = uri("${project.projectDir}/repo")
         }
     }
 }
