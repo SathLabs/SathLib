@@ -66,7 +66,7 @@ public class SLItemProperties extends Item.Properties {
     /// Creates a new {@link SLItemProperties} instance with the {@link ResourceKey}
     /// created from the given {@link Identifier}
     ///
-    /// - Sets {@link Item.Properties#id} to {@code ResourceKey.create(Registries.ITEM, identifier)}
+    /// - Sets {@link Item.Properties#id} to `ResourceKey.create(Registries.ITEM, identifier)`
     ///
     /// @param identifier Identifier of the item.
     ///
@@ -79,7 +79,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Creates a new {@link SLItemProperties} instance with the given {@link ResourceKey}
     ///
-    /// - Sets {@link Item.Properties#id} to {@code key}
+    /// - Sets {@link Item.Properties#id} to `key`
     ///
     /// @param key Resource key of the item.
     ///
@@ -92,9 +92,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Disables repairing this item by combining two damaged copies.
     ///
-    /// - Sets {@link Item#canCombineRepair} to {@code false}
+    /// - Sets {@link Item#canCombineRepair} to `false`
     ///
-    /// Defaults to {@code true}
+    /// Defaults to `true`
     ///
     /// @return This {@link SLItemProperties} instance.
     ///
@@ -108,10 +108,10 @@ public class SLItemProperties extends Item.Properties {
     /// Affects the nutrition and saturation values of this item, if it can always be eaten and
     /// the behavior while consuming it, such as animation and duration.
     ///
-    /// - Sets {@link DataComponents#FOOD} to {@code food}
+    /// - Sets {@link DataComponents#FOOD} to `food`
     /// - Sets {@link DataComponents#CONSUMABLE} to {@link Consumables#DEFAULT_FOOD}
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param food Food properties of this item.
     ///
@@ -127,10 +127,10 @@ public class SLItemProperties extends Item.Properties {
     /// Affects the nutrition and saturation values of this item, if it can always be eaten and
     /// the behavior while consuming it, such as animation and duration.
     ///
-    /// - Sets {@link DataComponents#FOOD} to {@code foodProperties}
-    /// - Sets {@link DataComponents#CONSUMABLE} to {@code consumable}
+    /// - Sets {@link DataComponents#FOOD} to `foodProperties`
+    /// - Sets {@link DataComponents#CONSUMABLE} to `consumable`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param foodProperties Food properties of this item.
     /// @param consumable     Consumable behavior of this item.
@@ -147,9 +147,9 @@ public class SLItemProperties extends Item.Properties {
     /// Affects into which item this item turns after being used, such as a potion
     /// turning into an empty bottle.
     ///
-    /// - Sets {@link DataComponents#USE_REMAINDER} to {@code item}
+    /// - Sets {@link DataComponents#USE_REMAINDER} to `item`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param item The item this item converts into after use.
     ///
@@ -164,9 +164,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Affects how long this item is on cooldown after being used.
     ///
-    /// - Sets the {@link DataComponents#USE_COOLDOWN} to {@code seconds}
+    /// - Sets the {@link DataComponents#USE_COOLDOWN} to `seconds`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param seconds Cooldown length in seconds.
     ///
@@ -182,11 +182,11 @@ public class SLItemProperties extends Item.Properties {
     /// Affects how many of these items can be stacked in a single slot.
     ///
     /// If {@link SLItemProperties#durability(int)} is called or this item has the
-    /// {@link DataComponents#DAMAGE} component, the stack size must be {@code 1}!
+    /// {@link DataComponents#DAMAGE} component, the stack size must be `1`!
     ///
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code maxStackSize}
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `maxStackSize`
     ///
-    /// Defaults to {@code 64} Max value is {@code 99}
+    /// Defaults to `64` Max value is `99`
     ///
     /// @param maxStackSize Maximum stack size of this item.
     ///
@@ -201,11 +201,11 @@ public class SLItemProperties extends Item.Properties {
     /// Affects how many times this item can be damaged before breaking.
     /// Items which have durability cannot be stacked.
     ///
-    /// - Sets {@link DataComponents#MAX_DAMAGE} to {@code maxDamage}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#MAX_DAMAGE} to `maxDamage`
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param maxDamage Maximum durability of this item.
     ///
@@ -221,7 +221,7 @@ public class SLItemProperties extends Item.Properties {
     /// Affects the item that remains in the crafting grid after this item has been used,
     /// such as a water bucket turning into an empty bucket.
     ///
-    /// - Sets {@link Item#craftingRemainingItem} to {@code craftingRemainingItem}
+    /// - Sets {@link Item#craftingRemainingItem} to `craftingRemainingItem`
     ///
     /// @param craftingRemainingItem The {@link ItemStackTemplate} remaining in the crafting grid.
     ///
@@ -237,7 +237,7 @@ public class SLItemProperties extends Item.Properties {
     /// Affects the item that remains in the crafting grid after this item has been used,
     /// such as a water bucket turning into an empty bucket.
     ///
-    /// - Sets {@link Item#craftingRemainingItem} to {@code new ItemStackTemplate(craftingRemainingItem)}
+    /// - Sets {@link Item#craftingRemainingItem} to `new ItemStackTemplate(craftingRemainingItem)`
     ///
     /// @param craftingRemainingItem The {@link Item} remaining in the crafting grid.
     ///
@@ -252,7 +252,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the {@link Rarity} of this item. Affects the display color
     ///
-    /// - Sets {@link DataComponents#RARITY} to {@code rarity}
+    /// - Sets {@link DataComponents#RARITY} to `rarity`
     ///
     /// Defaults to {@link Rarity#COMMON}
     ///
@@ -271,7 +271,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// - Sets {@link DataComponents#DAMAGE_RESISTANT} to {@link DamageTypeTags#IS_FIRE}
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @return This {@link SLItemProperties} instance.
     ///
@@ -285,9 +285,9 @@ public class SLItemProperties extends Item.Properties {
     /// Defines the {@link ResourceKey} of the {@link JukeboxSong} that plays when this
     /// item is placed in a jukebox.
     ///
-    /// - Sets {@link DataComponents#JUKEBOX_PLAYABLE} to {@code song}
+    /// - Sets {@link DataComponents#JUKEBOX_PLAYABLE} to `song`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param song {@link ResourceKey} of the {@link JukeboxSong} that plays when this item is placed in a jukebox.
     ///
@@ -302,9 +302,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Marks this item as enchantable with the given enchantability value.
     ///
-    /// - Sets {@link DataComponents#ENCHANTABLE} to {@code value}
+    /// - Sets {@link DataComponents#ENCHANTABLE} to `value`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param value Enchantability value of this item.
     ///
@@ -319,9 +319,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the {@link Item} which can be used to repeair this item in an anvil.
     ///
-    /// - Sets {@link DataComponents#REPAIRABLE} to {@code repairItem}
+    /// - Sets {@link DataComponents#REPAIRABLE} to `repairItem`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param repairItem {@link Item} that can be used to repair this item.
     ///
@@ -336,9 +336,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the {@link TagKey} which can be used to repeair this item in an anvil.
     ///
-    /// - Sets {@link DataComponents#REPAIRABLE} to {@code repairItems}
+    /// - Sets {@link DataComponents#REPAIRABLE} to `repairItems`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param repairItems {@link TagKey} of items that can be used to repair this item.
     ///
@@ -355,9 +355,9 @@ public class SLItemProperties extends Item.Properties {
     /// Allows swapping this item with another item already equipped in the given slot,
     /// such as a chestplate with an elytra.
     ///
-    /// - Sets {@link DataComponents#EQUIPPABLE} to {@code slot}
+    /// - Sets {@link DataComponents#EQUIPPABLE} to `slot`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param slot Equipment slot this item can be equipped in.
     ///
@@ -373,9 +373,9 @@ public class SLItemProperties extends Item.Properties {
     /// Makes this item equippable in the given {@link EquipmentSlot}
     /// Does not allow swapping this item with another item already equipped in the given slot.
     ///
-    /// - Sets {@link DataComponents#EQUIPPABLE} to {@code slot}
+    /// - Sets {@link DataComponents#EQUIPPABLE} to `slot`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param slot Equipment slot this item can be equipped in.
     ///
@@ -393,23 +393,23 @@ public class SLItemProperties extends Item.Properties {
     /// - Sets {@link DataComponents#TOOL} from:
     ///     - {@link List#of()} from:
     ///         - {@link Tool.Rule#deniesDrops(HolderSet)} to {@link ToolMaterial#incorrectBlocksForDrops()}
-    ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@code minesEfficiently} and {@link ToolMaterial#speed()}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 1}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code true}
+    ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to `minesEfficiently` and {@link ToolMaterial#speed()}
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `1`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `true`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} to:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 2}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code disableBlockingSeconds}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `2`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `disableBlockingSeconds`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material               Tool material of this item.
     /// @param minesEfficiently       {@link TagKey} of blocks that this item can mine efficiently.
@@ -422,7 +422,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// @return This {@link SLItemProperties} instance.
     ///
-    /// @throws IllegalStateException if {@link DataComponents#MAX_STACK_SIZE} is greater than {@code 1}
+    /// @throws IllegalStateException if {@link DataComponents#MAX_STACK_SIZE} is greater than `1`
     ///
     @Override
     public SLItemProperties tool(
@@ -444,22 +444,22 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link List#of()} from:
     ///         - {@link Tool.Rule#deniesDrops(HolderSet)} to {@link ToolMaterial#incorrectBlocksForDrops()}
     ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link BlockTags#MINEABLE_WITH_PICKAXE} and {@link ToolMaterial#speed()}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 1}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code true}
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `1`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `true`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} to:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 2}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 0.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `2`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `0.0F`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material             Tool material of this item.
     /// @param attackDamageBaseline Attack-damage of this item before material value or other bonus calculations.
@@ -481,22 +481,22 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link List#of()} from:
     ///         - {@link Tool.Rule#deniesDrops(HolderSet)} to {@link ToolMaterial#incorrectBlocksForDrops()}
     ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link BlockTags#MINEABLE_WITH_AXE} and {@link ToolMaterial#speed()}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 1}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code true}
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `1`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `true`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} to:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 2}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 5.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `2`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `5.0F`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material             Tool material of this item.
     /// @param attackDamageBaseline Attack-damage of this item before material value or other bonus calculations.
@@ -518,22 +518,22 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link List#of()} from:
     ///         - {@link Tool.Rule#deniesDrops(HolderSet)} to {@link ToolMaterial#incorrectBlocksForDrops()}
     ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link BlockTags#MINEABLE_WITH_HOE} and {@link ToolMaterial#speed()}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 1}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code true}
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `1`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `true`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} to:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 2}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 0.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `2`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `0.0F`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material             Tool material of this item.
     /// @param attackDamageBaseline Attack-damage of this item before material value or other bonus calculations.
@@ -555,22 +555,22 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link List#of()} from:
     ///         - {@link Tool.Rule#deniesDrops(HolderSet)} to {@link ToolMaterial#incorrectBlocksForDrops()}
     ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link BlockTags#MINEABLE_WITH_SHOVEL} and {@link ToolMaterial#speed()}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 1}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code true}
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `1`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `true`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} from:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 2}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 0.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `2`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `0.0F`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material             Tool material of this item.
     /// @param attackDamageBaseline Attack-damage of this item before material value or other bonus calculations.
@@ -590,25 +590,25 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// - Sets {@link DataComponents#TOOL} from:
     ///     - {@link List#of()} from:
-    ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link Blocks#COBWEB} and {@code 15.0F}
+    ///         - {@link Tool.Rule#minesAndDrops(HolderSet, float)} to {@link Blocks#COBWEB} and `15.0F`
     ///         - {@link Tool.Rule#overrideSpeed(HolderSet, float)} to {@link BlockTags#SWORD_INSTANTLY_MINES} and {@link Float#MAX_VALUE}
-    ///         - {@link Tool.Rule#overrideSpeed(HolderSet, float)} to {@link BlockTags#SWORD_EFFICIENT} and {@code 1.5F}
-    ///     - {@link Tool#defaultMiningSpeed()} to {@code 1.0F}
-    ///     - {@link Tool#damagePerBlock()} to {@code 2}
-    ///     - {@link Tool#canDestroyBlocksInCreative()} to {@code false}
+    ///         - {@link Tool.Rule#overrideSpeed(HolderSet, float)} to {@link BlockTags#SWORD_EFFICIENT} and `1.5F`
+    ///     - {@link Tool#defaultMiningSpeed()} to `1.0F`
+    ///     - {@link Tool#damagePerBlock()} to `2`
+    ///     - {@link Tool#canDestroyBlocksInCreative()} to `false`
     /// - Sets {@link DataComponents#MAX_DAMAGE} to {@link ToolMaterial#durability()}
-    /// - Sets {@link DataComponents#DAMAGE} to {@code 0}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#DAMAGE} to `0`
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ToolMaterial#repairItems()}
     /// - Sets {@link DataComponents#WEAPON} from:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 1}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 0.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `1`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `0.0F`
     ///
-    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} {@code +} {@code attackDamageBaseline}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code attackSpeedBaseline}
+    /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()} `+` `attackDamageBaseline`
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `attackSpeedBaseline`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material             Tool material of this item.
     /// @param attackDamageBaseline Attack-damage of this item before material value or other bonus calculations.
@@ -630,47 +630,47 @@ public class SLItemProperties extends Item.Properties {
     /// - Sets {@link DataComponents#ENCHANTABLE} to {@link ToolMaterial#enchantmentValue()}
     /// - Sets {@link DataComponents#DAMAGE_TYPE} to {@link DamageTypes#SPEAR}
     /// - Sets {@link DataComponents#KINETIC_WEAPON} from:
-    ///     - {@link KineticWeapon#contactCooldownTicks()} to {@code 10}
-    ///     - {@link KineticWeapon#delayTicks()} to {@code delay * 20}
-    ///     - {@link KineticWeapon#dismountConditions()} from {@link KineticWeapon.Condition#ofAttackerSpeed(int, float)} to {@code dismountTime * 20} and {@code dismountThreshold}
-    ///     - {@link KineticWeapon#knockbackConditions()} from {@link KineticWeapon.Condition#ofAttackerSpeed(int, float)} to {@code knockbackTime * 20} and {@code knockbackThreshold}
-    ///     - {@link KineticWeapon#damageConditions()} from {@link KineticWeapon.Condition#ofRelativeSpeed(int, float)} to {@code damageTime * 20} and {@code damageThreshold}
-    ///     - {@link KineticWeapon#forwardMovement()} to {@code 0.38F}
-    ///     - {@link KineticWeapon#damageMultiplier()} to {@code damageMultiplier}
+    ///     - {@link KineticWeapon#contactCooldownTicks()} to `10`
+    ///     - {@link KineticWeapon#delayTicks()} to `delay * 20`
+    ///     - {@link KineticWeapon#dismountConditions()} from {@link KineticWeapon.Condition#ofAttackerSpeed(int, float)} to `dismountTime * 20` and `dismountThreshold`
+    ///     - {@link KineticWeapon#knockbackConditions()} from {@link KineticWeapon.Condition#ofAttackerSpeed(int, float)} to `knockbackTime * 20` and `knockbackThreshold`
+    ///     - {@link KineticWeapon#damageConditions()} from {@link KineticWeapon.Condition#ofRelativeSpeed(int, float)} to `damageTime * 20` and `damageThreshold`
+    ///     - {@link KineticWeapon#forwardMovement()} to `0.38F`
+    ///     - {@link KineticWeapon#damageMultiplier()} to `damageMultiplier`
     ///     - {@link KineticWeapon#sound()} to:
     ///         - {@link SoundEvents#SPEAR_WOOD_USE} if {@link ToolMaterial#WOOD} otherwise {@link SoundEvents#SPEAR_USE}
     ///     - {@link KineticWeapon#hitSound()} to:
     ///         - {@link SoundEvents#SPEAR_WOOD_HIT} if {@link ToolMaterial#WOOD} otherwise {@link SoundEvents#SPEAR_HIT}
     /// - Sets {@link DataComponents#PIERCING_WEAPON} from:
-    ///     - {@link PiercingWeapon#dealsKnockback()} to {@code true}
-    ///     - {@link PiercingWeapon#dismounts()} to {@code false}
+    ///     - {@link PiercingWeapon#dealsKnockback()} to `true`
+    ///     - {@link PiercingWeapon#dismounts()} to `false`
     ///     - {@link PiercingWeapon#sound()} to:
     ///         - {@link SoundEvents#SPEAR_WOOD_ATTACK} if {@link ToolMaterial#WOOD} otherwise {@link SoundEvents#SPEAR_ATTACK}
     ///     - {@link PiercingWeapon#hitSound()} to:
     ///         - {@link SoundEvents#SPEAR_WOOD_HIT} if {@link ToolMaterial#WOOD} otherwise {@link SoundEvents#SPEAR_HIT}
     /// - Sets {@link DataComponents#ATTACK_RANGE} from:
-    ///     - {@link AttackRange#minReach()} to {@code 2.0F}
-    ///     - {@link AttackRange#maxReach()} to {@code 4.5F}
-    ///     - {@link AttackRange#minCreativeReach()} to {@code 2.0F}
-    ///     - {@link AttackRange#maxCreativeReach()} to {@code 6.5F}
-    ///     - {@link AttackRange#hitboxMargin()} to {@code 0.125F}
-    ///     - {@link AttackRange#mobFactor()} to {@code 0.5F}
-    /// - Sets {@link DataComponents#MINIMUM_ATTACK_CHARGE} to {@code 1.0F}
+    ///     - {@link AttackRange#minReach()} to `2.0F`
+    ///     - {@link AttackRange#maxReach()} to `4.5F`
+    ///     - {@link AttackRange#minCreativeReach()} to `2.0F`
+    ///     - {@link AttackRange#maxCreativeReach()} to `6.5F`
+    ///     - {@link AttackRange#hitboxMargin()} to `0.125F`
+    ///     - {@link AttackRange#mobFactor()} to `0.5F`
+    /// - Sets {@link DataComponents#MINIMUM_ATTACK_CHARGE} to `1.0F`
     /// - Sets {@link DataComponents#SWING_ANIMATION} from:
     ///     - {@link SwingAnimation#type()} to {@link SwingAnimationType#STAB}
-    ///     - {@link SwingAnimation#duration()} to {@code attackDuration * 20}
+    ///     - {@link SwingAnimation#duration()} to `attackDuration * 20`
     /// - Sets {@link DataComponents#USE_EFFECTS} from:
-    ///     - {@link UseEffects#canSprint()} to {@code true}
-    ///     - {@link UseEffects#interactVibrations()} to {@code false}
-    ///     - {@link UseEffects#speedMultiplier()} to {@code 1.0F}
+    ///     - {@link UseEffects#canSprint()} to `true`
+    ///     - {@link UseEffects#interactVibrations()} to `false`
+    ///     - {@link UseEffects#speedMultiplier()} to `1.0F`
     /// - Sets {@link DataComponents#WEAPON} from:
-    ///     - {@link Weapon#itemDamagePerAttack()} to {@code 1}
-    ///     - {@link Weapon#disableBlockingForSeconds()} to {@code 0.0F}
+    ///     - {@link Weapon#itemDamagePerAttack()} to `1`
+    ///     - {@link Weapon#disableBlockingForSeconds()} to `0.0F`
     ///
     /// - Adds {@link Attributes#ATTACK_DAMAGE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@link ToolMaterial#attackDamageBonus()}
-    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to {@code 1.0F / attackDuration - 4.0}
+    /// - Adds {@link Attributes#ATTACK_SPEED} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#MAINHAND} to `1.0F / attackDuration - 4.0`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material           Tool material of this item.
     /// @param attackDuration     Duration of the spear attack animation in seconds.
@@ -716,9 +716,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Makes this item behave like a spawn egg for the given entity type.
     ///
-    /// - Sets {@link DataComponents#ENTITY_DATA} to {@code type}
+    /// - Sets {@link DataComponents#ENTITY_DATA} to `type`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param type Entity type spawned by this item.
     ///
@@ -744,11 +744,11 @@ public class SLItemProperties extends Item.Properties {
     /// - Sets {@link DataComponents#REPAIRABLE} to {@link ArmorMaterial#repairIngredient()}
     ///
     /// - Sets attribute modifiers from {@link ArmorMaterial#createAttributes(ArmorType)} from:
-    ///     - {@link Attributes#ARMOR} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to defense from {@link ArmorMaterial#defense()} for {@code type}
+    ///     - {@link Attributes#ARMOR} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to defense from {@link ArmorMaterial#defense()} for `type`
     ///     - {@link Attributes#ARMOR_TOUGHNESS} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#toughness()}
-    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than {@code 0.0F}
+    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than `0.0F`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material Armor material of this item.
     /// @param type     Armor type of this item.
@@ -774,17 +774,17 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link Equippable#assetId()} to {@link ArmorMaterial#assetId()}
     ///     - {@link Equippable#allowedEntities()} to {@link HolderSet#direct(Holder[])} from:
     ///         - {@link EntityType#WOLF}
-    ///     - {@link Equippable#canBeSheared()} to {@code true}
+    ///     - {@link Equippable#canBeSheared()} to `true`
     ///     - {@link Equippable#shearingSound()} to {@link SoundEvents#ARMOR_UNEQUIP_WOLF}
     /// - Sets {@link DataComponents#BREAK_SOUND} to {@link SoundEvents#WOLF_ARMOR_BREAK}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     ///
     /// - Sets attribute modifiers from {@link ArmorMaterial#createAttributes(ArmorType)} with:
     ///     - {@link Attributes#ARMOR} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to defense from {@link ArmorMaterial#defense()} for {@link ArmorType#BODY}
     ///     - {@link Attributes#ARMOR_TOUGHNESS} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#toughness()}
-    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than {@code 0.0F}
+    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than `0.0F`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material Armor material of this item.
     ///
@@ -804,17 +804,17 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link Equippable#equipSound()} to {@link SoundEvents#HORSE_ARMOR}
     ///     - {@link Equippable#assetId()} to {@link ArmorMaterial#assetId()}
     ///     - {@link Equippable#allowedEntities()} to entities from {@link EntityTypeTags#CAN_WEAR_HORSE_ARMOR}
-    ///     - {@link Equippable#damageOnHurt()} to {@code false}
-    ///     - {@link Equippable#canBeSheared()} to {@code true}
+    ///     - {@link Equippable#damageOnHurt()} to `false`
+    ///     - {@link Equippable#canBeSheared()} to `true`
     ///     - {@link Equippable#shearingSound()} to {@link SoundEvents#HORSE_ARMOR_UNEQUIP}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     ///
     /// - Sets attribute modifiers from {@link ArmorMaterial#createAttributes(ArmorType)} with:
     ///     - {@link Attributes#ARMOR} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to defense from {@link ArmorMaterial#defense()} for {@link ArmorType#BODY}
     ///     - {@link Attributes#ARMOR_TOUGHNESS} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#toughness()}
-    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than {@code 0.0F}
+    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than `0.0F`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material Armor material of this item.
     ///
@@ -834,18 +834,18 @@ public class SLItemProperties extends Item.Properties {
     ///     - {@link Equippable#equipSound()} to {@link SoundEvents#ARMOR_EQUIP_NAUTILUS}
     ///     - {@link Equippable#assetId()} to {@link ArmorMaterial#assetId()}
     ///     - {@link Equippable#allowedEntities()} to {@link EntityTypeTags#CAN_WEAR_NAUTILUS_ARMOR}
-    ///     - {@link Equippable#damageOnHurt()} to {@code false}
-    ///     - {@link Equippable#equipOnInteract()} to {@code true}
-    ///     - {@link Equippable#canBeSheared()} to {@code true}
+    ///     - {@link Equippable#damageOnHurt()} to `false`
+    ///     - {@link Equippable#equipOnInteract()} to `true`
+    ///     - {@link Equippable#canBeSheared()} to `true`
     ///     - {@link Equippable#shearingSound()} to {@link SoundEvents#ARMOR_UNEQUIP_NAUTILUS}
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code 1}
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `1`
     ///
     /// - Sets attribute modifiers from {@link ArmorMaterial#createAttributes(ArmorType)} with:
     ///     - {@link Attributes#ARMOR} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to defense from {@link ArmorMaterial#defense()} for {@link ArmorType#BODY}
     ///     - {@link Attributes#ARMOR_TOUGHNESS} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#toughness()}
-    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than {@code 0.0F}
+    ///     - {@link Attributes#KNOCKBACK_RESISTANCE} with {@link AttributeModifier.Operation#ADD_VALUE} at {@link EquipmentSlotGroup#bySlot(EquipmentSlot)} to {@link ArmorMaterial#knockbackResistance()} when greater than `0.0F`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material Armor material of this item.
     ///
@@ -860,9 +860,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the trim material this item provides when used as trim in the smithing table
     ///
-    /// - Sets {@link DataComponents#PROVIDES_TRIM_MATERIAL} to {@code material}
+    /// - Sets {@link DataComponents#PROVIDES_TRIM_MATERIAL} to `material`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param material Trim material provided by this item.
     ///
@@ -892,9 +892,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the {@link ResourceKey} of this item.
     ///
-    /// - Sets {@code id} to {@code key}
+    /// - Sets `id` to `key`
     ///
-    /// Defaults to {@code null}
+    /// Defaults to `null`
     ///
     /// @param key Resource key of this item.
     ///
@@ -909,9 +909,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Sets the {@link Identifier} to construct the {@link ResourceKey} of this item from.
     ///
-    /// - Sets {@code id} to {@code ResourceKey.create(Registries.ITEM, identifier)}
+    /// - Sets `id` to `ResourceKey.create(Registries.ITEM, identifier)`
     ///
-    /// Defaults to {@code null}
+    /// Defaults to `null`
     ///
     /// @param identifier Identifier to construct the {@link ResourceKey} from.
     ///
@@ -926,9 +926,9 @@ public class SLItemProperties extends Item.Properties {
     /// Overrides the generated description id of this item. Description means
     /// the display name of the item in-game.
     ///
-    /// - Sets {@code descriptionId} to {@code DependantName.fixed(descriptionId)}
+    /// - Sets `descriptionId` to `DependantName.fixed(descriptionId)`
     ///
-    /// Defaults to {@code Util.makeDescriptionId("item", id.identifier())}
+    /// Defaults to `Util.makeDescriptionId("item", id.identifier())`
     ///
     /// @param descriptionId Description id of this item.
     ///
@@ -944,7 +944,7 @@ public class SLItemProperties extends Item.Properties {
     /// Overrides the generated description id of this item to use the block id.
     /// Description means the display name of the item in-game.
     ///
-    /// - Sets {@code descriptionId} to {@link Item.Properties#BLOCK_DESCRIPTION_ID}
+    /// - Sets `descriptionId` to {@link Item.Properties#BLOCK_DESCRIPTION_ID}
     ///
     /// Defaults to {@link Item.Properties#ITEM_DESCRIPTION_ID}
     ///
@@ -960,7 +960,7 @@ public class SLItemProperties extends Item.Properties {
     /// Overrides the generated description id of this item to use the item id.
     /// Description means the display name of the item in-game.
     ///
-    /// - Sets {@code descriptionId} to {@link Item.Properties#ITEM_DESCRIPTION_ID}
+    /// - Sets `descriptionId` to {@link Item.Properties#ITEM_DESCRIPTION_ID}
     ///
     /// Defaults to {@link Item.Properties#ITEM_DESCRIPTION_ID}
     ///
@@ -975,7 +975,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds a data component to this item.
     ///
-    /// - Adds {@code component} with {@code value} to {@link DataComponents#COMMON_ITEM_COMPONENTS}
+    /// - Adds `component` with `value` to {@link DataComponents#COMMON_ITEM_COMPONENTS}
     ///
     /// @param type  Data component type to add.
     /// @param value Value of the component.
@@ -991,9 +991,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds a data component to this item.
     ///
-    /// - Adds {@code component} with {@code value} to {@link DataComponents#COMMON_ITEM_COMPONENTS}
+    /// - Adds `component` with `value` to {@link DataComponents#COMMON_ITEM_COMPONENTS}
     ///
-    /// Defaults to {@code DataComponents.COMMON_ITEM_COMPONENTS}
+    /// Defaults to `DataComponents.COMMON_ITEM_COMPONENTS`
     ///
     /// @param type  Data component type supplier to add.
     /// @param value Value of the component.
@@ -1008,9 +1008,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds a delayed data component to this item which gets resolved once the {@link HolderLookup.Provider} is available.
     ///
-    /// - Adds {@code component} with {@code value} to {@link DataComponents#COMMON_ITEM_COMPONENTS}
+    /// - Adds `component` with `value` to {@link DataComponents#COMMON_ITEM_COMPONENTS}
     ///
-    /// Defaults to {@code DataComponents.COMMON_ITEM_COMPONENTS}
+    /// Defaults to `DataComponents.COMMON_ITEM_COMPONENTS`
     ///
     /// @param type        Data component type supplier to add.
     /// @param initializer Initializer for the component.
@@ -1026,9 +1026,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds a delayed data component to this item which gets resolved once the {@link HolderLookup.Provider} is available.
     ///
-    /// - Adds {@code component} with {@code value} to {@link DataComponents#COMMON_ITEM_COMPONENTS}
+    /// - Adds `component` with `value` to {@link DataComponents#COMMON_ITEM_COMPONENTS}
     ///
-    /// Defaults to {@code DataComponents.COMMON_ITEM_COMPONENTS}
+    /// Defaults to `DataComponents.COMMON_ITEM_COMPONENTS`
     ///
     /// @param type        Data component type supplier to add.
     /// @param initializer Initializer for the component.
@@ -1043,9 +1043,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds a delayed data component to this item which gets resolved once the {@link HolderLookup.Provider} is available.
     ///
-    /// - Adds {@code component} with {@code value} to {@link DataComponents#COMMON_ITEM_COMPONENTS}
+    /// - Adds `component` with `value` to {@link DataComponents#COMMON_ITEM_COMPONENTS}
     ///
-    /// Defaults to {@code DataComponents.COMMON_ITEM_COMPONENTS}
+    /// Defaults to `DataComponents.COMMON_ITEM_COMPONENTS`
     ///
     /// @param type  Data component type to add.
     /// @param value Data component value supplier.
@@ -1059,9 +1059,9 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Adds item attribute modifiers to this item.
     ///
-    /// - Sets {@link DataComponents#ATTRIBUTE_MODIFIERS} to {@code attributes}
+    /// - Sets {@link DataComponents#ATTRIBUTE_MODIFIERS} to `attributes`
     ///
-    /// Defaults to {@code nothing}
+    /// Defaults to `nothing`
     ///
     /// @param attributes Attribute modifiers of this item.
     ///
@@ -1076,7 +1076,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// Marks this item as a bucket-like item.
     ///
-    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to {@code maxStackSize}
+    /// - Sets {@link DataComponents#MAX_STACK_SIZE} to `maxStackSize`
     /// - Sets {@link Item#craftingRemainingItem} to {@link Items#BUCKET}
     ///
     /// @return This {@link SLItemProperties} instance.

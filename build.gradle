@@ -33,7 +33,7 @@ java {
 neoForge {
     version = project.neo_version
 
-    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {

@@ -30,7 +30,7 @@ public class SLResourceUtils {
     }
     
     ///
-    /// Helper for creating a {@link Identifier} from the {@code minecraft} namespace
+    /// Helper for creating a {@link Identifier} from the `minecraft` namespace
     ///
     /// @param path Resource path
     ///
@@ -41,7 +41,7 @@ public class SLResourceUtils {
     }
     
     ///
-    /// Helper for creating a {@link Identifier} from the {@code neoforge} namespace
+    /// Helper for creating a {@link Identifier} from the `neoforge` namespace
     ///
     /// @param path Resource path
     ///
@@ -52,7 +52,7 @@ public class SLResourceUtils {
     }
     
     ///
-    /// Helper for creating a {@link Identifier} from the {@code c} namespace
+    /// Helper for creating a {@link Identifier} from the `c` namespace
     ///
     /// @param path Resource path
     ///

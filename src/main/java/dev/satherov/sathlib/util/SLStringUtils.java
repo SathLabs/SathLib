@@ -76,7 +76,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to camel case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code helloWorldThisIsATest}
+    /// `hello-world_thisIs  aTEST` -> `helloWorldThisIsATest`
     ///
     /// @param input String to convert.
     ///
@@ -100,7 +100,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to pascal case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code HelloWorldThisIsATest}
+    /// `hello-world_thisIs  aTEST` -> `HelloWorldThisIsATest`
     ///
     /// @param input String to convert.
     ///
@@ -121,7 +121,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to snake case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code hello_world_this_is_a_test}
+    /// `hello-world_thisIs  aTEST` -> `hello_world_this_is_a_test`
     ///
     /// @param input String to convert.
     ///
@@ -135,7 +135,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to screaming snake case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code HELLO_WORLD_THIS_IS_A_TEST}
+    /// `hello-world_thisIs  aTEST` -> `HELLO_WORLD_THIS_IS_A_TEST`
     ///
     /// @param input String to convert.
     ///
@@ -151,7 +151,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to kebab case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code hello-world-this-is-a-test}
+    /// `hello-world_thisIs  aTEST` -> `hello-world-this-is-a-test`
     ///
     /// @param input String to convert.
     ///
@@ -165,7 +165,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to sentence case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code Hello world this is a test}
+    /// `hello-world_thisIs  aTEST` -> `Hello world this is a test`
     ///
     /// @param input String to convert.
     ///
@@ -182,7 +182,7 @@ public class SLStringUtils {
     ///
     /// Converts the given string to title case.
     ///
-    /// {@code hello-world_thisIs  aTEST} -> {@code Hello World This Is A Test}
+    /// `hello-world_thisIs  aTEST` -> `Hello World This Is A Test`
     ///
     /// @param input String to convert.
     ///
@@ -199,7 +199,7 @@ public class SLStringUtils {
     ///
     /// Capitalizes the first letter of the given word and turns the rest into lowercase.
     ///
-    /// {@code eXaMpLe} -> {@code Example}
+    /// `eXaMpLe` -> `Example`
     ///
     /// @param word Word to capitalize.
     ///

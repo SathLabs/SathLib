@@ -1,5 +1,5 @@
 license="${mod_license}"
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/"
+issueTrackerURL="https://github.com/SathLabs/SathLib/issues"
 
 [[mods]]
 modId="${mod_id}"
@@ -14,8 +14,8 @@ JarJar Library for my personal stuff
 [[mixins]]
 config="${mod_id}.mixins.json"
 
-#[[accessTransformers]]
-#file="META-INF/accesstransformer.cfg"
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
 
 [[dependencies.${mod_id}]]
     modId="neoforge"

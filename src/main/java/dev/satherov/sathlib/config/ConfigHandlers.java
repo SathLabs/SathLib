@@ -85,7 +85,7 @@ public class ConfigHandlers {
     }
     
     ///
-    /// Implementation for {@link Boolean} / {@code boolean} fields.
+    /// Implementation for {@link Boolean} / `boolean` fields.
     ///
     private static class BooleanHandler implements ConfigHandler {
         
@@ -98,7 +98,7 @@ public class ConfigHandlers {
     }
     
     ///
-    /// Implementation for {@link Integer} / {@code int} fields.
+    /// Implementation for {@link Integer} / `int` fields.
     ///
     private static class IntegerHandler implements ConfigHandler {
         
@@ -112,7 +112,7 @@ public class ConfigHandlers {
     }
     
     ///
-    /// Implementation for {@link Long} / {@code long} fields.
+    /// Implementation for {@link Long} / `long` fields.
     ///
     private static class LongHandler implements ConfigHandler {
         
@@ -126,7 +126,7 @@ public class ConfigHandlers {
     }
     
     ///
-    /// Implementation for {@link Double} / {@code double} fields.
+    /// Implementation for {@link Double} / `double` fields.
     ///
     private static class DoubleHandler implements ConfigHandler {
         

@@ -119,10 +119,10 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     }
     
     ///
-    /// Sets the {@code hasCollision} property of the block to false.
-    /// {@code false} means entities can pass through the block.
+    /// Sets the `hasCollision` property of the block to false.
+    /// `false` means entities can pass through the block.
     ///
-    /// Defaults to {@code true}.
+    /// Defaults to `true`.
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -133,10 +133,10 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     }
     
     ///
-    /// Sets the {@code canOcclude} property of the block to false.
-    /// {@code false} means the block will block light.
+    /// Sets the `canOcclude` property of the block to false.
+    /// `false` means the block will block light.
     ///
-    /// Defaults to {@code true}.
+    /// Defaults to `true`.
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -150,7 +150,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the entity friction value of this block.
     /// Higher value means slower acceleration and faster stopping.
     ///
-    /// Defaults to {@code 0.6F}.
+    /// Defaults to `0.6F`.
     ///
     /// @param friction The friction value of this block.
     ///
@@ -166,7 +166,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the entity delta speed multiplier of this block.
     /// Higher value means faster acceleration and faster overall movement.
     ///
-    /// Defaults to {@code 1.0F}.
+    /// Defaults to `1.0F`.
     ///
     /// @param speedFactor The speed factor of this block.
     ///
@@ -182,7 +182,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the entity jump multiplier of this block.
     /// Higher value means higher jump height.
     ///
-    /// Defaults to {@code 1.0F}.
+    /// Defaults to `1.0F`.
     ///
     /// @param jumpFactor The jump factor of this block.
     ///
@@ -216,7 +216,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// using the given factory supplying the {@link BlockState}.
     /// Higher value means higher light level emission.
     ///
-    /// Defaults to {@code 0}. Max value is {@code 15}.
+    /// Defaults to `0`. Max value is `15`.
     ///
     /// @param lightEmission Factory to construct the light emission of this block.
     ///
@@ -232,7 +232,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the light emission of this block.
     /// Higher value means higher light level emission.
     ///
-    /// Defaults to {@code 0}. Max value is {@code 15}.
+    /// Defaults to `0`. Max value is `15`.
     ///
     /// @param lightLevel The light emission of this block.
     ///
@@ -246,8 +246,8 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the strength of this block, defined by its
     /// destroy-time and explosion-resistance.
     ///
-    /// Destroy-time defaults to {@code 0.0F}
-    /// Explosion-resistance defaults to {@code 0.0F}
+    /// Destroy-time defaults to `0.0F`
+    /// Explosion-resistance defaults to `0.0F`
     ///
     /// @param destroyTime         The destroy-time of this block.
     /// @param explosionResistance The explosion-resistance of this block.
@@ -267,8 +267,8 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the strength of this block by setting both its
     /// destroy-time and explosion-resistance to the same value.
     ///
-    /// Destroy-time defaults to {@code 0.0F}
-    /// Explosion-resistance defaults to {@code 0.0F}
+    /// Destroy-time defaults to `0.0F`
+    /// Explosion-resistance defaults to `0.0F`
     ///
     /// @param strength The strength of this block.
     ///
@@ -287,11 +287,11 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the destroy-time of this block.
     /// Higher value means longer destroy time.
     ///
-    /// {@code -1} to make the block unbreakable.
+    /// `-1` to make the block unbreakable.
     ///
-    /// {@code 0} to make the block breakable in one-hit.
+    /// `0` to make the block breakable in one-hit.
     ///
-    /// Defaults to {@code 0.0F}
+    /// Defaults to `0.0F`
     ///
     @Override
     public SLBlockProperties destroyTime(float destroyTime) {
@@ -303,7 +303,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Sets the explosion-resistance of this block.
     /// Higher value means this block absorbs more damage from an explosion.
     ///
-    /// Defaults to {@code 0.0F}. Min value is {@code 0.0F}.
+    /// Defaults to `0.0F`. Min value is `0.0F`.
     ///
     /// @param explosionResistance Explosion resistance of this block.
     ///
@@ -318,9 +318,9 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Marks this block as being breakable in one-hit,
     /// even without any tools.
-    /// Effectively calls {@link SLBlockProperties#strength(float)} with value {@code 0}.
+    /// Effectively calls {@link SLBlockProperties#strength(float)} with value `0`.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -334,7 +334,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block as receiving random-tick updates.
     /// Must be set for {@link Block#randomTick(BlockState, ServerLevel, BlockPos, RandomSource)} to function.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -349,7 +349,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// relevant information from being cached. Forced the game to
     /// recalculate collision shapes every time they're checked.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -361,10 +361,10 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     
     ///
     /// Sets this resource key of this block's loot table to empty. Effectively
-    /// calls {@link SLBlockProperties#overrideLootTable(Optional)} with value {@code Optional.empty()}.
+    /// calls {@link SLBlockProperties#overrideLootTable(Optional)} with value `Optional.empty()`.
     /// Cheaper than generating an empty loot table.
     ///
-    /// Defaults to {@code Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))}
+    /// Defaults to `Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -377,7 +377,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Overrides the default loot table by setting the resource key of this block's loot table to the given optional {@link ResourceKey}.
     ///
-    /// Defaults to {@code Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))}
+    /// Defaults to `Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))`
     ///
     /// @param table Optional resource key of the loot table.
     ///
@@ -392,7 +392,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Overrides the default loot table by setting the resource key of this block's loot table to the given {@link ResourceKey}.
     ///
-    /// Defaults to {@code Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))}
+    /// Defaults to `Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))`
     ///
     /// @param table Resource key of the loot table.
     ///
@@ -406,7 +406,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Overrides the default loot table by setting the resource key of this block's loot table to the given {@link Identifier}.
     ///
-    /// Defaults to {@code Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))}
+    /// Defaults to `Optional.of(ResourceKey.create(Registries.LOOT_TABLE, id.identifier().withPrefix("blocks/")))`
     ///
     /// @param table Identifier of the loot table.
     ///
@@ -420,7 +420,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Marks this block as being able to catch on fire.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -436,7 +436,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Should normally only be used when extending {@link LiquidBlock}.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -450,7 +450,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Legacy property for forcing the {@link BlockState#isSolid()} to always return true
     /// instead of calculating it from the collision shape.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -464,7 +464,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Legacy property for forcing the {@link BlockState#isSolid()} to always return false
     /// instead of calculating it from the collision shape.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -493,7 +493,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block as air. Used for optimizing chunk storage and querying,
     /// as well as checking if a block is unoccupied.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -507,7 +507,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Overrides the default spawn check.
     /// If the check returns true an entity can spawn on top of this block.
     ///
-    /// Defaults to {@code (state, level, pos, entityType) -> state.isFaceSturdy(level, pos, Direction.UP) && state.getLightEmission(level, pos) < 14}
+    /// Defaults to `(state, level, pos, entityType) -> state.isFaceSturdy(level, pos, Direction.UP) && state.getLightEmission(level, pos) < 14`
     ///
     /// @param isValidSpawn The spawn check predicate.
     ///
@@ -523,7 +523,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Overrides the default conductivity check.
     /// A conductive block will pass a redstone signal through it.
     ///
-    /// Defaults to {@code (state, level, pos) -> state.isCollisionShapeFullBlock(level, pos)}
+    /// Defaults to `(state, level, pos) -> state.isCollisionShapeFullBlock(level, pos)`
     ///
     /// @param isRedstoneConductor The conductivity check predicate.
     ///
@@ -539,7 +539,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Overrides the default suffocation check.
     /// If the check returns true, an entity with its head inside this block will suffocate.
     ///
-    /// Defaults to {@code (state, level, pos) -> state.blocksMotion() && state.isCollisionShapeFullBlock(level, pos)}
+    /// Defaults to `(state, level, pos) -> state.blocksMotion() && state.isCollisionShapeFullBlock(level, pos)`
     ///
     /// @param isSuffocating The suffocation check predicate.
     ///
@@ -556,7 +556,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// If the check returns true, blocks visibility on the client side.
     /// Used for calculating ambient occlusion.
     ///
-    /// Defaults to {@code (state, level, pos) -> state.blocksMotion() && state.isCollisionShapeFullBlock(level, pos)}
+    /// Defaults to `(state, level, pos) -> state.blocksMotion() && state.isCollisionShapeFullBlock(level, pos)`
     ///
     /// @param isViewBlocking The view blocking check predicate.
     ///
@@ -572,7 +572,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block for post-processing after being generated. This ticks a fluid or
     /// updates a state from its neighbors.
     ///
-    /// Defaults to {@code (state, level, pos) -> false}
+    /// Defaults to `(state, level, pos) -> false`
     ///
     /// @param postProcess The post-processing check predicate.
     ///
@@ -589,7 +589,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Marks this block to render as if it were emitting light.
     ///
-    /// Defaults to {@code (state, level, pos) -> false}
+    /// Defaults to `(state, level, pos) -> false`
     ///
     /// @param emissiveRendering The emissive rendering check predicate.
     ///
@@ -607,7 +607,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block as requiring the correct tool for it to drop.
     /// Without this set the block can be mined by hand.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -622,7 +622,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// This affects placement on the block and will slightly shift the placement
     /// off-center, such as with saplings or flowers.
     ///
-    /// Defaults to {@code null}
+    /// Defaults to `null`
     ///
     /// @param offsetType The {@link BlockBehaviour.OffsetType} of this block.
     ///
@@ -635,11 +635,11 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     }
     
     ///
-    /// Sets the {@code spawnTerrainParticles} property of this block to false.
+    /// Sets the `spawnTerrainParticles` property of this block to false.
     /// Terrain particles appear, for example, when running over a block,
     /// falling onto a block, hitting a block, etc.
     ///
-    /// Defaults to {@code true}
+    /// Defaults to `true`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -684,7 +684,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block as being able to be replaced by another block.
     /// Allows players to place another block into a space occupied by this block.
     ///
-    /// Defaults to {@code false}
+    /// Defaults to `false`
     ///
     /// @return This {@link SLBlockProperties} instance.
     ///
@@ -697,7 +697,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Sets the {@link ResourceKey} of this block.
     ///
-    /// Defaults to {@code null}
+    /// Defaults to `null`
     ///
     /// @param key The {@link ResourceKey} of this block.
     ///
@@ -712,7 +712,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Sets the {@link Identifier} to construct the {@link ResourceKey} of this block from.
     ///
-    /// Defaults to {@code null}
+    /// Defaults to `null`
     ///
     /// @param identifier The {@link Identifier} to construct the {@link ResourceKey} from.
     ///
@@ -726,7 +726,7 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Overwrites the default description translation key of this block.
     ///
-    /// Defaults to {@code id -> Util.makeDescriptionId("block", id.identifier())}
+    /// Defaults to `id -> Util.makeDescriptionId("block", id.identifier())`
     ///
     /// @param descriptionId The description translation key of this block.
     ///
