@@ -1,5 +1,8 @@
 package dev.satherov.sathlib;
 
+import lombok.AccessLevel;
+import lombok.extern.slf4j.Slf4j;
+
 import dev.satherov.sathlib.util.SLResourceUtils;
 
 import net.neoforged.bus.api.IEventBus;
@@ -8,6 +11,7 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 
 import net.minecraft.resources.Identifier;
 
+@Slf4j(access = AccessLevel.PUBLIC)
 @Mod(SathLib.MOD_ID)
 public class SathLib {
     
