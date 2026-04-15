@@ -8,8 +8,8 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 public class SathLib {
     
     public static final String MOD_ID = "sathlib";
-
+    
     public SathLib(final IEventBus bus, final FMLModContainer container) {
-
+        
     }
 }
