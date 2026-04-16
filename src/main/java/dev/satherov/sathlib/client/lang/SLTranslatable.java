@@ -4,7 +4,6 @@ import dev.satherov.sathlib.network.chat.SLComponent;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 public interface SLTranslatable {
     
@@ -27,8 +26,8 @@ public interface SLTranslatable {
     ///
     /// @return Translation component
     ///
-    default MutableComponent translate() {
-        return Component.translatable(this.key());
+    default SLComponent translate() {
+        return SLComponent.of(Component.translatable(this.key()));
     }
     
     ///
@@ -39,26 +38,7 @@ public interface SLTranslatable {
     ///
     /// @see SLComponent#identify(String, Object...)
     ///
-    default MutableComponent translate(Object... args) {
+    default SLComponent translate(Object... args) {
         return SLComponent.identify(this.key(), args);
-    }
-    
-    ///
-    /// Creates an {@link SLComponent} from this translation key
-    ///
-    /// @return SLComponent
-    ///
-    default SLComponent text() {
-        return SLComponent.of(this.translate());
-    }
-    
-    ///
-    /// Creates an {@link SLComponent} from this translation key and
-    /// translation arguments to be interpreted into {@link ChatFormatting} and args
-    ///
-    /// @return SLComponent
-    ///
-    default SLComponent text(Object... args) {
-        return SLComponent.of(this.translate(args));
     }
 }

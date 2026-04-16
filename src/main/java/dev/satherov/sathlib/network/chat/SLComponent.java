@@ -1,12 +1,16 @@
 package dev.satherov.sathlib.network.chat;
 
 import dev.satherov.sathlib.client.lang.SLTranslatable;
+import dev.satherov.sathlib.core.annotations.NothingNull;
 
 import net.neoforged.fml.loading.FMLEnvironment;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +19,8 @@ import java.util.function.UnaryOperator;
 ///
 /// Wrapper class for building components
 ///
-public class SLComponent {
+@NothingNull
+public class SLComponent implements Component {
     
     private final MutableComponent component;
     
@@ -48,16 +53,6 @@ public class SLComponent {
     ///
     public SLComponent append(Component component) {
         this.component.append(component);
-        return this;
-    }
-    
-    ///
-    /// Appends a {@link SLComponent} to the root
-    ///
-    /// @return self
-    ///
-    public SLComponent append(SLComponent component) {
-        this.component.append(component.create());
         return this;
     }
     
@@ -132,20 +127,11 @@ public class SLComponent {
     }
     
     ///
-    /// Returns the root component
-    ///
-    /// @return root component
-    ///
-    public MutableComponent create() {
-        return this.component;
-    }
-    
-    ///
     /// Creates a {@link MutableComponent} from the given translation key and the given translation components
     ///
     /// @return created component
     ///
-    public static MutableComponent identify(String translationKey, Object... args) {
+    public static SLComponent identify(String translationKey, Object... args) {
         List<ChatFormatting> formatting = new ArrayList<>();
         List<Object> arguments = new ArrayList<>();
         
@@ -162,7 +148,27 @@ public class SLComponent {
         }
         
         MutableComponent component = arguments.isEmpty() ? Component.translatable(translationKey) : Component.translatable(translationKey, arguments.toArray());
-        if (formatting.isEmpty()) return component;
-        return component.withStyle(formatting.toArray(ChatFormatting[]::new));
+        if (formatting.isEmpty()) component.withStyle(formatting.toArray(ChatFormatting[]::new));
+        return SLComponent.of(component);
+    }
+    
+    @Override
+    public Style getStyle() {
+        return this.component.getStyle();
+    }
+    
+    @Override
+    public ComponentContents getContents() {
+        return this.component.getContents();
+    }
+    
+    @Override
+    public List<Component> getSiblings() {
+        return this.component.getSiblings();
+    }
+    
+    @Override
+    public FormattedCharSequence getVisualOrderText() {
+        return this.component.getVisualOrderText();
     }
 }

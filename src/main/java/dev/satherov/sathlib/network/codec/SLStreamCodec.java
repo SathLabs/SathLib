@@ -11,7 +11,6 @@ import net.minecraft.util.ByIdMap;
 
 import io.netty.buffer.ByteBuf;
 
-import java.security.Key;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,14 +47,14 @@ public final class SLStreamCodec {
         return SLStreamCodec.list(valueCodec, ArrayList::new);
     }
     
-    /// 
+    ///
     /// Creates a list stream codec from the given value codec and list supplier
-    /// 
+    ///
     /// @param valueCodec Codec for the list items
     /// @param supplier   Supplier for the list
-    /// 
+    ///
     /// @return Stream codec for the given list type
-    /// 
+    ///
     public static <T, L extends List<T>, B extends ByteBuf> StreamCodec<B, L> list(StreamCodec<B, T> valueCodec, Supplier<L> supplier) {
         return new StreamCodec<>() {
             
@@ -70,13 +69,13 @@ public final class SLStreamCodec {
             
             @Override
             public L decode(B input) {
-               final L list =  supplier.get();
-               final int size = list.size();
-               for (int i = 0; i < size; i++) {
-                   T item = valueCodec.decode(input);
-                   list.add(item);
-               }
-               return list;
+                final L list = supplier.get();
+                final int size = list.size();
+                for (int i = 0; i < size; i++) {
+                    T item = valueCodec.decode(input);
+                    list.add(item);
+                }
+                return list;
             }
         };
     }
@@ -98,11 +97,11 @@ public final class SLStreamCodec {
     ///
     /// Creates a map stream codec from the given key-value codecs and map supplier.
     ///
-    /// @param keyCodec    Codec for the map keys
-    /// @param valueCodec  Codec for the map values
-    /// @param supplier    Supplier for the map
-    /// @param <K>         Type of the map keys
-    /// @param <V>         Type of the map values
+    /// @param keyCodec   Codec for the map keys
+    /// @param valueCodec Codec for the map values
+    /// @param supplier   Supplier for the map
+    /// @param <K>        Type of the map keys
+    /// @param <V>        Type of the map values
     ///
     /// @return Stream codec for the given map type
     ///

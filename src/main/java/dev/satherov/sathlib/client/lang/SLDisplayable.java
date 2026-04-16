@@ -1,6 +1,6 @@
 package dev.satherov.sathlib.client.lang;
 
-import net.minecraft.network.chat.MutableComponent;
+import dev.satherov.sathlib.network.chat.SLComponent;
 
 public interface SLDisplayable {
     
@@ -9,5 +9,5 @@ public interface SLDisplayable {
     ///
     /// @return Translatable component
     ///
-    MutableComponent display(Object... args);
+    SLComponent display(Object... args);
 }

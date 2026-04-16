@@ -21,9 +21,9 @@ public class SathLib {
         
     }
     
-    /// 
+    ///
     /// {@link Identifier} under the `sathlib` namespace
-    /// 
+    ///
     public static Identifier id(final String name) {
         return SLResourceUtils.id(SathLib.MOD_ID, name);
     }
