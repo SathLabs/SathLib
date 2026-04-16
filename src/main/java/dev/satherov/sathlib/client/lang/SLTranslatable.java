@@ -1,6 +1,6 @@
 package dev.satherov.sathlib.client.lang;
 
-import dev.satherov.sathlib.util.SLComponents;
+import dev.satherov.sathlib.network.chat.SLComponent;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -37,9 +37,28 @@ public interface SLTranslatable {
     ///
     /// @return Translation component
     ///
-    /// @see SLComponents#translate(String, Object...)
+    /// @see SLComponent#identify(String, Object...)
     ///
     default MutableComponent translate(Object... args) {
-        return SLComponents.translate(this.key(), args);
+        return SLComponent.identify(this.key(), args);
+    }
+    
+    ///
+    /// Creates an {@link SLComponent} from this translation key
+    ///
+    /// @return SLComponent
+    ///
+    default SLComponent text() {
+        return SLComponent.of(this.translate());
+    }
+    
+    ///
+    /// Creates an {@link SLComponent} from this translation key and
+    /// translation arguments to be interpreted into {@link ChatFormatting} and args
+    ///
+    /// @return SLComponent
+    ///
+    default SLComponent text(Object... args) {
+        return SLComponent.of(this.translate(args));
     }
 }
