@@ -149,12 +149,12 @@ public class ConfigHandlers {
         public ModConfigSpec.ConfigValue<?> create(ModConfigSpec.Builder builder, String name, Field field, Object object, List<String> comments) {
             Class<? extends Enum> clazz = field.getType().asSubclass(Enum.class);
             Enum<?> value = ConfigHandlers.validate(name, object, clazz);
-            if (!(value instanceof ConfigEnum<?>)) {
+            if (!(value instanceof ConfigEnum cfg)) {
                 throw new IllegalArgumentException("Enum " + clazz.getSimpleName() + " is not a Config Enum");
             }
             
             ConfigHandlers.comment(builder, comments, value);
-            Arrays.stream(clazz.getEnumConstants()).forEach(e -> builder.comment(" " + e.name() + ": " + ((ConfigEnum<?>) e).description()));
+            Arrays.stream(clazz.getEnumConstants()).forEach(e -> builder.comment(" " + e.name() + ": " + cfg.description()));
             return EnumHandler.defineEnum(name, builder, value, clazz);
         }
         

@@ -3,7 +3,7 @@ package dev.satherov.sathlib.config.data;
 ///
 /// Marks an enum as a config enum.
 ///
-public interface ConfigEnum<E extends Enum<E> & ConfigEnum<E>> {
+public interface ConfigEnum {
     
     ///
     /// Human-readable description of what the specific enum value does.
