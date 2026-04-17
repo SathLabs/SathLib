@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.network.chat;
 
+import dev.satherov.sathlib.client.lang.FormattingLang;
+import dev.satherov.sathlib.client.lang.GenericLang;
 import dev.satherov.sathlib.client.lang.SLTranslatable;
 import dev.satherov.sathlib.core.annotations.NothingNull;
 
@@ -11,6 +13,10 @@ import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +39,7 @@ public class SLComponent implements Component {
     ///
     /// @return Empty SLComponent
     ///
-    public static SLComponent builder() {
+    public static SLComponent empty() {
         return new SLComponent(Component.empty());
     }
     
@@ -127,15 +133,15 @@ public class SLComponent implements Component {
     }
     
     ///
-    /// Creates a {@link MutableComponent} from the given translation key and the given translation components
+    /// Creates a {@link SLComponent} from the given translation key and the given translation components
     ///
     /// @return created component
     ///
-    public static SLComponent identify(String translationKey, Object... args) {
+    public static SLComponent identify(String translationKey, @Nullable Object... args) {
         List<ChatFormatting> formatting = new ArrayList<>();
         List<Object> arguments = new ArrayList<>();
         
-        for (Object arg : args) {
+        for (@Nullable Object arg : args) {
             switch (arg) {
                 case ChatFormatting format -> formatting.add(format);
                 case Component _, Number _, Boolean _, String _ -> arguments.add(arg);
@@ -151,6 +157,90 @@ public class SLComponent implements Component {
         if (formatting.isEmpty()) component.withStyle(formatting.toArray(ChatFormatting[]::new));
         return SLComponent.of(component);
     }
+    
+    ///
+    /// Returns a component for the given key
+    ///
+    /// @param key the input constant key
+    ///
+    /// @return mutable component of the key's display name
+    ///
+    public static SLComponent key(InputConstants.Key key) {
+        return SLComponent.of(key.getDisplayName().copy());
+    }
+    
+    ///
+    /// Returns the correct enabled / disabled state for the given boolean
+    ///
+    /// @param enabled decides which text to return
+    ///
+    /// @return {@link GenericLang#ENABLED} if `true`, {@link GenericLang#DISABLED} if `false`
+    ///
+    public static SLComponent enabledDisabled(boolean enabled) {
+        return enabled ? GenericLang.ENABLED.translate(ChatFormatting.DARK_GREEN) : GenericLang.DISABLED.translate(ChatFormatting.DARK_RED);
+    }
+    
+    ///
+    /// Returns the correct on / off state for the given boolean
+    ///
+    /// @param on decides which text to return
+    ///
+    /// @return {@link GenericLang#ON} if `true`, {@link GenericLang#OFF} if `false`
+    ///
+    public static SLComponent onOff(boolean on) {
+        return on ? GenericLang.ON.translate(ChatFormatting.DARK_GREEN) : GenericLang.OFF.translate(ChatFormatting.DARK_RED);
+    }
+    
+    ///
+    /// Returns the correct allowed / deny state for the given boolean
+    ///
+    /// @param allowed decides which text to return
+    ///
+    /// @return {@link GenericLang#ALLOW} if `true`, {@link GenericLang#DENY} if `false`
+    ///
+    public static SLComponent allowedDenied(boolean allowed) {
+        return allowed ? GenericLang.ALLOW.translate(ChatFormatting.DARK_GREEN) : GenericLang.DENY.translate(ChatFormatting.DARK_RED);
+    }
+    
+    ///
+    /// Wraps the given component into two rounded brackets
+    ///
+    /// "Example" -> "\(Example\)"
+    ///
+    /// @param component the component to wrap
+    ///
+    /// @return the component wrapped in rounded brackets
+    ///
+    public static SLComponent roundBrackets(Component component) {
+        return FormattingLang.ROUND_BRACKETS.translate(component);
+    }
+    
+    ///
+    /// Wraps the given component into two square brackets
+    ///
+    /// "Example" -> "\[Example\]"
+    ///
+    /// @param component the component to wrap
+    ///
+    /// @return the component wrapped in square brackets
+    ///
+    public static SLComponent squareBrackets(Component component) {
+        return FormattingLang.SQUARE_BRACKETS.translate(component);
+    }
+    
+    ///
+    /// Wraps the given component into two curly brackets
+    ///
+    /// "Example" -> "\{Example\}"
+    ///
+    /// @param component the component to wrap
+    ///
+    /// @return the component wrapped in curly brackets
+    ///
+    public static SLComponent curlyBrackets(Component component) {
+        return FormattingLang.CURLY_BRACKETS.translate(component);
+    }
+    
     
     @Override
     public Style getStyle() {

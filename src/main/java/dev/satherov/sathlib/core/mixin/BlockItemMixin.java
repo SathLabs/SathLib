@@ -31,6 +31,8 @@ public abstract class BlockItemMixin extends Item {
     @Override
     @SuppressWarnings("deprecation")
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flags) {
-        if (this.sathlib$self().getBlock() instanceof SLBlock block) block.appendHoverText(stack, context, display, builder, flags);
+        if (this.sathlib$self().getBlock() instanceof SLBlock block) {
+            block.appendHoverText(stack, context, display, builder, flags);
+        }
     }
 }
