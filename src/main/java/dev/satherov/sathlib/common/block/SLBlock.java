@@ -8,11 +8,15 @@ import dev.satherov.sathlib.core.annotations.NothingNull;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +29,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Slf4j
 @NothingNull
@@ -149,6 +154,17 @@ public class SLBlock extends Block {
     protected InteractionResult useWithoutItem(Player player, Level level, BlockState state, BlockPos pos, BlockHitResult hit) {
         return InteractionResult.PASS;
     }
+    
+    ///
+    /// Called for the block item of this block
+    ///
+    /// @param stack   ItemStack with this BlockItem
+    /// @param context TooltipContext under which this tooltip is displayed
+    /// @param display Hidden tooltips and if they should be displayed or not
+    /// @param builder The builder for adding components
+    /// @param flag    The ToolTip flags set during this call
+    ///
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) { }
     
     @NoArgsConstructor(staticName = "create", access = AccessLevel.PRIVATE)
     public static class StateBuilder {
