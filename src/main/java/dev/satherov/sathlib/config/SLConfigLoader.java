@@ -27,6 +27,7 @@ import org.objectweb.asm.Type;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -209,6 +210,9 @@ public class SLConfigLoader {
             final List<String> comments = entry.comment().lines().map(String::strip).toList();
             
             try {
+                if (Modifier.isFinal(field.getModifiers())) throw new IllegalStateException("Config field " + name + " must not be final");
+                if (!Modifier.isStatic(field.getModifiers())) throw new IllegalStateException("Config field " + name + " must be static");
+                
                 field.setAccessible(true);
                 Object object = field.get(null);
                 ModConfigSpec.ConfigValue<?> spec = ConfigHandlers.create(mod, builder, name, field, object, comments).orElseThrow(() -> new IllegalArgumentException("Unsupported config field type " + field.getType()));
@@ -218,7 +222,7 @@ public class SLConfigLoader {
             } catch (IllegalAccessException e) {
                 SLConfigLoader.throwOrLog("Failed to access field " + name, e);
             } catch (NullPointerException e) {
-                SLConfigLoader.throwOrLog("Config field " + name + " is null or not static", e);
+                SLConfigLoader.throwOrLog("Config field " + name + " is null", e);
             }
         }
     }
