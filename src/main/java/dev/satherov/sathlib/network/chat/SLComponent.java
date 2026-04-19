@@ -8,6 +8,7 @@ import dev.satherov.sathlib.core.annotations.NothingNull;
 import net.neoforged.fml.loading.FMLEnvironment;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
@@ -163,10 +164,21 @@ public class SLComponent implements Component {
     ///
     /// @param key the input constant key
     ///
-    /// @return mutable component of the key's display name
+    /// @return component of the key's display name
     ///
     public static SLComponent key(InputConstants.Key key) {
         return SLComponent.of(key.getDisplayName().copy());
+    }
+    
+    /// 
+    /// Returns a component for the given block position
+    /// 
+    /// @param pos the block position
+    /// 
+    /// @return component of the formatted block position
+    /// 
+    public static SLComponent pos(BlockPos pos) {
+        return SLComponent.of(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ()));
     }
     
     ///
