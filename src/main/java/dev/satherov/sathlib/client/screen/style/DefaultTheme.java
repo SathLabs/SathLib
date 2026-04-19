@@ -21,6 +21,7 @@ import org.jspecify.annotations.Nullable;
 /// Replace this implementation when a project wants a different visual identity.
 ///
 public enum DefaultTheme implements UITheme {
+    /// Shared singleton instance of the built-in theme.
     INSTANCE;
     
     private static final int PANEL_FILL = 0xEE1D2431;

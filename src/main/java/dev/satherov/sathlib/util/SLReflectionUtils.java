@@ -1,15 +1,18 @@
 package dev.satherov.sathlib.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Map;
 
+///
+/// Reflection helpers used when SathLib integrates with NeoForge internals.
+///
 @Slf4j
-@UtilityClass
 public final class SLReflectionUtils {
+    
+    private SLReflectionUtils() { }
     
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPER = Map.of(
             boolean.class, Boolean.class,

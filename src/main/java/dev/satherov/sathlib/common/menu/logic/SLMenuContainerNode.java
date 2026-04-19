@@ -19,6 +19,11 @@ public class SLMenuContainerNode extends SLMenuNode {
     private final List<SLMenuNode> children = new ArrayList<>();
     
     ///
+    /// Creates an empty menu container node.
+    ///
+    public SLMenuContainerNode() { }
+    
+    ///
     /// Returns the ordered child nodes.
     ///
     /// @return immutable child list

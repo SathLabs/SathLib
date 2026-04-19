@@ -11,4 +11,9 @@ package dev.satherov.sathlib.client.screen.node;
 /// Extend this class for standalone widgets such as labels, buttons, progress
 /// bars, sliders, or bespoke custom controls.
 ///
-public abstract class UILeafNode<S extends UILeafNode<S>> extends UINode<S> { }
+/// @param <S> concrete leaf subtype used for fluent setters
+///
+public abstract class UILeafNode<S extends UILeafNode<S>> extends UINode<S> {
+    
+    protected UILeafNode() { }
+}

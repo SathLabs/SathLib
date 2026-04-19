@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.config;
 
-import lombok.experimental.UtilityClass;
-
 import dev.satherov.sathlib.config.data.ConfigEnum;
 import dev.satherov.sathlib.config.data.Range;
 import dev.satherov.sathlib.core.mixin.ModConfigSpecEnumValueAccessor;
@@ -26,11 +24,21 @@ import java.util.Optional;
 ///
 /// Handlers for building the {@link ModConfigSpec} for each type
 ///
-@UtilityClass
 public class ConfigHandlers {
+    
+    private ConfigHandlers() { }
     
     ///
     /// Handles the creation of a {@link ModConfigSpec.ConfigValue} for the given field.
+    ///
+    /// @param mod      mod id used for translation keys
+    /// @param builder  config spec builder receiving the value
+    /// @param name     config entry name
+    /// @param field    reflected field that defines the config entry
+    /// @param object   default value stored on the field
+    /// @param comments comments added to the generated config spec entry
+    ///
+    /// @return config value when the field type is supported, otherwise an empty optional
     ///
     public static Optional<ModConfigSpec.ConfigValue<?>> create(String mod, ModConfigSpec.Builder builder, String name, Field field, Object object, List<String> comments) {
         ConfigHandler handler = ConfigHandlers.HANDLERS.get(SLReflectionUtils.getWrapper(field.getType()));

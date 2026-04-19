@@ -45,6 +45,8 @@ import java.util.function.Consumer;
 ///
 public final class UI {
     
+    private UI() { }
+    
     ///
     /// Creates a column builder.
     ///
@@ -164,6 +166,9 @@ public final class UI {
     ///
     /// Extend this class when adding new widget builders.
     ///
+    /// @param <N> runtime node type built by this builder
+    /// @param <B> concrete builder type used for fluent chaining
+    ///
     public abstract static class Builder<N extends UINode<N>, B extends Builder<N, B>> {
         
         private SLLength width = SLLength.content();
@@ -174,6 +179,8 @@ public final class UI {
         private SLAlignment verticalAlignment = SLAlignment.START;
         private SLScalar offsetX = SLScalar.zero();
         private SLScalar offsetY = SLScalar.zero();
+        
+        protected Builder() { }
         
         ///
         /// Returns the concrete builder type for fluent chaining.
@@ -388,9 +395,14 @@ public final class UI {
     ///
     /// Extend this class for new container builder types.
     ///
+    /// @param <N> runtime container node type built by this builder
+    /// @param <B> concrete builder type used for fluent chaining
+    ///
     public abstract static class ContainerBuilder<N extends UIContainerNode<N>, B extends ContainerBuilder<N, B>> extends Builder<N, B> {
         
         private final List<UINode<?>> children = new ArrayList<>();
+        
+        protected ContainerBuilder() { }
         
         ///
         /// Adds a runtime child node.
@@ -425,10 +437,15 @@ public final class UI {
     ///
     /// Extend this class for new flow builder variants.
     ///
+    /// @param <N> runtime flow node type built by this builder
+    /// @param <B> concrete builder type used for fluent chaining
+    ///
     public abstract static class FlowBuilder<N extends SLFlowNode<N>, B extends FlowBuilder<N, B>> extends ContainerBuilder<N, B> {
         
         private SLScalar gap = SLScalar.zero();
         private SLAlignment mainAxisAlignment = SLAlignment.START;
+        
+        protected FlowBuilder() { }
         
         ///
         /// Sets a fixed child gap.
@@ -481,6 +498,8 @@ public final class UI {
     ///
     public static final class ColumnBuilder extends FlowBuilder<SLColumnNode, ColumnBuilder> {
         
+        private ColumnBuilder() { }
+        
         @Override
         public SLColumnNode build() {
             SLColumnNode node = new SLColumnNode();
@@ -495,6 +514,8 @@ public final class UI {
     /// Builder for {@link SLRowNode}.
     ///
     public static final class RowBuilder extends FlowBuilder<SLRowNode, RowBuilder> {
+        
+        private RowBuilder() { }
         
         @Override
         public SLRowNode build() {
@@ -511,6 +532,8 @@ public final class UI {
     ///
     public static final class StackBuilder extends ContainerBuilder<SLStackNode, StackBuilder> {
         
+        private StackBuilder() { }
+        
         @Override
         public SLStackNode build() {
             SLStackNode node = new SLStackNode();
@@ -524,6 +547,8 @@ public final class UI {
     /// Builder for {@link SLPanelNode}.
     ///
     public static final class PanelBuilder extends FlowBuilder<SLPanelNode, PanelBuilder> {
+        
+        private PanelBuilder() { }
         
         @Override
         public SLPanelNode build() {
@@ -544,6 +569,8 @@ public final class UI {
         private @Nullable Integer color;
         private boolean shadow;
         private @Nullable UIState<Component> textState;
+        
+        private LabelBuilder() { }
         
         ///
         /// Sets the label text.
@@ -619,6 +646,8 @@ public final class UI {
         private @Nullable UIState<Component> textState;
         private @Nullable UIState<Boolean> enabledState;
         
+        private ButtonBuilder() { }
+        
         ///
         /// Sets the button label.
         ///
@@ -687,6 +716,8 @@ public final class UI {
         private @Nullable Component overlay;
         private @Nullable UIState<Float> progressState;
         private @Nullable UIState<Component> overlayState;
+        
+        private ProgressBarBuilder() { }
         
         ///
         /// Sets the progress value.

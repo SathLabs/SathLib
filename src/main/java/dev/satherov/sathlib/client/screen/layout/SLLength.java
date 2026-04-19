@@ -20,9 +20,13 @@ public record SLLength(Mode mode, float value) {
     /// Supported sizing modes.
     ///
     public enum Mode {
+        /// Use the node's measured content size.
         CONTENT,
+        /// Use a fixed pixel size.
         FIXED,
+        /// Use a fraction of the available space.
         PERCENT,
+        /// Fill available space, optionally using a weight.
         FILL,
     }
     
@@ -50,7 +54,7 @@ public record SLLength(Mode mode, float value) {
     /// Uses a fraction of the available space.
     ///
     /// @param percent percentage as a fraction between {@code 0.0} and
-    ///                               {@code 1.0}
+    ///                                              {@code 1.0}
     ///
     /// @return percentage length
     ///

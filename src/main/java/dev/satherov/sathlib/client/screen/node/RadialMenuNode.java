@@ -45,6 +45,11 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     private int pressedIndex = -1;
     
     ///
+    /// Creates an empty radial menu node.
+    ///
+    public RadialMenuNode() { }
+    
+    ///
     /// Returns an immutable entry view.
     ///
     /// @return immutable entry list
@@ -185,6 +190,14 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         return hadPress;
     }
     
+    ///
+    /// Returns the node selected under the mouse coordinates
+    ///
+    /// @param mouseX the x coordinate of the mouse cursor
+    /// @param mouseY the y coordinate of the mouse cursor
+    ///
+    /// @return the entry index of the node under the cursor or `-1` if none is found
+    ///
     private int entryIndexAt(double mouseX, double mouseY) {
         if (!this.getBounds().contains(mouseX, mouseY)) {
             return -1;
@@ -231,6 +244,12 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         private final Component label;
         private final Runnable action;
         
+        ///
+        /// Creates a radial entry with a label and activation callback.
+        ///
+        /// @param label  entry label
+        /// @param action callback invoked when the entry is activated
+        ///
         public Entry(Component label, Runnable action) {
             this.label = label;
             this.action = action;

@@ -37,6 +37,11 @@ import java.util.function.ToIntFunction;
 public class SLBlockProperties extends BlockBehaviour.Properties {
     
     ///
+    /// Creates a new mutable block property container.
+    ///
+    public SLBlockProperties() { }
+    
+    ///
     /// Creates a new {@link SLBlockProperties} instance.
     ///
     /// @return New {@link SLBlockProperties} instance.
@@ -742,12 +747,20 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     /// Marks this block as a fluid. Effectively calls {@link SLBlockProperties#noCollision()},
     /// {@link SLBlockProperties#replaceable()} and {@link SLBlockProperties#liquid()}.
     ///
+    /// @return This {@link SLBlockProperties} instance.
+    ///
     public SLBlockProperties fluid() {
         return this.noCollision().replaceable().liquid();
     }
     
     ///
     /// Always true {@link BlockBehaviour.StateArgumentPredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    /// @param arg    additional predicate argument
+    /// @param <T>    additional predicate argument type
     ///
     /// @return true
     ///
@@ -758,6 +771,12 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Always false {@link BlockBehaviour.StateArgumentPredicate}
     ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    /// @param arg    additional predicate argument
+    /// @param <T>    additional predicate argument type
+    ///
     /// @return false
     ///
     public static <T> boolean never(BlockState state, BlockGetter getter, BlockPos pos, T arg) {
@@ -767,6 +786,10 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     /// Always true {@link BlockBehaviour.StatePredicate}
     ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    ///
     /// @return true
     ///
     public static boolean always(BlockState state, BlockGetter getter, BlockPos pos) {
@@ -775,6 +798,10 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     
     ///
     /// Always false {@link BlockBehaviour.StatePredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
     ///
     /// @return false
     ///

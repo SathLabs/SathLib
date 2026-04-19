@@ -31,6 +31,8 @@ public final class SLSyncedFields {
     
     private static final SyncedBindings BINDINGS = new SyncedBindings();
     
+    private SLSyncedFields() { }
+    
     ///
     /// Visits every generated `DataSlot` for the given menu host.
     ///

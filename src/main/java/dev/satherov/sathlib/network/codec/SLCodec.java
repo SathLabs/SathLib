@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.network.codec;
 
-import lombok.experimental.UtilityClass;
-
 import dev.satherov.sathlib.core.annotations.NothingNull;
 
 import net.minecraft.util.StringRepresentable;
@@ -14,12 +12,22 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
+///
+/// Shared codecs for common SathLib serialization patterns.
+///
 @NothingNull
-@UtilityClass
 public final class SLCodec {
     
+    private SLCodec() { }
+    
+    ///
+    /// Codec for {@link UUID} values encoded as strings.
+    ///
     public static final Codec<UUID> UUID = Codec.STRING.xmap(java.util.UUID::fromString, java.util.UUID::toString);
     
+    ///
+    /// Codec for {@link Instant} values encoded as ISO-8601 strings.
+    ///
     public static final Codec<Instant> INSTANT = Codec.STRING.xmap(Instant::parse, Instant::toString);
     
     ///
@@ -28,7 +36,9 @@ public final class SLCodec {
     /// @param key   Codec for the map keys
     /// @param value Codec for the map values
     /// @param <K>   Type of the map
-    /// @param <V>   Type of the map
+    /// @param <V>   Type of the map values
+    ///
+    /// @return codec for a mutable {@link HashMap}
     ///
     public static <K, V> Codec<HashMap<K, V>> map(Codec<K> key, Codec<V> value) {
         return SLCodec.map(key, value, HashMap::new);
@@ -43,6 +53,7 @@ public final class SLCodec {
     /// @param constructor Constructor for the map
     /// @param <K>         Type of the map keys
     /// @param <V>         Type of the map values
+    /// @param <T>         Concrete map type produced by the codec
     ///
     /// @return Codec for the given map type
     ///

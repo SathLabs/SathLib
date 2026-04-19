@@ -135,9 +135,14 @@ public final class SLMenus {
     ///
     /// Shared container builder base for menu logic trees.
     ///
+    /// @param <N> runtime container node type produced by the builder
+    /// @param <B> concrete builder type used for fluent chaining
+    ///
     public abstract static class ContainerBuilder<N extends SLMenuContainerNode, B extends ContainerBuilder<N, B>> {
         
         private final java.util.List<SLMenuNode> children = new java.util.ArrayList<>();
+        
+        protected ContainerBuilder() { }
         
         ///
         /// Returns the concrete builder type.
@@ -161,6 +166,11 @@ public final class SLMenus {
             return this.self();
         }
         
+        ///
+        /// Applies the collected children to a runtime container node.
+        ///
+        /// @param node runtime container node to populate
+        ///
         protected final void applyChildren(N node) {
             for (SLMenuNode child : this.children) {
                 node.addChild(child);
@@ -179,6 +189,8 @@ public final class SLMenus {
     /// Builder for the root container node.
     ///
     public static final class RootBuilder extends ContainerBuilder<SLMenuContainerNode, RootBuilder> {
+        
+        private RootBuilder() { }
         
         @Override
         public SLMenuContainerNode build() {

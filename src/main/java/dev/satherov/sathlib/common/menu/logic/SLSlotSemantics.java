@@ -13,12 +13,19 @@ package dev.satherov.sathlib.common.menu.logic;
 ///
 public final class SLSlotSemantics {
     
+    /// Semantic for the player's main inventory grid.
     public static final SLSlotSemantic PLAYER_INVENTORY = SLSlotSemantics.create("player_inventory", true);
+    /// Semantic for the player's hotbar.
     public static final SLSlotSemantic PLAYER_HOTBAR = SLSlotSemantics.create("player_hotbar", true);
+    /// Semantic for machine input slots.
     public static final SLSlotSemantic MACHINE_INPUT = SLSlotSemantics.create("machine_input", false);
+    /// Semantic for machine output slots.
     public static final SLSlotSemantic MACHINE_OUTPUT = SLSlotSemantics.create("machine_output", false);
+    /// Semantic for generic machine storage slots.
     public static final SLSlotSemantic MACHINE_STORAGE = SLSlotSemantics.create("machine_storage", false);
+    /// Semantic for configuration-related slots.
     public static final SLSlotSemantic CONFIG = SLSlotSemantics.create("config", false);
+    /// Semantic for upgrade slots.
     public static final SLSlotSemantic UPGRADE = SLSlotSemantics.create("upgrade", false);
     
     private SLSlotSemantics() {

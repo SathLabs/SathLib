@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.network.codec;
 
-import lombok.experimental.UtilityClass;
-
 import dev.satherov.sathlib.core.annotations.NothingNull;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,10 +18,17 @@ import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
+///
+/// Shared stream codecs for SathLib network payload helpers.
+///
 @NothingNull
-@UtilityClass
 public final class SLStreamCodec {
     
+    private SLStreamCodec() { }
+    
+    ///
+    /// Stream codec for {@link UUID} values.
+    ///
     public static final StreamCodec<ByteBuf, UUID> UUID = new StreamCodec<>() {
         public UUID decode(ByteBuf input) {
             return FriendlyByteBuf.readUUID(input);
@@ -34,12 +39,17 @@ public final class SLStreamCodec {
         }
     };
     
+    ///
+    /// Stream codec for {@link Instant} values encoded as epoch milliseconds.
+    ///
     public static final StreamCodec<ByteBuf, Instant> INSTANT = StreamCodec.composite(ByteBufCodecs.LONG, Instant::toEpochMilli, Instant::ofEpochMilli);
     
     ///
     /// Creates an array list stream codec from the given value codec
     ///
     /// @param valueCodec Codec for the list items
+    /// @param <T>        Type of the list items
+    /// @param <B>        Byte buffer type
     ///
     /// @return Stream codec for the given list type
     ///
@@ -52,6 +62,9 @@ public final class SLStreamCodec {
     ///
     /// @param valueCodec Codec for the list items
     /// @param supplier   Supplier for the list
+    /// @param <T>        Type of the list items
+    /// @param <L>        Concrete list type
+    /// @param <B>        Byte buffer type
     ///
     /// @return Stream codec for the given list type
     ///
@@ -87,6 +100,7 @@ public final class SLStreamCodec {
     /// @param valueCodec Codec for the map values
     /// @param <K>        Type of the map keys
     /// @param <V>        Type of the map values
+    /// @param <B>        Byte buffer type
     ///
     /// @return Stream codec for the given map type
     ///
@@ -102,6 +116,8 @@ public final class SLStreamCodec {
     /// @param supplier   Supplier for the map
     /// @param <K>        Type of the map keys
     /// @param <V>        Type of the map values
+    /// @param <M>        Concrete map type
+    /// @param <B>        Byte buffer type
     ///
     /// @return Stream codec for the given map type
     ///
@@ -136,6 +152,7 @@ public final class SLStreamCodec {
     /// Creates an enum stream codec from the given enum class, clamping out of bounds values.
     ///
     /// @param clazz Enum class
+    /// @param <E>   Enum type
     ///
     /// @return Enum stream codec
     ///
@@ -148,6 +165,7 @@ public final class SLStreamCodec {
     ///
     /// @param clazz    Enum class
     /// @param strategy Out-of-bounds strategy
+    /// @param <E>      Enum type
     ///
     /// @return Enum stream codec
     ///

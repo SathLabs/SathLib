@@ -33,6 +33,11 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     private @Nullable Runnable unsubscribeOverlayState;
     
     ///
+    /// Creates an unbound progress bar node.
+    ///
+    public SLProgressBarNode() { }
+    
+    ///
     /// Sets the normalized progress value.
     ///
     /// @param progress progress in {@code [0, 1]}

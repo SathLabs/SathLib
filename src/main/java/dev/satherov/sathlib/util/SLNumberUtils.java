@@ -1,14 +1,13 @@
 package dev.satherov.sathlib.util;
 
-import lombok.experimental.UtilityClass;
-
 import org.jspecify.annotations.Nullable;
 
 ///
 /// Number and string helpers used by screen widgets.
 ///
-@UtilityClass
 public class SLNumberUtils {
+    
+    private SLNumberUtils() { }
     
     ///
     /// Sanitizes the given text input into only valid hex digits
@@ -17,7 +16,7 @@ public class SLNumberUtils {
     ///
     /// @return The sanitized String
     ///
-    public String sanitizeHex(@Nullable String text) {
+    public static String sanitizeHex(@Nullable String text) {
         if (text == null || text.isBlank()) return "";
         
         String source = text.trim();
@@ -33,7 +32,14 @@ public class SLNumberUtils {
         return digits.toString();
     }
     
-    public @Nullable Integer tryPraseToHex(String text) {
+    ///
+    /// Attempts to parse an RGB hex string after sanitizing it.
+    ///
+    /// @param text source text to parse
+    ///
+    /// @return parsed RGB value, or {@code null} when parsing fails
+    ///
+    public static @Nullable Integer tryPraseToHex(String text) {
         String hex = SLNumberUtils.sanitizeHex(text);
         if (hex.length() != 6) return null;
         
@@ -44,10 +50,24 @@ public class SLNumberUtils {
         }
     }
     
+    ///
+    /// Formats an RGB color as a six-digit hex string.
+    ///
+    /// @param rgb packed RGB color
+    ///
+    /// @return formatted hex string prefixed with {@code #}
+    ///
     public static String rgbToHex(int rgb) {
         return String.format("#%06X", rgb & 0xFFFFFF);
     }
     
+    ///
+    /// Formats an ARGB color as an eight-digit hex string.
+    ///
+    /// @param argb packed ARGB color
+    ///
+    /// @return formatted hex string prefixed with {@code #}
+    ///
     public static String argbToHex(int argb) {
         return String.format("#%08X", argb);
     }

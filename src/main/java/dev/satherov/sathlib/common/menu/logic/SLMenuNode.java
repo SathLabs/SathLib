@@ -20,6 +20,11 @@ public abstract class SLMenuNode {
     private @Nullable SLMenuContainerNode parent;
     
     ///
+    /// Creates a detached menu logic node.
+    ///
+    protected SLMenuNode() { }
+    
+    ///
     /// Returns the parent container for this node.
     ///
     /// @return parent container, or {@code null} for the root
@@ -39,6 +44,11 @@ public abstract class SLMenuNode {
         return List.of();
     }
     
+    ///
+    /// Attaches this node to a parent container inside a menu tree.
+    ///
+    /// @param parent parent container, or {@code null} for the root
+    ///
     public final void attach(@Nullable SLMenuContainerNode parent) {
         this.parent = parent;
         this.onAttached();

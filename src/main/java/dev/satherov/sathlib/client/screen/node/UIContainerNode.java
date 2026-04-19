@@ -24,9 +24,13 @@ import java.util.List;
 /// Subclasses usually implement only layout behavior while inheriting the child
 /// lifecycle management from this class.
 ///
+/// @param <S> concrete container subtype used for fluent setters
+///
 public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINode<S> {
     
     private final List<UINode<?>> children = new ArrayList<>();
+    
+    protected UIContainerNode() { }
     
     ///
     /// Returns an immutable view of the child list.

@@ -37,6 +37,9 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     private @Nullable Runnable unsubscribeTextState;
     private @Nullable Runnable unsubscribeEnabledState;
     
+    ///
+    /// Creates a button node with the default built-in padding.
+    ///
     public SLButtonNode() {
         this.padding(SLInsets.symmetric(10, 5));
     }

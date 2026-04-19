@@ -21,6 +21,9 @@ import java.util.Objects;
 ///
 public record SLSlotSemantic(String id, boolean playerSide) {
     
+    ///
+    /// Validates the semantic identifier.
+    ///
     public SLSlotSemantic {
         Objects.requireNonNull(id);
     }

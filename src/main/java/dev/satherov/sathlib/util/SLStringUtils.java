@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.util;
 
-import lombok.experimental.UtilityClass;
-
 import org.intellij.lang.annotations.PrintFormat;
 import org.jspecify.annotations.Nullable;
 
@@ -14,8 +12,9 @@ import java.util.Locale;
 ///
 /// General utils for Strings
 ///
-@UtilityClass
 public class SLStringUtils {
+    
+    private SLStringUtils() { }
     
     private static final Locale LOCALE = Locale.ROOT;
     
@@ -217,8 +216,9 @@ public class SLStringUtils {
      * Plain decimal format is used when the value fits within the requested precision;
      * otherwise scientific notation is used.
      *
-     * @param value the number to format
+     * @param value     the number to format
      * @param precision the maximum number of significant digits to keep
+     *
      * @return the formatted number
      */
     public static String scientific(double value, int precision) {

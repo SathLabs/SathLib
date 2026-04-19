@@ -12,7 +12,17 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Range {
     
+    ///
+    /// Lower inclusive bound for the annotated config value.
+    ///
+    /// @return minimum allowed value
+    ///
     double min() default Double.NEGATIVE_INFINITY;
     
+    ///
+    /// Upper inclusive bound for the annotated config value.
+    ///
+    /// @return maximum allowed value
+    ///
     double max() default Double.POSITIVE_INFINITY;
 }

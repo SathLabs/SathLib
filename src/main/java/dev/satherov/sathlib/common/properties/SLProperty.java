@@ -43,11 +43,13 @@ import org.jspecify.annotations.Nullable;
 /// }
 /// ```
 ///
+/// @param <T> logical property value type
+/// @param <E> block entity type supported by the property
+///
 /// @see SLPropertyContainer
 ///
 @Slf4j
 @Getter
-@Builder
 @NothingNull
 @Accessors(fluent = true)
 public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
@@ -69,6 +71,37 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     protected final SLProperty.@Nullable Extractor<T, ItemStack> stackExtractor;
     protected final SLProperty.@Nullable Extractor<T, BlockState> stateExtractor;
     protected final SLProperty.@Nullable Extractor<T, E> blockEntityExtractor;
+    
+    @Builder
+    private SLProperty(
+            Identifier identifier,
+            Class<T> typeClass,
+            Class<E> entityClass,
+            SLTranslatable name,
+            @Nullable Displayer<T> valueDisplayer,
+            @Nullable Displayer<T> tooltipDisplayer,
+            Cycler<T> cycler,
+            @Nullable Updater<T, ItemStack> stackUpdater,
+            @Nullable StateUpdater<T> stateUpdater,
+            @Nullable Updater<T, E> blockEntityUpdater,
+            SLProperty.@Nullable Extractor<T, ItemStack> stackExtractor,
+            SLProperty.@Nullable Extractor<T, BlockState> stateExtractor,
+            SLProperty.@Nullable Extractor<T, E> blockEntityExtractor
+    ) {
+        this.identifier = identifier;
+        this.typeClass = typeClass;
+        this.entityClass = entityClass;
+        this.name = name;
+        this.valueDisplayer = valueDisplayer;
+        this.tooltipDisplayer = tooltipDisplayer;
+        this.cycler = cycler;
+        this.stackUpdater = stackUpdater;
+        this.stateUpdater = stateUpdater;
+        this.blockEntityUpdater = blockEntityUpdater;
+        this.stackExtractor = stackExtractor;
+        this.stateExtractor = stateExtractor;
+        this.blockEntityExtractor = blockEntityExtractor;
+    }
     
     ///
     /// Starts a new property builder for properties that use the generic {@link BlockEntity} type.
@@ -126,6 +159,8 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     ///
     /// @param state stack to update
     /// @param value value to update with
+    ///
+    /// @return updated block state
     ///
     public BlockState update(BlockState state, T value) {
         if (this.stateUpdater == null) return state;
@@ -229,6 +264,8 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     /// @param stack item stack to get value from
     /// @param state block state to update
     ///
+    /// @return updated block state
+    ///
     public BlockState updateFromStack(ItemStack stack, BlockState state) {
         T value = this.extract(stack);
         if (value == null) return state;
@@ -288,6 +325,8 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     ///
     /// @param entity block entity to get value from
     /// @param state  block state to update
+    ///
+    /// @return updated block state
     ///
     public BlockState updateFromBlockEntity(E entity, BlockState state) {
         T value = this.extract(entity);
@@ -481,7 +520,15 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         return component != null ? SLComponent.of(component.copy()) : SLComponent.empty();
     }
     
+    ///
+    /// Fluent builder for composing an {@link SLProperty} definition.
+    ///
+    /// @param <T> logical property value type
+    /// @param <E> block entity type supported by the property
+    ///
     public static class SLPropertyBuilder<T, E extends BlockEntity> {
+        
+        private SLPropertyBuilder() { }
         
         ///
         /// Sets both the stack extractor and updater using a simple raw-value extractor.
@@ -520,6 +567,12 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         }
     }
     
+    ///
+    /// Reads a property value from a source object.
+    ///
+    /// @param <T> logical property value type
+    /// @param <O> source object type
+    ///
     @FunctionalInterface
     public interface Extractor<T, O> {
         ///
@@ -532,6 +585,12 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         SLPropertyValue<T> resolve(O object);
     }
     
+    ///
+    /// Writes a property value to a mutable target object.
+    ///
+    /// @param <T> logical property value type
+    /// @param <O> target object type
+    ///
     @FunctionalInterface
     public interface Updater<T, O> {
         ///
@@ -543,6 +602,11 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         void update(O object, T value);
     }
     
+    ///
+    /// Writes a property value to a block state and returns the updated state.
+    ///
+    /// @param <T> logical property value type
+    ///
     @FunctionalInterface
     public interface StateUpdater<T> {
         ///
@@ -556,6 +620,11 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         BlockState update(BlockState state, T value);
     }
     
+    ///
+    /// Produces a neighboring property value for directional cycling.
+    ///
+    /// @param <T> logical property value type
+    ///
     @FunctionalInterface
     public interface Cycler<T> {
         ///
@@ -569,6 +638,11 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         T cycle(boolean dir, T original);
     }
     
+    ///
+    /// Formats a raw property value as an {@link SLComponent}.
+    ///
+    /// @param <T> logical property value type
+    ///
     @FunctionalInterface
     public interface Displayer<T> {
         ///
@@ -581,14 +655,33 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
         SLComponent display(T value);
     }
     
+    ///
+    /// Returns a displayer that always emits the same component.
+    ///
+    /// @param component component to return for every value
+    /// @param <T>       logical property value type
+    ///
+    /// @return constant component displayer
+    ///
     public static <T> Displayer<T> directDisplayer(SLComponent component) {
         return _ -> component;
     }
     
+    ///
+    /// Returns a boolean displayer that chooses between two translation entries.
+    ///
+    /// @param on  translation used for {@code true}
+    /// @param off translation used for {@code false}
+    ///
+    /// @return boolean value displayer
+    ///
     public static Displayer<Boolean> boolDisplayer(SLTranslatable on, SLTranslatable off) {
         return val -> val ? on.translate() : off.translate();
     }
     
+    ///
+    /// Boolean cycler that toggles between {@code true} and {@code false}.
+    ///
     public static final Cycler<Boolean> BOOLEAN_CYCLER = (_, val) -> !val;
     
     ///

@@ -63,6 +63,8 @@ public final class SLQuickMovePlan {
         
         private final Map<SLSlotSemantic, List<RouteTarget>> targetsBySource = new LinkedHashMap<>();
         
+        private Builder() { }
+        
         ///
         /// Starts a route definition for one source semantic.
         ///

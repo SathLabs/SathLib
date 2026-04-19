@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 ///
 /// Payload that can be sent from both the client and the server.
 ///
-/// @param <T>
+/// @param <T> payload type handled in both directions
 ///
 @NothingNull
 public non-sealed interface BiDirectionalPayloadProvider<T extends SLPayload<T>> extends PayloadProvider<T> {

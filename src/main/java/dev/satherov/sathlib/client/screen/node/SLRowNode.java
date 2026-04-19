@@ -15,6 +15,9 @@ import dev.satherov.sathlib.client.screen.layout.SLAxis;
 ///
 public class SLRowNode extends SLFlowNode<SLRowNode> {
     
+    ///
+    /// Creates a horizontal flow container.
+    ///
     public SLRowNode() {
         super(SLAxis.HORIZONTAL);
     }

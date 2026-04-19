@@ -25,6 +25,8 @@ import java.util.List;
 ///
 /// Concrete row and column nodes choose the axis through the constructor.
 ///
+/// @param <S> concrete flow subtype used for fluent setters
+///
 public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNode<S> {
     
     private final SLAxis axis;

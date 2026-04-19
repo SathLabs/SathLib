@@ -18,8 +18,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+///
+/// Property bridge between one block type, item type, and block entity type.
+///
+/// @param <B> supported block type
+/// @param <I> supported item type
+/// @param <E> supported block entity type
+///
 @Slf4j
-@Builder
 @NothingNull
 public class SLPropertyContainer<B extends Block, I extends Item, E extends BlockEntity> implements Iterable<SLProperty<?, E>> {
     
@@ -28,12 +34,26 @@ public class SLPropertyContainer<B extends Block, I extends Item, E extends Bloc
     protected final Class<E> blockEntity;
     protected final Map<Identifier, SLProperty<?, E>> properties;
     
+    @Builder
+    private SLPropertyContainer(Class<B> block, Class<I> item, Class<E> blockEntity, Map<Identifier, SLProperty<?, E>> properties) {
+        this.block = block;
+        this.item = item;
+        this.blockEntity = blockEntity;
+        this.properties = properties;
+    }
+    
     ///
     /// Starts a new builder. Requires the class of the block and item that should interchange values.
     /// Using {@code Block.class} and {@code Item.class} disabled the check for matching classes but may lead to issues
     ///
-    /// @param block Class or super class of the block
-    /// @param item  Class or super class of the item
+    /// @param block       Class or super class of the block
+    /// @param item        Class or super class of the item
+    /// @param blockEntity Class or super class of the block entity
+    /// @param <B>         Supported block type
+    /// @param <I>         Supported item type
+    /// @param <E>         Supported block entity type
+    ///
+    /// @return new property container builder
     ///
     public static <B extends Block, I extends Item, E extends BlockEntity> SLPropertyContainerBuilder<B, I, E> builder(Class<B> block, Class<I> item, Class<E> blockEntity) {
         return new SLPropertyContainerBuilder<B, I, E>().block(block).item(item).blockEntity(blockEntity).properties(new LinkedHashMap<>());
@@ -128,7 +148,16 @@ public class SLPropertyContainer<B extends Block, I extends Item, E extends Bloc
         return this.properties.values().iterator();
     }
     
+    ///
+    /// Builder for {@link SLPropertyContainer}.
+    ///
+    /// @param <B> supported block type
+    /// @param <I> supported item type
+    /// @param <E> supported block entity type
+    ///
     public static class SLPropertyContainerBuilder<B extends Block, I extends Item, E extends BlockEntity> {
+        
+        private SLPropertyContainerBuilder() { }
         
         ///
         /// Adds a property to this container

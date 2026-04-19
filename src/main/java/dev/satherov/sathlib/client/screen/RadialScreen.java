@@ -24,6 +24,9 @@ public class RadialScreen extends SLScreen {
     
     private final RadialMenuNode radialMenu = new RadialMenuNode();
     
+    ///
+    /// Creates a centered radial screen shell with an empty menu.
+    ///
     public RadialScreen() {
         super(Component.empty());
         this.radialMenu.align(SLAlignment.CENTER, SLAlignment.CENTER);

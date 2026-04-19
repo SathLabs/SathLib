@@ -11,9 +11,13 @@ package dev.satherov.sathlib.client.screen.layout;
 /// This enum is closed.
 ///
 public enum SLAlignment {
+    /// Places content at the start of the available region.
     START,
+    /// Centers content inside the available region.
     CENTER,
+    /// Places content at the end of the available region.
     END,
+    /// Expands content to fill the available region.
     FILL,
     ;
     

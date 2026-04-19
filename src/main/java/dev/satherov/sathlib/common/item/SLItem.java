@@ -11,9 +11,17 @@ import net.minecraft.world.item.component.TooltipDisplay;
 
 import java.util.function.Consumer;
 
+///
+/// Base SathLib item type with tooltip override hooks.
+///
 @NothingNull
 public class SLItem extends Item {
     
+    ///
+    /// Creates an item using the supplied SathLib item properties.
+    ///
+    /// @param properties item properties
+    ///
     public SLItem(SLItemProperties properties) {
         super(properties);
     }

@@ -9,6 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import javax.annotation.Nonnull;
 import javax.annotation.meta.TypeQualifierDefault;
 
+///
+/// Package-level default nullness annotation for SathLib code.
+///
 @NotNull
 @NonNull
 @Nonnull

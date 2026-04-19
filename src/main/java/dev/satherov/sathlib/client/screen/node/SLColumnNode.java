@@ -15,6 +15,9 @@ import dev.satherov.sathlib.client.screen.layout.SLAxis;
 ///
 public class SLColumnNode extends SLFlowNode<SLColumnNode> {
     
+    ///
+    /// Creates a vertical flow container.
+    ///
     public SLColumnNode() {
         super(SLAxis.VERTICAL);
     }

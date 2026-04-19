@@ -47,6 +47,8 @@ public class SLComponent implements Component {
     ///
     /// Creates a new component with the given root component
     ///
+    /// @param component root component to wrap
+    ///
     /// @return component with the given root
     ///
     public static SLComponent of(MutableComponent component) {
@@ -55,6 +57,8 @@ public class SLComponent implements Component {
     
     ///
     /// Appends a {@link Component} to the root
+    ///
+    /// @param component component to append
     ///
     /// @return self
     ///
@@ -66,6 +70,8 @@ public class SLComponent implements Component {
     ///
     /// Appends a {@link SLTranslatable} to the root
     ///
+    /// @param translatable translation entry to append
+    ///
     /// @return self
     ///
     public SLComponent append(SLTranslatable translatable) {
@@ -74,6 +80,8 @@ public class SLComponent implements Component {
     
     ///
     /// Appends a literal string to the root
+    ///
+    /// @param text literal text to append
     ///
     /// @return self
     ///
@@ -84,6 +92,8 @@ public class SLComponent implements Component {
     
     ///
     /// Appends a translateable component to the root, using the given translation key
+    ///
+    /// @param translationKey translation key to append
     ///
     /// @return self
     ///
@@ -96,6 +106,9 @@ public class SLComponent implements Component {
     /// Appends a translateable component to the root, using the given translation key and
     /// translation argument to be inferred by {@link SLComponent#identify(String, Object...)}
     ///
+    /// @param translationKey translation key to append
+    /// @param args           translation arguments
+    ///
     /// @return self
     ///
     public SLComponent translateable(String translationKey, Object... args) {
@@ -105,6 +118,8 @@ public class SLComponent implements Component {
     
     ///
     /// Sets the style with the given {@link ChatFormatting}
+    ///
+    /// @param format style format to apply
     ///
     /// @return self
     ///
@@ -116,6 +131,8 @@ public class SLComponent implements Component {
     ///
     /// Sets the style with the given {@link ChatFormatting}s
     ///
+    /// @param formats style formats to apply
+    ///
     /// @return self
     ///
     public SLComponent style(ChatFormatting... formats) {
@@ -126,6 +143,8 @@ public class SLComponent implements Component {
     ///
     /// Sets the style with the given {@link SLStyle} operator
     ///
+    /// @param operator style mutator
+    ///
     /// @return self
     ///
     public SLComponent style(UnaryOperator<SLStyle> operator) {
@@ -135,6 +154,9 @@ public class SLComponent implements Component {
     
     ///
     /// Creates a {@link SLComponent} from the given translation key and the given translation components
+    ///
+    /// @param translationKey translation key to resolve
+    /// @param args           translation arguments and optional formatting markers
     ///
     /// @return created component
     ///
@@ -170,13 +192,13 @@ public class SLComponent implements Component {
         return SLComponent.of(key.getDisplayName().copy());
     }
     
-    /// 
+    ///
     /// Returns a component for the given block position
-    /// 
+    ///
     /// @param pos the block position
-    /// 
+    ///
     /// @return component of the formatted block position
-    /// 
+    ///
     public static SLComponent pos(BlockPos pos) {
         return SLComponent.of(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ()));
     }

@@ -4,6 +4,9 @@ import dev.satherov.sathlib.client.lang.SLDisplayable;
 
 import net.minecraft.network.chat.MutableComponent;
 
+///
+/// Marker for enum-backed property values that expose tooltip text.
+///
 public interface PropertyEnum extends SLDisplayable {
     
     ///

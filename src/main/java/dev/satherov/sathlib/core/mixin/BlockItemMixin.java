@@ -15,10 +15,18 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.function.Consumer;
 
+///
+/// Forwards block item tooltip requests to {@link SLBlock} instances.
+///
 @NothingNull
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin extends Item {
     
+    ///
+    /// Creates the synthetic mixin item base.
+    ///
+    /// @param properties item properties passed to {@link Item}
+    ///
     public BlockItemMixin(Properties properties) {
         super(properties);
     }

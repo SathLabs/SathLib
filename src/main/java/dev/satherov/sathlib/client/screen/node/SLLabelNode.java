@@ -32,6 +32,11 @@ public class SLLabelNode extends UILeafNode<SLLabelNode> {
     private @Nullable Runnable unsubscribeTextState;
     
     ///
+    /// Creates an empty label node.
+    ///
+    public SLLabelNode() { }
+    
+    ///
     /// Sets the displayed text.
     ///
     /// @param text new label text

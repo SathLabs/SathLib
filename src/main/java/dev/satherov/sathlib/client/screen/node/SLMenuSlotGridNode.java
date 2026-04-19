@@ -24,8 +24,11 @@ import java.util.Objects;
 ///
 public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
     
+    /// Outer frame size for one slot in pixels.
     public static final int SLOT_FRAME_SIZE = 18;
+    /// Offset from the frame edge to the item content area in pixels.
     public static final int SLOT_CONTENT_OFFSET = 1;
+    /// Content area size inside one slot frame in pixels.
     public static final int SLOT_CONTENT_SIZE = 16;
     
     private final List<Slot> slots;

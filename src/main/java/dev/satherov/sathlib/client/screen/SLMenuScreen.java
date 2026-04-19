@@ -83,10 +83,26 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     private boolean doubleclick;
     private ItemStack lastQuickMoved = ItemStack.EMPTY;
     
+    ///
+    /// Creates a menu screen with vanilla-sized bounds.
+    ///
+    /// @param menu      backing menu
+    /// @param inventory player inventory
+    /// @param title     screen title
+    ///
     protected SLMenuScreen(M menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
     }
     
+    ///
+    /// Creates a menu screen with explicit background dimensions.
+    ///
+    /// @param menu        backing menu
+    /// @param inventory   player inventory
+    /// @param title       screen title
+    /// @param imageWidth  background width
+    /// @param imageHeight background height
+    ///
     protected SLMenuScreen(M menu, Inventory inventory, Component title, int imageWidth, int imageHeight) {
         super(menu, inventory, title, imageWidth, imageHeight);
     }

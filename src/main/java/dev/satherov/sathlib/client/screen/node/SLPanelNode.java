@@ -17,6 +17,9 @@ import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 ///
 public class SLPanelNode extends SLFlowNode<SLPanelNode> {
     
+    ///
+    /// Creates a vertical panel container with default padding.
+    ///
     public SLPanelNode() {
         super(SLAxis.VERTICAL);
         this.padding(SLInsets.all(8));

@@ -20,7 +20,9 @@ public record SLScalar(Mode mode, float value) {
     /// Resolution modes supported by {@link SLScalar}.
     ///
     public enum Mode {
+        /// Resolve to a fixed pixel value.
         FIXED,
+        /// Resolve to a fraction of the reference size.
         PERCENT,
     }
     
@@ -39,7 +41,7 @@ public record SLScalar(Mode mode, float value) {
     /// Creates a percentage scalar.
     ///
     /// @param percent percentage as a fraction between {@code 0.0} and
-    ///                               {@code 1.0}
+    ///                                              {@code 1.0}
     ///
     /// @return percent scalar
     ///

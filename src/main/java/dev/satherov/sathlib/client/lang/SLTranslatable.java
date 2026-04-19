@@ -5,6 +5,10 @@ import dev.satherov.sathlib.network.chat.SLComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
+///
+/// Marks a class as being translateable.
+/// This should typically be used for language enums
+///
 public interface SLTranslatable {
     
     ///
@@ -33,6 +37,8 @@ public interface SLTranslatable {
     ///
     /// Creates a translation component with the given translation key and
     /// translation arguments to be interpreted into {@link ChatFormatting} and args
+    ///
+    /// @param args translation arguments passed to the component formatter
     ///
     /// @return Translation component
     ///

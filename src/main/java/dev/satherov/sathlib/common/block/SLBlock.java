@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.common.block;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import dev.satherov.sathlib.core.annotations.NothingNull;
@@ -31,12 +29,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+///
+/// Base block with higher-level lifecycle hooks and state registration helpers.
+///
 @Slf4j
 @NothingNull
 public class SLBlock extends Block {
     
     private @Nullable StateBuilder pendingStateBuilder;
     
+    ///
+    /// Creates a block with the given properties.
+    ///
+    /// @param properties block properties used by the base {@link Block}
+    ///
     public SLBlock(Properties properties) {
         super(properties);
         if (this.pendingStateBuilder != null) {
@@ -166,10 +172,23 @@ public class SLBlock extends Block {
     ///
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) { }
     
-    @NoArgsConstructor(staticName = "create", access = AccessLevel.PRIVATE)
+    ///
+    /// Mutable helper for declaring block state properties and their defaults.
+    ///
     public static class StateBuilder {
         
         private final Map<Property<?>, Comparable<?>> properties = new HashMap<>();
+        
+        private StateBuilder() { }
+        
+        ///
+        /// Creates a new empty state builder.
+        ///
+        /// @return new state builder
+        ///
+        public static StateBuilder create() {
+            return new StateBuilder();
+        }
         
         ///
         /// Add a BlockProperty to this block.

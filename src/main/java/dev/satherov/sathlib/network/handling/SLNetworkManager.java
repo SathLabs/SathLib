@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.network.handling;
 
-import lombok.RequiredArgsConstructor;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -12,11 +10,25 @@ import java.util.Set;
 ///
 /// Network manager for registering payloads
 ///
-@RequiredArgsConstructor(staticName = "create")
 public class SLNetworkManager {
     
     private final String namespace;
     private final Set<PayloadProvider<?>> providers = new HashSet<>();
+    
+    private SLNetworkManager(String namespace) {
+        this.namespace = namespace;
+    }
+    
+    ///
+    /// Creates a network manager for one payload namespace.
+    ///
+    /// @param namespace payload namespace
+    ///
+    /// @return new network manager
+    ///
+    public static SLNetworkManager create(String namespace) {
+        return new SLNetworkManager(namespace);
+    }
     
     ///
     /// Adds a payload provider to the network manager.

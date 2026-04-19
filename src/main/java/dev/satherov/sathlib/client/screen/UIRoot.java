@@ -40,6 +40,11 @@ public final class UIRoot {
     private @Nullable UINode<?> focusedNode;
     
     ///
+    /// Creates an empty UI root.
+    ///
+    public UIRoot() { }
+    
+    ///
     /// Returns the current root node.
     ///
     /// @return current root node, or {@code null} when unset

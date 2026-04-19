@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.common.item;
 
-import lombok.NoArgsConstructor;
-
 import dev.satherov.sathlib.common.block.SLBlockProperties;
 import dev.satherov.sathlib.core.annotations.NothingNull;
 
@@ -59,8 +57,18 @@ import java.util.function.Supplier;
 /// {@link Item.Properties} extension with some extra helpers.
 ///
 @NothingNull
-@NoArgsConstructor(staticName = "create")
 public class SLItemProperties extends Item.Properties {
+    
+    private SLItemProperties() { }
+    
+    ///
+    /// Creates a new empty {@link SLItemProperties} instance.
+    ///
+    /// @return New {@link SLItemProperties} instance.
+    ///
+    public static SLItemProperties create() {
+        return new SLItemProperties();
+    }
     
     ///
     /// Creates a new {@link SLItemProperties} instance with the {@link ResourceKey}
@@ -1032,6 +1040,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// @param type        Data component type supplier to add.
     /// @param initializer Initializer for the component.
+    /// @param <T>         Data component value type.
     ///
     /// @return This {@link SLItemProperties} instance.
     ///
@@ -1049,6 +1058,7 @@ public class SLItemProperties extends Item.Properties {
     ///
     /// @param type  Data component type to add.
     /// @param value Data component value supplier.
+    /// @param <T>   Holder value type.
     ///
     @Override
     public <T> SLItemProperties delayedHolderComponent(DataComponentType<Holder<T>> type, ResourceKey<T> value) {

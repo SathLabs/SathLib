@@ -12,7 +12,9 @@ package dev.satherov.sathlib.client.screen.layout;
 /// This enum is closed.
 ///
 public enum SLAxis {
+    /// Horizontal layout axis.
     HORIZONTAL,
+    /// Vertical layout axis.
     VERTICAL,
     ;
     

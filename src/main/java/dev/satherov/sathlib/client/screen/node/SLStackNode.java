@@ -21,6 +21,11 @@ import net.minecraft.client.gui.Font;
 ///
 public class SLStackNode extends UIContainerNode<SLStackNode> {
     
+    ///
+    /// Creates an empty stack container.
+    ///
+    public SLStackNode() { }
+    
     @Override
     protected SLMeasuredSize measureContent(Font font, int availableWidth, int availableHeight) {
         int maxWidth = 0;

@@ -1,7 +1,5 @@
 package dev.satherov.sathlib.util;
 
-import lombok.experimental.UtilityClass;
-
 import net.minecraft.util.Mth;
 
 import org.joml.Vector2d;
@@ -11,8 +9,9 @@ import org.joml.Vector2i;
 ///
 /// Small math helpers used by custom screen rendering.
 ///
-@UtilityClass
 public class SLMathUtils {
+    
+    private SLMathUtils() { }
     
     ///
     /// Gets the cosinus by degrees. Use {@link Math#cos(double)} for radian

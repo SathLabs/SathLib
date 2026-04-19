@@ -34,6 +34,8 @@ import org.jspecify.annotations.Nullable;
 /// Custom components typically extend {@link UILeafNode} or
 /// {@link UIContainerNode} and override the protected hooks exposed here.
 ///
+/// @param <S> concrete node subtype used for fluent setters
+///
 public abstract class UINode<S extends UINode<S>> {
     
     private @Nullable @Getter UIContainerNode<?> parent;
@@ -50,6 +52,8 @@ public abstract class UINode<S extends UINode<S>> {
     private @Getter boolean hovered;
     private @Getter boolean pressed;
     private @Getter boolean focused;
+    
+    protected UINode() { }
     
     @SuppressWarnings("unchecked")
     protected final S self() {

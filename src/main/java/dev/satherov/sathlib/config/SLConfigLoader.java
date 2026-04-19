@@ -1,13 +1,11 @@
 package dev.satherov.sathlib.config;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import dev.satherov.sathlib.config.data.Config;
 import dev.satherov.sathlib.config.data.ConfigEntry;
 import dev.satherov.sathlib.config.data.ConfigHolder;
 import dev.satherov.sathlib.config.data.Group;
-import dev.satherov.sathlib.config.data.Range;
 import dev.satherov.sathlib.util.SLReflectionUtils;
 import dev.satherov.sathlib.util.SLStringUtils;
 
@@ -42,9 +40,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+///
+/// Static config discovery and reload integration for SathLib mods.
+///
 @Slf4j
-@UtilityClass
 public class SLConfigLoader {
+    
+    private SLConfigLoader() { }
     
     private static final Type CONFIG_HOLDER = Type.getType(ConfigHolder.class);
     

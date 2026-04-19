@@ -11,13 +11,26 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
+///
+/// Render pipelines register
+///
 public class SLRenderPipelines {
     
+    private SLRenderPipelines() { }
+    
+    ///
+    /// Vertex-only GUI pipeline used by custom retained-mode rendering.
+    ///
     public static final RenderPipeline VERTEX_GUI = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(SathLib.id("render_pipeline/vertex_gui"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
             .build();
     
+    ///
+    /// Registers all render pipelines to the mod event bus
+    ///
+    /// @param bus the mod event bus
+    ///
     public static void register(final IEventBus bus) {
         bus.addListener(RegisterRenderPipelinesEvent.class, event -> {
             event.registerPipeline(SLRenderPipelines.VERTEX_GUI);

@@ -18,6 +18,8 @@ import org.jspecify.annotations.Nullable;
 ///
 /// The SLEntityBlock interface must be implemented on all blocks which have a block entity associated to them
 ///
+/// @param <T> block entity type managed by the block
+///
 @NothingNull
 public interface SLEntityBlock<T extends BlockEntity> extends EntityBlock {
     
