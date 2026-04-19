@@ -108,4 +108,24 @@ public class SLMathUtils {
                 center.y() + (SLMathUtils.sin(degrees) * radius)
         );
     }
+    
+    ///
+    /// Splits the given value into the given amount of near-even parts.
+    ///
+    /// @param value Value to split.
+    /// @param parts Amount of parts to create.
+    ///
+    /// @return Array containing the split parts.
+    ///
+    public static int[] split(int value, int parts) {
+        if (parts <= 0) return new int[0];
+        
+        final int[] result = new int[parts];
+        final int base = value / parts;
+        final int remainder = value % parts;
+        for (int index = 0; index < parts; index++) {
+            result[index] = base + (index < remainder ? 1 : 0);
+        }
+        return result;
+    }
 }
