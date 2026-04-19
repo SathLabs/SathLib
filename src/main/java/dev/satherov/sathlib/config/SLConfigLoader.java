@@ -413,17 +413,18 @@ public class SLConfigLoader {
     /// @param annotations The annotations on the config field.
     /// @param builder     The builder to add the translation to.
     ///
+    @SuppressWarnings("ConstantValue")
     private static boolean addRangeTranslation(Field field, Annotation[] annotations, StringBuilder builder) {
         final Optional<Range> optional = Arrays.stream(annotations).map(_ -> field.getAnnotation(Range.class)).filter(Objects::nonNull).findFirst();
         if (optional.isEmpty()) return false;
         final Range range = optional.get();
         
-        if (range.max() < Double.MAX_VALUE && range.min() > Double.MIN_VALUE) {
-            builder.append("Range: ").append(SLStringUtils.scientific(range.min(), 6)).append(" ~ ").append(SLStringUtils.scientific(range.max(), 6));
-        } else if (range.max() >= Double.MAX_VALUE) {
-            builder.append("Range: >").append(SLStringUtils.scientific(range.min(), 6));
-        } else if (range.min() <= Double.MIN_VALUE) {
-            builder.append("Range: <").append(SLStringUtils.scientific(range.max(), 6));
+        if (range.min() != Double.NEGATIVE_INFINITY && range.max() != Double.POSITIVE_INFINITY) {
+            builder.append("Range: ").append(SLStringUtils.scientific(range.min(), 4)).append(" ~ ").append(SLStringUtils.scientific(range.max(), 4));
+        } else if (range.max() == Double.POSITIVE_INFINITY) {
+            builder.append("Range: >").append(SLStringUtils.scientific(range.min(), 4));
+        } else if (range.min() == Double.NEGATIVE_INFINITY) {
+            builder.append("Range: <").append(SLStringUtils.scientific(range.max(), 4));
         }
         
         return true;
