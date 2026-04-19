@@ -26,22 +26,22 @@ public class SLExperienceUtil {
         while (player.experienceProgress < 0.0F) {
             float remaining = player.experienceProgress * SLExperienceUtil.getXPForNextLevel(player);
             if (player.experienceLevel > 0) {
-                SLExperienceUtil.giveExperienceLevels(player, -1, fireEvent);
+                SLExperienceUtil.addExperienceLevels(player, -1, fireEvent);
                 player.experienceProgress = 1.0F + remaining / SLExperienceUtil.getXPForNextLevel(player);
             } else {
-                SLExperienceUtil.giveExperienceLevels(player, -1, fireEvent);
+                SLExperienceUtil.addExperienceLevels(player, -1, fireEvent);
                 player.experienceProgress = 0.0F;
             }
         }
         
         while (player.experienceProgress >= 1.0F) {
             player.experienceProgress = (player.experienceProgress - 1.0F) * SLExperienceUtil.getXPForNextLevel(player);
-            SLExperienceUtil.giveExperienceLevels(player, 1, fireEvent);
+            SLExperienceUtil.addExperienceLevels(player, 1, fireEvent);
             player.experienceProgress = player.experienceProgress / SLExperienceUtil.getXPForNextLevel(player);
         }
     }
     
-    public static void giveExperienceLevels(Player player, int amount, boolean fireEvent) {
+    public static void addExperienceLevels(Player player, int amount, boolean fireEvent) {
         if (fireEvent) {
             PlayerXpEvent.LevelChange event = new PlayerXpEvent.LevelChange(player, amount);
             if (NeoForge.EVENT_BUS.post(event).isCanceled()) return;
