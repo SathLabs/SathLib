@@ -1,0 +1,24 @@
+package dev.satherov.sathlib.data.provider;
+
+import dev.satherov.sathlib.SathLib;
+import dev.satherov.sathlib.client.lang.FormattingLang;
+import dev.satherov.sathlib.client.lang.GenericLang;
+import dev.satherov.sathlib.client.lang.InputLang;
+
+import net.neoforged.neoforge.common.data.LanguageProvider;
+
+import net.minecraft.data.PackOutput;
+
+public class SLLanguageProvider extends LanguageProvider {
+    
+    public SLLanguageProvider(PackOutput output) {
+        super(output, SathLib.MOD_ID, "en_us");
+    }
+    
+    @Override
+    protected void addTranslations() {
+        GenericLang.translate(this::add);
+        InputLang.translate(this::add);
+        FormattingLang.translate(this::add);
+    }
+}
