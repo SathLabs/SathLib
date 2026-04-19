@@ -390,44 +390,12 @@ public class SLConfigLoader {
                 builder.append("\n");
             }
             
-            if (SLConfigLoader.addRangeTranslation(field, annotations, builder)) builder.append("\n");
             builder.append("Default: ").append(field.get(null));
             consumer.accept(key + ".tooltip", builder.toString().strip());
             
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to access config field " + field.getName(), e);
         }
-    }
-    
-    ///
-    /// Adds the translation for the range of the given config field to the given builder.
-    ///
-    /// Follows the given format:
-    /// ```
-    /// Range: 1.0 ~ 2.0    # If the range is finite in both directions
-    /// Range: >1.0         # If the range is infinite in positive direction
-    /// Range: <1.0         # If the range is infinite in negative direction
-    /// ```
-    ///
-    /// @param field       The config field.
-    /// @param annotations The annotations on the config field.
-    /// @param builder     The builder to add the translation to.
-    ///
-    @SuppressWarnings("ConstantValue")
-    private static boolean addRangeTranslation(Field field, Annotation[] annotations, StringBuilder builder) {
-        final Optional<Range> optional = Arrays.stream(annotations).map(_ -> field.getAnnotation(Range.class)).filter(Objects::nonNull).findFirst();
-        if (optional.isEmpty()) return false;
-        final Range range = optional.get();
-        
-        if (range.min() != Double.NEGATIVE_INFINITY && range.max() != Double.POSITIVE_INFINITY) {
-            builder.append("Range: ").append(SLStringUtils.scientific(range.min(), 4)).append(" ~ ").append(SLStringUtils.scientific(range.max(), 4));
-        } else if (range.max() == Double.POSITIVE_INFINITY) {
-            builder.append("Range: >").append(SLStringUtils.scientific(range.min(), 4));
-        } else if (range.min() == Double.NEGATIVE_INFINITY) {
-            builder.append("Range: <").append(SLStringUtils.scientific(range.max(), 4));
-        }
-        
-        return true;
     }
     
     ///

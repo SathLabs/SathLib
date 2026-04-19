@@ -107,7 +107,7 @@ public class ConfigHandlers {
             final MinMax range = MinMax.of(field);
             int value = ConfigHandlers.validate(name, object, Integer.class);
             ConfigHandlers.comment(builder, comments, value);
-            return builder.defineInRange(name, value, range.min(), range.max());
+            return builder.defineInRange(name, value, (int) range.min(), (int) range.max());
         }
     }
     
@@ -121,7 +121,7 @@ public class ConfigHandlers {
             final MinMax range = MinMax.of(field);
             long value = ConfigHandlers.validate(name, object, Long.class);
             ConfigHandlers.comment(builder, comments, value);
-            return builder.defineInRange(name, value, range.min(), range.max());
+            return builder.defineInRange(name, value, (long) range.min(), (long) range.max());
         }
     }
     
