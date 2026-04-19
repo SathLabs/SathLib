@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 import org.intellij.lang.annotations.PrintFormat;
 import org.jspecify.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -210,40 +212,42 @@ public class SLStringUtils {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase(SLStringUtils.LOCALE);
     }
     
-    ///
-    /// Formats a floating point number with the given precision.
-    ///
-    /// @param value     Floating point number to format.
-    /// @param precision Number of digits after the decimal point.
-    ///
-    /// @return Formatted decimal string.
-    ///
-    public static String decimal(double value, int precision) {
-        if (Double.isNaN(value)) return "NaN";
-        if (Double.isInfinite(value)) {
-            if (value > 0) return "∞";
-            return "-∞";
-        }
-        final String format = "%." + precision + "f";
-        return String.format(Locale.ROOT, format, value);
-    }
-    
-    ///
-    /// Formats a floating point number with the given precision in scientific notation.
-    ///
-    /// @param value     Floating point number to format.
-    /// @param precision Number of digits after the decimal point.
-    ///
-    /// @return Formatted decimal string in scientific notation.
-    ///
+    /**
+     * Formats a {@code double} as either a plain decimal string or scientific notation.
+     * Plain decimal format is used when the value fits within the requested precision;
+     * otherwise scientific notation is used.
+     *
+     * @param value the number to format
+     * @param precision the maximum number of significant digits to keep
+     * @return the formatted number
+     */
     public static String scientific(double value, int precision) {
         if (Double.isNaN(value)) return "NaN";
-        if (Double.isInfinite(value)) {
-            if (value > 0) return "∞";
-            return "-∞";
-        }
-        final String format = "%." + precision + "e";
-        return String.format(Locale.ROOT, format, value);
+        if (Double.isInfinite(value)) return value > 0 ? "∞" : "-∞";
+        
+        final BigDecimal decimal = BigDecimal.valueOf(value).stripTrailingZeros();
+        if (decimal.signum() == 0) return "0";
+        
+        final BigDecimal abs = decimal.abs();
+        final int digits = abs.precision();
+        
+        if (digits <= precision) return decimal.toPlainString();
+        
+        final int exp = abs.precision() - abs.scale() - 1;
+        BigDecimal mantissa = decimal.movePointLeft(exp)
+                .setScale(Math.max(precision - 1, 0), RoundingMode.DOWN)
+                .stripTrailingZeros();
+        
+        if (mantissa.scale() <= 0) mantissa = mantissa.setScale(1, RoundingMode.DOWN);
+        
+        final StringBuilder builder = new StringBuilder();
+        builder.append(mantissa.toPlainString());
+        builder.append("e");
+        
+        if (exp >= 0) builder.append("+");
+        
+        builder.append(exp);
+        return builder.toString();
     }
     
     ///
