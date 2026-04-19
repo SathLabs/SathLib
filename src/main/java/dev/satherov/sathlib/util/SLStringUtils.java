@@ -219,8 +219,11 @@ public class SLStringUtils {
     /// @return Formatted decimal string.
     ///
     public static String decimal(double value, int precision) {
-        final String base = String.valueOf(value);
-        if (base.length() - 1 <= precision) return base;
+        if (Double.isNaN(value)) return "NaN";
+        if (Double.isInfinite(value)) {
+            if (value > 0) return "∞";
+            return "-∞";
+        }
         final String format = "%." + precision + "f";
         return String.format(Locale.ROOT, format, value);
     }
@@ -234,8 +237,11 @@ public class SLStringUtils {
     /// @return Formatted decimal string in scientific notation.
     ///
     public static String scientific(double value, int precision) {
-        final String base = String.valueOf(value);
-        if (base.length() - 1 <= precision) return base;
+        if (Double.isNaN(value)) return "NaN";
+        if (Double.isInfinite(value)) {
+            if (value > 0) return "∞";
+            return "-∞";
+        }
         final String format = "%." + precision + "e";
         return String.format(Locale.ROOT, format, value);
     }
