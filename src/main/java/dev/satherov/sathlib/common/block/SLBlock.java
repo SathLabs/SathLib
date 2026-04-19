@@ -37,7 +37,7 @@ public class SLBlock extends Block {
     
     private @Nullable StateBuilder pendingStateBuilder;
     
-    public SLBlock(SLBlockProperties properties) {
+    public SLBlock(Properties properties) {
         super(properties);
         if (this.pendingStateBuilder != null) {
             this.registerDefaultState(this.pendingStateBuilder.applyDefaults(this.defaultBlockState()));
