@@ -53,8 +53,7 @@ public record SLLength(Mode mode, float value) {
     ///
     /// Uses a fraction of the available space.
     ///
-    /// @param percent percentage as a fraction between {@code 0.0} and
-    ///                                              {@code 1.0}
+    /// @param percent percentage as a fraction between {@code 0.0} and {@code 1.0}
     ///
     /// @return percentage length
     ///

@@ -14,11 +14,10 @@ import java.util.function.BiConsumer;
 ///
 @Getter
 @Accessors(fluent = true)
+@SuppressWarnings("doclint:missing")
 public enum InputLang implements SLTranslatable {
     // @formatter:off
-    /// Mouse wheel up input label.
     WHEEL_UP  ("wheel.up",   "Wheel Up"),
-    /// Mouse wheel down input label.
     WHEEL_DOWN("wheel.down", "Wheel Down"),
     // @formatter:on
     ;

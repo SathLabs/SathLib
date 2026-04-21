@@ -14,29 +14,19 @@ import java.util.function.BiConsumer;
 ///
 @Getter
 @Accessors(fluent = true)
+@SuppressWarnings("doclint:missing")
 public enum GenericLang implements SLTranslatable {
     // @formatter:off
-    /// Generic "on" label.
     ON      ("on",       "On"),
-    /// Generic "off" label.
     OFF     ("off",      "Off"),
-    /// Generic "enabled" label.
     ENABLED ("enabled",  "Enabled"),
-    /// Generic "disabled" label.
     DISABLED("disabled", "Disabled"),
-    /// Generic "allow" label.
     ALLOW   ("allow",    "Allow"),
-    /// Generic "deny" label.
     DENY    ("deny",     "Deny"),
-    /// Generic "allowed" label.
     ALLOWED ("allowed",  "Allowed"),
-    /// Generic "denied" label.
     DENIED  ("denied",   "Denied"),
-    /// Generic "none" label.
     NONE    ("none",     "None"),
-    /// Generic "all" label.
     ALL     ("all",      "All"),
-    /// Generic "any" label.
     ANY     ("any",      "Any"),
     // @formatter:on
     ;

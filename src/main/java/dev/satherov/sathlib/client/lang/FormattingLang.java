@@ -14,13 +14,11 @@ import java.util.function.BiConsumer;
 ///
 @Getter
 @Accessors(fluent = true)
+@SuppressWarnings("doclint:missing")
 public enum FormattingLang implements SLTranslatable {
     // @formatter:off
-    /// Wraps one value in round brackets.
     ROUND_BRACKETS ("round_brackets",  "(%s)"),
-    /// Wraps one value in square brackets.
     SQUARE_BRACKETS("square_brackets", "[%s]"),
-    /// Wraps one value in curly brackets.
     CURLY_BRACKETS ("curly_brackets",  "{%s}"),
     // @formatter:on
     ;

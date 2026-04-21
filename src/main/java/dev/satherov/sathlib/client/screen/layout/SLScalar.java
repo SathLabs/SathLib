@@ -40,8 +40,7 @@ public record SLScalar(Mode mode, float value) {
     ///
     /// Creates a percentage scalar.
     ///
-    /// @param percent percentage as a fraction between {@code 0.0} and
-    ///                                              {@code 1.0}
+    /// @param percent percentage as a fraction between {@code 0.0} and {@code 1.0}
     ///
     /// @return percent scalar
     ///
