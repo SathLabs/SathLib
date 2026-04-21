@@ -1,6 +1,7 @@
 package dev.satherov.sathlib;
 
 import dev.satherov.sathlib.client.render.SLRenderPipelines;
+import dev.satherov.sathlib.client.render.model.SLModelLoaders;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -20,6 +21,7 @@ public class SathLibClient {
     /// @param container owning mod container
     ///
     public SathLibClient(final IEventBus bus, final FMLModContainer container) {
+        SLModelLoaders.register(bus);
         SLRenderPipelines.register(bus);
     }
 }
