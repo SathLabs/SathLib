@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 ///
 /// A SLBLockProperty defines a property that can be used to modify a {@link BlockState}, {@link ItemStack} or {@link BlockEntity}
 /// from any of the other two defined. An {@link Extractor} extracts a certain value from the origin and then applies it to the target
@@ -141,6 +143,46 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     ///
     public T cycle(boolean dir, T value) {
         return this.cycler.cycle(dir, value);
+    }
+    
+    ///
+    /// Cycles the property on an ItemStack in the given direction. Requires both an updater and a resolver
+    ///
+    /// @param dir   the direction to cycle in. `true` for forward, `false` for backwards
+    /// @param stack the ItemStack to update
+    ///
+    public void cycle(boolean dir, ItemStack stack) {
+        T value = this.extract(stack);
+        if (value == null) return;
+        T updated = this.cycle(dir, value);
+        if (!Objects.equals(value, updated)) this.update(stack, updated);
+    }
+    
+    ///
+    /// Cycles the property on an BlockState in the given direction. Requires both an updater and a resolver
+    ///
+    /// @param dir   the direction to cycle in. `true` for forward, `false` for backwards
+    /// @param state the BlockState to update
+    ///
+    public BlockState cycle(boolean dir, BlockState state) {
+        T value = this.extract(state);
+        if (value == null) return state;
+        T updated = this.cycle(dir, value);
+        if (!Objects.equals(value, updated)) return this.update(state, updated);
+        return state;
+    }
+    
+    ///
+    /// Cycles the property on an BlockEntity in the given direction. Requires both an updater and a resolver
+    ///
+    /// @param dir    the direction to cycle in. `true` for forward, `false` for backwards
+    /// @param entity the BlockEntity to update
+    ///
+    public void cycle(boolean dir, E entity) {
+        T value = this.extract(entity);
+        if (value == null) return;
+        T updated = this.cycle(dir, value);
+        if (!Objects.equals(value, updated)) this.update(entity, updated);
     }
     
     ///

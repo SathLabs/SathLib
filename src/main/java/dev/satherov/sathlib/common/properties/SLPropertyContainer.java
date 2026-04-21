@@ -60,6 +60,17 @@ public class SLPropertyContainer<B extends Block, I extends Item, E extends Bloc
     }
     
     ///
+    /// Gets a property from the container by its id
+    ///
+    /// @param id Identifier of the property
+    ///
+    /// @return the property
+    ///
+    public @Nullable SLProperty<?, E> get(Identifier id) {
+        return this.properties.get(id);
+    }
+    
+    ///
     /// Extracts all properties from the {@link BlockState} and applies them to the {@link ItemStack}
     ///
     /// @param state The BlockState to extract the properties from
