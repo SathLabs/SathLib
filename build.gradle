@@ -152,7 +152,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named('javadoc', Javadoc).configure {
-    source = sourceSets.main.allJava
+    dependsOn tasks.named('delombok')
+    source = fileTree(layout.buildDirectory.dir('generated/sources/delombok/java/main'))
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.output
+    failOnError = false
     options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
