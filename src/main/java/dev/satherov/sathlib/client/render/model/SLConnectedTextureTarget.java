@@ -22,8 +22,8 @@ import java.util.Optional;
 /// @param connectionRule   rule controlling block-to-block connectivity
 /// @param faces            faces on which this target applies
 /// @param layout           layout that maps bitmasks to sub-regions
-/// @param fallbackMask     mask used when contextual connectivity cannot be
-///                                                                         resolved
+/// @param fallbackMask     mask used when contextual connectivity cannot be resolved
+/// 
 public record SLConnectedTextureTarget(
         String id,
         Identifier matchTexture,
