@@ -17,7 +17,6 @@ public class SLDataGenerator {
     
     @SubscribeEvent
     private static void onGatherData(GatherDataEvent.Client event) {
-        
         event.createProvider(SLLanguageProvider::new);
     }
 }
