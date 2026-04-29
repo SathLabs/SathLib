@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("doclint:missing")
 public enum Mods implements CompatMod {
     JADE("jade"),
     JEI("jei"),
