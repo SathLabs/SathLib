@@ -29,8 +29,8 @@ final class ConnectedTextureSubSprite extends TextureAtlasSprite {
         );
         
         this.delegate = delegate;
-        int width = Math.round((float) (delegate.contents().width() * SpriteSheet.PARTITION));
-        int height = Math.round((float) (delegate.contents().height() * SpriteSheet.PARTITION));
+        int width = Math.round(delegate.contents().width() * SpriteSheet.PARTITION);
+        int height = Math.round(delegate.contents().height() * SpriteSheet.PARTITION);
         this.pixelOffsetX = tile.x() * width;
         this.pixelOffsetY = tile.y() * height;
         this.atlasX = delegate.getX() + this.pixelOffsetX;
@@ -111,10 +111,10 @@ final class ConnectedTextureSubSprite extends TextureAtlasSprite {
     }
     
     private static int tileWidth(final TextureAtlasSprite sprite) {
-        return Math.round((float) (sprite.contents().width() * SpriteSheet.PARTITION));
+        return Math.round(sprite.contents().width() * SpriteSheet.PARTITION);
     }
     
     private static int tileHeight(final TextureAtlasSprite sprite) {
-        return Math.round((float) (sprite.contents().height() * SpriteSheet.PARTITION));
+        return Math.round(sprite.contents().height() * SpriteSheet.PARTITION);
     }
 }

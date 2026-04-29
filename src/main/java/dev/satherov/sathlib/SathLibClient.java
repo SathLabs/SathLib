@@ -1,7 +1,7 @@
 package dev.satherov.sathlib;
 
-import dev.satherov.sathlib.client.render.SLRenderPipelines;
 import dev.satherov.sathlib.client.model.SLModelLoaders;
+import dev.satherov.sathlib.client.render.SLRenderPipelines;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;

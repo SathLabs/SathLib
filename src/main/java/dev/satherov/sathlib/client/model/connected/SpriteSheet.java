@@ -1,11 +1,20 @@
 package dev.satherov.sathlib.client.model.connected;
 
+///
+/// Connected texture atlas lookup table that maps face masks to atlas tile positions.
+///
 public final class SpriteSheet {
     
+    ///
+    /// Number of horizontal partitions in the connected texture atlas.
+    ///
     public static final int SIZE = 8;
     private static final int WIDTH = 8;
     private static final int HEIGHT = 6;
-    public static final double PARTITION = 1.0D / SpriteSheet.SIZE;
+    ///
+    /// UV span of a single atlas tile relative to the full sprite.
+    ///
+    public static final float PARTITION = 1.0F / SpriteSheet.SIZE;
     
     private static final int[][] SPRITES = SpriteSheet.createSprites();
     private static final SpriteSheet.Pos[] CACHE = SpriteSheet.createCache();
@@ -89,12 +98,28 @@ public final class SpriteSheet {
         return cache;
     }
     
+    ///
+    /// Resolves the atlas position for a sprite mask.
+    ///
+    /// @param mask sprite connection mask
+    ///
+    /// @return atlas tile position for the mask
+    ///
     public static Pos resolve(int mask) {
         final SpriteSheet.Pos pos = SpriteSheet.CACHE[mask & 0xFF];
         return pos != null ? pos : Pos.ORIGIN;
     }
     
+    ///
+    /// Immutable atlas tile position.
+    ///
+    /// @param x x coordinate in atlas tile units
+    /// @param y y coordinate in atlas tile units
+    ///
     public record Pos(int x, int y) {
+        ///
+        /// Origin tile of the connected texture atlas.
+        ///
         public static final Pos ORIGIN = new Pos(0, 0);
     }
 }

@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+///
+/// Registry of connected texture predicates keyed by identifier.
+///
 public final class ConnectedTexturePredicateRegistry {
     
     private static final Map<Identifier, ConnectedTexturePredicate> PREDICATES = new ConcurrentHashMap<>();
@@ -17,20 +20,18 @@ public final class ConnectedTexturePredicateRegistry {
     
     private ConnectedTexturePredicateRegistry() { }
     
+    ///
+    /// Registers a connected texture predicate.
+    ///
+    /// @param id        identifier used to resolve the predicate
+    /// @param predicate predicate implementation to register
+    ///
     public static void register(final Identifier id, final ConnectedTexturePredicate predicate) {
         final ConnectedTexturePredicate previous = ConnectedTexturePredicateRegistry.PREDICATES.putIfAbsent(id, predicate);
         
         if (previous != null) {
             throw new IllegalStateException("Duplicate connected texture predicate registration for " + id);
         }
-    }
-    
-    public static ConnectedTexturePredicate sameBlock() {
-        return context -> context.originState().getBlock() == context.neighborState().getBlock();
-    }
-    
-    public static ConnectedTexturePredicate sameAppearanceBlock() {
-        return context -> context.originAppearance().getBlock() == context.neighborAppearance().getBlock();
     }
     
     @Nullable

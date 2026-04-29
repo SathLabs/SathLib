@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 /// Breadth-first block crawler that advances through the deferred task scheduler.
 ///
 @Builder
+@SuppressWarnings("doclint:missing")
 public class SLBlockCrawler implements SLDeferredTask {
     
     private static final Direction[] DIRECTIONS = Direction.values();
@@ -50,6 +51,14 @@ public class SLBlockCrawler implements SLDeferredTask {
     @Builder.Default
     private final Function<SLBlockCrawler, Boolean> stopCondition = SLBlockCrawler.NEVER_STOP;
     
+    ///
+    /// Starts a crawler builder with the origin position already queued and visited.
+    ///
+    /// @param level  level the crawler reads from
+    /// @param origin starting block position
+    ///
+    /// @return preconfigured crawler builder
+    ///
     public static SLBlockCrawlerBuilder builder(ServerLevel level, BlockPos origin) {
         final Collection<BlockPos> singleton = Collections.singleton(origin);
         return new SLBlockCrawlerBuilder().level(level).queue(new ArrayDeque<>(singleton)).visited(new HashSet<>(singleton));
@@ -83,10 +92,20 @@ public class SLBlockCrawler implements SLDeferredTask {
         return this.queue.isEmpty() || this.stopCondition.apply(this);
     }
     
+    ///
+    /// Returns how many positions have been visited so far.
+    ///
+    /// @return visited position count
+    ///
     public int visitedCount() {
         return this.visited.size();
     }
     
+    ///
+    /// Returns how many positions are currently queued for traversal.
+    ///
+    /// @return queued position count
+    ///
     public int queuedCount() {
         return this.queue.size();
     }

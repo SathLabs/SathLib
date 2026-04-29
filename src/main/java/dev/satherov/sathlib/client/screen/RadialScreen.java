@@ -8,7 +8,6 @@ import dev.satherov.sathlib.core.annotations.NothingNull;
 import dev.satherov.sathlib.util.SLColorUtils;
 import dev.satherov.sathlib.util.SLMathUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -36,8 +35,11 @@ import java.util.List;
 ///
 /// Base screen implementation for radial menus composed of interactive slices.
 ///
+/// @param <T> concrete screen type
+/// @param <S> slice type rendered by the screen
+///
 @NothingNull
-@SuppressWarnings({ "UnusedReturnValue", "SameParameterValue" })
+@SuppressWarnings({ "doclint:missing", "UnusedReturnValue", "SameParameterValue" })
 public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.RadialSlice<T, S>> extends Screen {
     
     private static final int DEFAULT_SLICE_COLOR = 0xC0202020;
@@ -45,13 +47,13 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     private static final int DEFAULT_LABEL_COLOR = 0xFFF2F2F2;
     
     protected final List<S> slices = new ArrayList<>();
-
+    
     protected double mouseX;
     protected double mouseY;
-
+    
     protected float centerX;
     protected float centerY;
-
+    
     @Getter
     @Nullable
     protected S hovered;
@@ -98,7 +100,7 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     protected T self() {
         return (T) this;
     }
-
+    
     ///
     /// Initializes pointer tracking for the radial menu.
     ///
@@ -618,7 +620,7 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
             float angle = Mth.lerp((float) step / count, context.startAngle(), context.endAngle());
             outerVertices.add(SLMathUtils.getPointOnCircle(new Vector2d(context.centerX(), context.centerY()), angle, context.outerRadius()));
         }
-
+        
         for (int step = 0; step <= count; step++) {
             float angle = Mth.lerp((float) step / count, context.startAngle(), context.endAngle());
             innerVertices.add(SLMathUtils.getPointOnCircle(new Vector2d(context.centerX(), context.centerY()), angle, context.innerRadius()));
@@ -703,6 +705,24 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     ///
     /// Immutable context object used while rendering a single slice.
     ///
+    /// @param <T>         concrete screen type
+    /// @param <S>         slice type rendered by the screen
+    /// @param screen      owning radial screen
+    /// @param slice       slice being rendered
+    /// @param index       zero-based slice index
+    /// @param count       total slice count
+    /// @param hovered     whether the slice is currently hovered
+    /// @param progress    hover animation progress
+    /// @param centerX     radial menu center x position
+    /// @param centerY     radial menu center y position
+    /// @param startAngle  slice start angle in degrees
+    /// @param middleAngle slice middle angle in degrees
+    /// @param endAngle    slice end angle in degrees
+    /// @param innerRadius slice inner radius
+    /// @param outerRadius slice outer radius
+    /// @param mouseX      current mouse x position
+    /// @param mouseY      current mouse y position
+    ///
     public record SliceRenderContext<T extends RadialScreen<T, S>, S extends RadialScreen.RadialSlice<T, S>>(
             T screen, S slice,
             int index, int count, boolean hovered, float progress,
@@ -744,7 +764,7 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         public float contentX() {
             return this.centerX + (SLMathUtils.cos(this.middleAngle) * this.radius());
         }
-
+        
         ///
         /// Returns the preferred y position for slice content.
         ///
@@ -809,6 +829,9 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     ///
     /// Base slice type used by {@link RadialScreen}.
     ///
+    /// @param <T> concrete screen type
+    /// @param <S> slice type implementation
+    ///
     @Getter
     public abstract static class RadialSlice<T extends RadialScreen<T, S>, S extends RadialSlice<T, S>> {
         
@@ -824,6 +847,11 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         @Getter
         @Setter
         private float hoverProgress;
+        
+        ///
+        /// Creates an empty radial slice.
+        ///
+        protected RadialSlice() { }
         
         ///
         /// Renders the background and contents of this slice.

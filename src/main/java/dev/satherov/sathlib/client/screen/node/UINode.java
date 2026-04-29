@@ -36,6 +36,7 @@ import org.jspecify.annotations.Nullable;
 ///
 /// @param <S> concrete node subtype used for fluent setters
 ///
+@SuppressWarnings("doclint:missing")
 public abstract class UINode<S extends UINode<S>> {
     
     private @Nullable @Getter UIContainerNode<?> parent;

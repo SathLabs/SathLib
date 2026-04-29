@@ -31,21 +31,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+///
+/// Dynamic block model that remaps quads to connected texture atlas tiles at render time.
+///
 @SuppressWarnings("deprecation")
 @NothingNull
 public final class ConnectedTextureBlockModel implements DynamicBlockStateModel {
     
+    ///
+    /// Type identifier used by the connected texture blockstate model codec.
+    ///
     public static final Identifier ID = SathLib.id("connected_texture");
     
     private final BlockStateModel delegate;
-    @Nullable
-    private final Identifier predicate;
+    private final @Nullable Identifier predicate;
     private final List<SLConnectedTextureConnection> connections;
     private final Material.Baked particleMaterial;
     
     @BakedQuad.MaterialFlags
     private final int materialFlags;
     
+    ///
+    /// Creates a connected texture block model.
+    ///
+    /// @param delegate    base baked block model
+    /// @param predicate   predicate identifier used for the base texture, or `null`
+    /// @param connections explicit connected texture bindings keyed by sprite
+    ///
     public ConnectedTextureBlockModel(
             final BlockStateModel delegate,
             @Nullable final Identifier predicate,
@@ -80,24 +92,17 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
     }
     
     @Override
-    @Nullable
-    public Object createGeometryKey(
+    public @Nullable Object createGeometryKey(
             final BlockAndTintGetter level,
             final BlockPos pos,
             final BlockState state,
             final RandomSource random
     ) {
         final Object delegateKey = this.delegate.createGeometryKey(level, pos, state, random);
-        
-        if (delegateKey == null) {
-            return null;
-        }
-        
+        if (delegateKey == null) return null;
         return new GeometryKey(
                 delegateKey,
-                this.predicate != null
-                        ? ConnectedTextureFaceMasks.resolve(level, pos, state, ConnectedTexturePredicateRegistry.resolve(this.predicate))
-                        : null,
+                this.predicate != null ? ConnectedTextureFaceMasks.resolve(level, pos, state, ConnectedTexturePredicateRegistry.resolve(this.predicate)) : null,
                 this.resolveConnections(level, pos, state)
         );
     }
@@ -124,14 +129,15 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
         return this.delegate.materialFlags(level, pos, state);
     }
     
+    ///
+    /// Resolves the connections
+    ///
     private Map<Identifier, ConnectedTextureFaceMasks> resolveConnections(
             final BlockAndTintGetter level,
             final BlockPos pos,
             final BlockState state
     ) {
-        if (this.connections.isEmpty()) {
-            return Map.of();
-        }
+        if (this.connections.isEmpty()) return Map.of();
         
         final HashMap<Identifier, ConnectedTextureFaceMasks> resolved = new HashMap<>(this.connections.size());
         
@@ -141,26 +147,26 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
         
         return Map.copyOf(resolved);
     }
-
+    
     private Material.Baked resolveParticleMaterial(final Material.Baked material) {
         return this.shouldRemapParticle(material.sprite())
                 ? ConnectedTextureUvResolver.remap(material, SpriteSheet.Pos.ORIGIN)
                 : material;
     }
-
+    
     private boolean shouldRemapParticle(final TextureAtlasSprite sprite) {
         if (this.predicate != null && this.connections.isEmpty()) {
             return true;
         }
-
+        
         final Identifier spriteId = sprite.contents().name();
-
+        
         for (final SLConnectedTextureConnection connection : this.connections) {
             if (connection.texture().sprite().equals(spriteId)) {
                 return true;
             }
         }
-
+        
         return false;
     }
     
@@ -170,22 +176,45 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
             Map<Identifier, ConnectedTextureFaceMasks> spriteMasks
     ) { }
     
+    ///
+    /// Unbaked connected texture model definition used by blockstate codecs.
+    ///
+    /// @param model       base unbaked blockstate model
+    /// @param predicate   predicate identifier used for the base texture, or `null`
+    /// @param connections explicit connected texture bindings
+    ///
     public record Unbaked(
             BlockStateModel.Unbaked model,
             @Nullable Identifier predicate,
             List<SLConnectedTextureConnection> connections
     ) implements CustomUnbakedBlockStateModel {
         
+        ///
+        /// Codec used to serialize unbaked connected texture block models.
+        ///
         public static final MapCodec<Unbaked> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 BlockStateModel.Unbaked.CODEC.fieldOf("model").forGetter(Unbaked::model),
                 Identifier.CODEC.optionalFieldOf("predicate").forGetter(unbaked -> java.util.Optional.ofNullable(unbaked.predicate())),
                 SLConnectedTextureConnection.CODEC.listOf().optionalFieldOf("connections", List.of()).forGetter(Unbaked::connections)
         ).apply(instance, (model, predicate, connections) -> new Unbaked(model, predicate.orElse(null), connections)));
         
+        ///
+        /// Creates an unbaked connected texture model that only uses a predicate.
+        ///
+        /// @param model     base unbaked blockstate model
+        /// @param predicate predicate identifier used for the base texture
+        ///
         public Unbaked(final BlockStateModel.Unbaked model, final Identifier predicate) {
             this(model, predicate, List.of());
         }
         
+        ///
+        /// Normalizes the connection list and validates that at least one connection strategy is present.
+        ///
+        /// @param model       base unbaked blockstate model
+        /// @param predicate   predicate identifier used for the base texture, or `null`
+        /// @param connections explicit connected texture bindings
+        ///
         public Unbaked {
             connections = List.copyOf(connections);
             

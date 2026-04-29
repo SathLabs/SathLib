@@ -60,9 +60,21 @@ public interface SLDeferredTask {
         };
     }
     
+    ///
+    /// Reason why a deferred task was removed from the scheduler.
+    ///
     enum RemovalReason {
+        ///
+        /// The task reported completion through {@link SLDeferredTask#isDone()}.
+        ///
         COMPLETED,
+        ///
+        /// The scheduler was cleared explicitly.
+        ///
         CLEARED,
+        ///
+        /// The task failed while executing.
+        ///
         FAILED
     }
 }

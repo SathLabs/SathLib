@@ -27,6 +27,7 @@ import java.util.Map;
 ///
 @Slf4j
 @NothingNull
+@SuppressWarnings("doclint:missing")
 public class SLPropertyContainer<B extends Block, I extends Item, E extends BlockEntity> implements Iterable<SLProperty<?, E>> {
     
     protected final Class<B> block;

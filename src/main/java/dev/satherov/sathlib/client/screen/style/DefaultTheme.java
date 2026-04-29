@@ -1,7 +1,6 @@
 package dev.satherov.sathlib.client.screen.style;
 
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
-import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.common.menu.slot.SLSlotVisuals;
 import dev.satherov.sathlib.util.SLColorUtils;
@@ -22,7 +21,6 @@ import org.jspecify.annotations.Nullable;
 /// Replace this implementation when a project wants a different visual identity.
 ///
 public enum DefaultTheme implements UITheme {
-    /// Shared singleton instance of the built-in theme.
     INSTANCE;
     
     private static final int PANEL_FILL = 0xEE1D2431;
@@ -99,9 +97,7 @@ public enum DefaultTheme implements UITheme {
             boolean hovered,
             boolean active
     ) {
-        if (!visuals.drawFrame()) {
-            return;
-        }
+        if (!visuals.drawFrame()) return;
         
         float inactiveBlend = active ? 0.0F : 0.45F;
         int fillColor = inactiveBlend > 0.0F

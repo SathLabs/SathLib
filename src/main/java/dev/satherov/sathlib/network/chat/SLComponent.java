@@ -177,7 +177,7 @@ public class SLComponent implements Component {
         }
         
         MutableComponent component = arguments.isEmpty() ? Component.translatable(translationKey) : Component.translatable(translationKey, arguments.toArray());
-        if (formatting.isEmpty()) component.withStyle(formatting.toArray(ChatFormatting[]::new));
+        if (!formatting.isEmpty()) component.withStyle(formatting.toArray(ChatFormatting[]::new));
         return SLComponent.of(component);
     }
     

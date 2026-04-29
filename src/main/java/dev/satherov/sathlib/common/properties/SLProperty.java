@@ -52,8 +52,10 @@ import java.util.Objects;
 ///
 @Slf4j
 @Getter
+@Builder
 @NothingNull
 @Accessors(fluent = true)
+@SuppressWarnings("doclint:missing")
 public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     
     protected final Identifier identifier;
@@ -73,37 +75,6 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     protected final SLProperty.@Nullable Extractor<T, ItemStack> stackExtractor;
     protected final SLProperty.@Nullable Extractor<T, BlockState> stateExtractor;
     protected final SLProperty.@Nullable Extractor<T, E> blockEntityExtractor;
-    
-    @Builder
-    private SLProperty(
-            Identifier identifier,
-            Class<T> typeClass,
-            Class<E> entityClass,
-            SLTranslatable name,
-            @Nullable Displayer<T> valueDisplayer,
-            @Nullable Displayer<T> tooltipDisplayer,
-            Cycler<T> cycler,
-            @Nullable Updater<T, ItemStack> stackUpdater,
-            @Nullable StateUpdater<T> stateUpdater,
-            @Nullable Updater<T, E> blockEntityUpdater,
-            SLProperty.@Nullable Extractor<T, ItemStack> stackExtractor,
-            SLProperty.@Nullable Extractor<T, BlockState> stateExtractor,
-            SLProperty.@Nullable Extractor<T, E> blockEntityExtractor
-    ) {
-        this.identifier = identifier;
-        this.typeClass = typeClass;
-        this.entityClass = entityClass;
-        this.name = name;
-        this.valueDisplayer = valueDisplayer;
-        this.tooltipDisplayer = tooltipDisplayer;
-        this.cycler = cycler;
-        this.stackUpdater = stackUpdater;
-        this.stateUpdater = stateUpdater;
-        this.blockEntityUpdater = blockEntityUpdater;
-        this.stackExtractor = stackExtractor;
-        this.stateExtractor = stateExtractor;
-        this.blockEntityExtractor = blockEntityExtractor;
-    }
     
     ///
     /// Starts a new property builder for properties that use the generic {@link BlockEntity} type.
@@ -163,6 +134,8 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     ///
     /// @param dir   the direction to cycle in. `true` for forward, `false` for backwards
     /// @param state the BlockState to update
+    ///
+    /// @return the updated block state
     ///
     public BlockState cycle(boolean dir, BlockState state) {
         T value = this.extract(state);

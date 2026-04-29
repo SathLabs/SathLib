@@ -1,97 +1,72 @@
 package dev.satherov.sathlib.client.model.connected;
 
+import lombok.experimental.UtilityClass;
+
 import dev.satherov.sathlib.core.annotations.NothingNull;
+
+import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplate;
+import net.neoforged.neoforge.client.model.generators.template.ExtendedModelTemplateBuilder;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
+///
+/// Small utility class for generating item models from a block with a connected texture atlas
+///
+@UtilityClass
 @NothingNull
 public final class ConnectedTextureItemModel {
     
-    private static final double MODEL_UV_SIZE = 16.0D * SpriteSheet.PARTITION;
+    /// UV size of one tile from the texture atlas,
+    /// scaled to match the entire atlas being mapped to 16x16
+    private static final float UV_SIZE = 16.0F * SpriteSheet.PARTITION;
     
-    private ConnectedTextureItemModel() { }
-    
+    ///
+    /// Creates an item model for a block with a connected texture atlas
+    ///
+    /// @param generators block model generators
+    /// @param block      block to generate an item-model for
+    /// @param parent     parent model identifier
+    /// @param texture    texture atlas material
+    ///
+    /// @return generated item model identifier
+    ///
     public static Identifier create(
             final BlockModelGenerators generators,
             final Block block,
             final Identifier parent,
             final Material texture
     ) {
-        return ConnectedTextureItemModel.create(
-                generators,
-                ModelLocationUtils.getModelLocation(block, "_connected_item"),
-                parent,
-                texture
-        );
+        final Identifier identifier = ModelLocationUtils.getModelLocation(block, "_connected");
+        ConnectedTextureItemModel.template(parent).create(identifier, TextureMapping.cube(texture).copySlot(TextureSlot.ALL, TextureSlot.PARTICLE), generators.modelOutput);
+        return identifier;
     }
     
-    public static Identifier create(
-            final BlockModelGenerators generators,
-            final Identifier modelId,
-            final Identifier parent,
-            final Material texture
-    ) {
-        generators.modelOutput.accept(modelId, () -> ConnectedTextureItemModel.json(parent, texture.sprite().toString(), SpriteSheet.Pos.ORIGIN));
-        return modelId;
-    }
-    
-    private static JsonObject json(final Identifier parent, final String texture, final SpriteSheet.Pos tile) {
-        final JsonObject json = new JsonObject();
-        json.addProperty("parent", parent.toString());
-        
-        final JsonObject textures = new JsonObject();
-        textures.addProperty("all", texture);
-        textures.addProperty("particle", texture);
-        json.add("textures", textures);
-        
-        final JsonArray elements = new JsonArray();
-        elements.add(ConnectedTextureItemModel.element(tile));
-        json.add("elements", elements);
-        return json;
-    }
-    
-    private static JsonObject element(final SpriteSheet.Pos tile) {
-        final JsonObject element = new JsonObject();
-        element.add("from", ConnectedTextureItemModel.vector(0.0D, 0.0D, 0.0D));
-        element.add("to", ConnectedTextureItemModel.vector(16.0D, 16.0D, 16.0D));
-        
-        final JsonObject faces = new JsonObject();
-        faces.add("down", ConnectedTextureItemModel.face(tile));
-        faces.add("up", ConnectedTextureItemModel.face(tile));
-        faces.add("north", ConnectedTextureItemModel.face(tile));
-        faces.add("south", ConnectedTextureItemModel.face(tile));
-        faces.add("west", ConnectedTextureItemModel.face(tile));
-        faces.add("east", ConnectedTextureItemModel.face(tile));
-        
-        element.add("faces", faces);
-        return element;
-    }
-    
-    private static JsonObject face(final SpriteSheet.Pos tile) {
-        final double minU = tile.x() * ConnectedTextureItemModel.MODEL_UV_SIZE;
-        final double minV = tile.y() * ConnectedTextureItemModel.MODEL_UV_SIZE;
-        final double maxU = minU + ConnectedTextureItemModel.MODEL_UV_SIZE;
-        final double maxV = minV + ConnectedTextureItemModel.MODEL_UV_SIZE;
-        
-        final JsonObject face = new JsonObject();
-        face.add("uv", ConnectedTextureItemModel.vector(minU, minV, maxU, maxV));
-        face.addProperty("texture", "#all");
-        return face;
-    }
-    
-    private static JsonArray vector(final double... values) {
-        final JsonArray array = new JsonArray();
-        for (final double value : values) {
-            array.add(value);
-        }
-        
-        return array;
+    ///
+    /// Creates a model template for the item model
+    ///
+    /// @param parent parent model identifier
+    ///
+    /// @return model template
+    ///
+    private static ExtendedModelTemplate template(final Identifier parent) {
+        return ExtendedModelTemplateBuilder.builder()
+                .parent(parent)
+                .requiredTextureSlot(TextureSlot.ALL)
+                .requiredTextureSlot(TextureSlot.PARTICLE)
+                .element(element -> element
+                        .from(0.0F, 0.0F, 0.0F)
+                        .to(16.0F, 16.0F, 16.0F)
+                        .allFaces((_, face) -> face.texture(TextureSlot.ALL).uvs(
+                                0, 0,
+                                ConnectedTextureItemModel.UV_SIZE, ConnectedTextureItemModel.UV_SIZE
+                        ))
+                )
+                .build();
     }
 }

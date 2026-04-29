@@ -11,46 +11,116 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+///
+/// Factory methods for common connected texture rules.
+///
 public final class SLConnectedTextureRules {
     
     private SLConnectedTextureRules() { }
     
+    ///
+    /// Returns a rule that always connects.
+    ///
+    /// @return always-true rule
+    ///
     public static SLConnectedTextureRule always() {
         return Always.INSTANCE;
     }
     
+    ///
+    /// Returns a rule that never connects.
+    ///
+    /// @return always-false rule
+    ///
     public static SLConnectedTextureRule never() {
         return Never.INSTANCE;
     }
     
+    ///
+    /// Returns a rule that connects only when every supplied rule connects.
+    ///
+    /// @param rules rules to evaluate
+    ///
+    /// @return conjunction rule
+    ///
     public static SLConnectedTextureRule all(final SLConnectedTextureRule... rules) {
         return new All(List.of(rules));
     }
     
+    ///
+    /// Returns a rule that connects when any supplied rule connects.
+    ///
+    /// @param rules rules to evaluate
+    ///
+    /// @return disjunction rule
+    ///
     public static SLConnectedTextureRule any(final SLConnectedTextureRule... rules) {
         return new Any(List.of(rules));
     }
     
+    ///
+    /// Returns a rule that negates the supplied rule.
+    ///
+    /// @param rule rule to negate
+    ///
+    /// @return negated rule
+    ///
     public static SLConnectedTextureRule not(final SLConnectedTextureRule rule) {
         return new Not(rule);
     }
     
+    ///
+    /// Returns a rule that connects blocks of the same block type.
+    ///
+    /// @return same-block rule
+    ///
     public static SLConnectedTextureRule sameBlock() {
         return SameBlock.INSTANCE;
     }
     
+    ///
+    /// Returns a rule that connects blocks with the same rendered appearance.
+    ///
+    /// @return same-appearance rule
+    ///
     public static SLConnectedTextureRule sameAppearanceBlock() {
         return SameAppearanceBlock.INSTANCE;
     }
     
+    ///
+    /// Returns a rule that connects when both states share the same value for the supplied property.
+    ///
+    /// @param property property that must match
+    /// @param <T>      property value type
+    ///
+    /// @return same-state rule
+    ///
     public static <T extends Comparable<T>> SLConnectedTextureRule sameState(final Property<T> property) {
         return new SameState(property.getName());
     }
     
+    ///
+    /// Returns a rule that connects when the origin state matches the supplied property value.
+    ///
+    /// @param property property to test on the origin state
+    /// @param value    expected property value
+    /// @param <T>      property value type
+    ///
+    /// @return origin-state rule
+    ///
     public static <T extends Comparable<T>> SLConnectedTextureRule originState(final Property<T> property, final T value) {
         return new OriginState(property.getName(), property.getName(value));
     }
     
+    ///
+    /// Returns a rule that connects when the neighbor state matches the supplied property value.
+    ///
+    /// @param property property to test on the neighbor state
+    /// @param value    expected property value
+    /// @param <T>      property value type
+    ///
+    /// @return neighbor-state rule
+    ///
     public static <T extends Comparable<T>> SLConnectedTextureRule neighborState(final Property<T> property, final T value) {
         return new NeighborState(property.getName(), property.getName(value));
     }
