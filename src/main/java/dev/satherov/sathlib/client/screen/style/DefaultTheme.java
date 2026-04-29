@@ -1,6 +1,7 @@
 package dev.satherov.sathlib.client.screen.style;
 
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
+import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.common.menu.slot.SLSlotVisuals;
 import dev.satherov.sathlib.util.SLColorUtils;
@@ -61,7 +62,7 @@ public enum DefaultTheme implements UITheme {
         
         context.fill(bounds, fillColor);
         context.outline(bounds, DefaultTheme.BUTTON_BORDER);
-        context.centeredText(text, bounds, this.labelColor(enabled), false);
+        context.centeredVisualText(text, bounds, this.labelColor(enabled), false);
     }
     
     @Override

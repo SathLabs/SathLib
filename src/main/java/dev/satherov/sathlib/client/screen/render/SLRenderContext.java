@@ -163,6 +163,35 @@ public final class SLRenderContext {
         this.text(text, textX, textY, color, shadow);
     }
     
+    /// 
+    /// Draws centered text inside the bounds with padding
+    /// 
+    /// @param text   text to draw
+    /// @param bounds target bounds
+    /// @param color  text color
+    /// @param shadow whether to render a shadow
+    /// 
+    public void centeredVisualText(Component text, SLBounds bounds, int color, boolean shadow) {
+        int textWidth = this.font.width(text);
+        int textX = bounds.x() + ((bounds.width() - textWidth) / 2);
+        int textY = this.centeredVisualTextY(bounds);
+        this.text(text, textX, textY, color, shadow);
+    }
+    
+    /// 
+    /// Calculates the vertical center position for text within the given bounds, with padding.
+    /// 
+    /// @param bounds target bounds
+    /// 
+    /// @return the calculated y position
+    /// 
+    private int centeredVisualTextY(SLBounds bounds) {
+        int lineHeight = this.font.lineHeight + 3;
+        if (bounds.height() < lineHeight) return bounds.y() + Math.max(0, (bounds.height() - lineHeight) / 2);
+        int slack = bounds.height() - lineHeight;
+        return bounds.y() + Math.floorDiv(slack + 1, 2) + 2;
+    }
+    
     ///
     /// Draws a sprite into the given rectangle.
     ///

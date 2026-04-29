@@ -174,7 +174,7 @@ public final class UI {
         private SLLength width = SLLength.content();
         private SLLength height = SLLength.content();
         private SLInsets margin = SLInsets.zero();
-        private SLInsets padding = SLInsets.zero();
+        private @Nullable SLInsets padding;
         private SLAlignment horizontalAlignment = SLAlignment.START;
         private SLAlignment verticalAlignment = SLAlignment.START;
         private SLScalar offsetX = SLScalar.zero();
@@ -372,9 +372,9 @@ public final class UI {
         protected final void applyCommon(N node) {
             node.size(this.width, this.height)
                     .margin(this.margin)
-                    .padding(this.padding)
                     .align(this.horizontalAlignment, this.verticalAlignment)
                     .offset(this.offsetX, this.offsetY);
+            if (this.padding != null) node.padding(this.padding);
         }
         
         ///
