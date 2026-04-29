@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import dev.satherov.sathlib.config.data.Config;
 import dev.satherov.sathlib.config.data.ConfigEntry;
+import dev.satherov.sathlib.config.data.ConfigEnum;
 import dev.satherov.sathlib.config.data.ConfigHolder;
 import dev.satherov.sathlib.config.data.Group;
 import dev.satherov.sathlib.util.SLReflectionUtils;
@@ -17,6 +18,7 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 
 import org.jspecify.annotations.Nullable;
@@ -359,7 +361,7 @@ public class SLConfigLoader {
         
         final String path = String.join(".", value.getPath());
         final String translation = entry.translation();
-        final String name = translation.isBlank() ? SLStringUtils.toSentenceCase(path) : translation;
+        final String name = translation.isBlank() ? SLStringUtils.toTitleCase(path) : translation;
         consumer.accept(translationKey, name);
         SLConfigLoader.addTooltipTranslation(translationKey, field, annotations, entry, consumer);
     }
@@ -388,11 +390,34 @@ public class SLConfigLoader {
         try {
             StringBuilder builder = new StringBuilder();
             if (!lines.isEmpty()) {
-                lines.forEach(comment -> builder.append(comment.strip()).append("\n"));
+                lines.forEach(comment -> builder
+                        .append('§').append(ChatFormatting.DARK_GRAY.getChar())
+                        .append(comment.strip())
+                        .append('§').append(ChatFormatting.RESET.getChar())
+                        .append("\n")
+                );
                 builder.append("\n");
             }
             
-            builder.append("Default: ").append(field.get(null));
+            if (field.getType().isEnum()) {
+                final Enum<?>[] values = field.getType().asSubclass(Enum.class).getEnumConstants();
+                for (Enum<?> e : values) {
+                    builder.append('§').append(ChatFormatting.GRAY.getChar())
+                            .append('§').append(ChatFormatting.BOLD.getChar())
+                            .append(e.name())
+                            .append('§').append(ChatFormatting.RESET.getChar())
+                            .append('§').append(ChatFormatting.GRAY.getChar())
+                            .append(": ")
+                            .append(((ConfigEnum) e).description().strip())
+                            .append('§').append(ChatFormatting.RESET.getChar())
+                            .append("\n");
+                }
+            }
+            
+            builder.append('§').append(ChatFormatting.GRAY.getChar())
+                    .append("Default: ")
+                    .append(field.get(null))
+                    .append('§').append(ChatFormatting.RESET.getChar());
             consumer.accept(key + ".tooltip", builder.toString().strip());
             
         } catch (IllegalAccessException e) {
