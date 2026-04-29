@@ -8,6 +8,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +30,9 @@ public class SLBlockCrawler implements SLDeferredTask {
     
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final Function<SLBlockCrawler, Boolean> NEVER_STOP = _ -> false;
+    
+    @Nonnull
+    private final BlockPos origin;
     
     @Nonnull
     private final Deque<BlockPos> queue;
@@ -61,7 +66,7 @@ public class SLBlockCrawler implements SLDeferredTask {
     ///
     public static SLBlockCrawlerBuilder builder(ServerLevel level, BlockPos origin) {
         final Collection<BlockPos> singleton = Collections.singleton(origin);
-        return new SLBlockCrawlerBuilder().level(level).queue(new ArrayDeque<>(singleton)).visited(new HashSet<>(singleton));
+        return new SLBlockCrawlerBuilder().origin(origin).level(level).queue(new ArrayDeque<>(singleton)).visited(new HashSet<>(singleton));
     }
     
     @Override
@@ -90,6 +95,15 @@ public class SLBlockCrawler implements SLDeferredTask {
     @Override
     public boolean isDone() {
         return this.queue.isEmpty() || this.stopCondition.apply(this);
+    }
+    
+    @Override
+    public String name() {
+        return new ToStringBuilder(this)
+                .append("origin", this.origin)
+                .append("visited", this.visitedCount())
+                .append("queued", this.queuedCount())
+                .toString();
     }
     
     ///

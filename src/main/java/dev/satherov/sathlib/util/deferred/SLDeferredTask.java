@@ -57,8 +57,20 @@ public interface SLDeferredTask {
             public boolean isDone() {
                 return isDone.getAsBoolean();
             }
+            
+            @Override
+            public String name() {
+                return super.toString();
+            }
         };
     }
+    
+    ///
+    /// Name of the deferred task, can be used for debugging purposes.
+    ///
+    /// @return Task name
+    ///
+    String name();
     
     ///
     /// Reason why a deferred task was removed from the scheduler.

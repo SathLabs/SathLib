@@ -58,10 +58,11 @@ public class SLDeferredTasks {
         int remaining = SLDeferredTasks.TASKS.size();
         int index = Math.floorMod(SLDeferredTasks.nextTaskIndex, SLDeferredTasks.TASKS.size());
         
-        while (remaining > 0 && !SLDeferredTasks.TASKS.isEmpty() && hasTime.getAsBoolean()) {
-            if (index >= SLDeferredTasks.TASKS.size()) {
-                index = 0;
-            }
+        while (remaining > 0 && !SLDeferredTasks.TASKS.isEmpty()) {
+            if (index >= SLDeferredTasks.TASKS.size()) index = 0;
+            
+            // Slow down the crawler if are already out of time to prevent even more strain
+            if (!hasTime.getAsBoolean() && server.getTickCount() % 4 != 0) return;
             
             SLDeferredTask task = SLDeferredTasks.TASKS.get(index);
             if (task.isDone()) {
@@ -73,7 +74,7 @@ public class SLDeferredTasks {
             try {
                 task.tick(server);
             } catch (Throwable throwable) {
-                SathLib.log.error("Deferred task {} failed and will be removed", task, throwable);
+                SathLib.log.error("Deferred task {} failed and will be removed", task.name(), throwable);
                 SLDeferredTasks.remove(index, server, SLDeferredTask.RemovalReason.FAILED);
                 remaining--;
                 continue;
