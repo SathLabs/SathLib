@@ -158,6 +158,15 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         }
     }
     
+    /// 
+    /// If this screen should pause the game in singleplayer and save the game.
+    /// 
+    /// @return `true` if the game should pause and save
+    /// 
+    public boolean isPauseScreen() {
+        return false;
+    }
+    
     ///
     /// Updates hovered slice state when the mouse moves.
     ///

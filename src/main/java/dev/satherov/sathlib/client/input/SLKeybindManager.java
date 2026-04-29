@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,27 +31,15 @@ public class SLKeybindManager {
     }
     
     ///
-    /// Creates a keybind manager with an existing category instance.
-    ///
-    /// @param namespace namespace of this manager
-    /// @param category  category used for all managed bindings
-    ///
-    /// @return the created keybind manager
-    ///
-    public static SLKeybindManager create(String namespace, KeyMapping.Category category) {
-        return new SLKeybindManager(namespace, category);
-    }
-    
-    ///
     /// Creates a Keybind manager under the given namespace and with a category of the given name
     ///
     /// @param namespace namespace of this manager and namespace under which the category is created
-    /// @param category  the translatable entry of this category. The translation key is used for the category identifier
+    /// @param category  the identifier of this category. The translation key is used for the category identifier
     ///
     /// @return the created Keybind manager
     ///
-    public static SLKeybindManager create(String namespace, SLTranslatable category) {
-        return new SLKeybindManager(namespace, new KeyMapping.Category(SLResourceUtils.id(namespace, category.key())));
+    public static SLKeybindManager create(String namespace, Identifier category) {
+        return new SLKeybindManager(namespace, new KeyMapping.Category(category));
     }
     
     ///
