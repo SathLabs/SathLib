@@ -1,5 +1,6 @@
 package dev.satherov.sathlib.client.model.connected;
 
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
@@ -79,15 +80,6 @@ public final class SLConnectedTextureRules {
     }
     
     ///
-    /// Returns a rule that connects blocks with the same rendered appearance.
-    ///
-    /// @return same-appearance rule
-    ///
-    public static SLConnectedTextureRule sameAppearanceBlock() {
-        return SameAppearanceBlock.INSTANCE;
-    }
-    
-    ///
     /// Returns a rule that connects when both states share the same value for the supplied property.
     ///
     /// @param property property that must match
@@ -136,7 +128,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_ALWAYS;
         }
     }
@@ -152,7 +144,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_NEVER;
         }
     }
@@ -173,7 +165,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_ALL;
         }
     }
@@ -194,7 +186,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_ANY;
         }
     }
@@ -211,7 +203,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_NOT;
         }
     }
@@ -227,24 +219,8 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_SAME_BLOCK;
-        }
-    }
-    
-    enum SameAppearanceBlock implements SLConnectedTextureRule {
-        INSTANCE;
-        
-        static final MapCodec<SameAppearanceBlock> CODEC = MapCodec.unit(SameAppearanceBlock.INSTANCE);
-        
-        @Override
-        public boolean connects(final ConnectedTextureContext context) {
-            return context.originAppearance().getBlock() == context.neighborAppearance().getBlock();
-        }
-        
-        @Override
-        public net.minecraft.resources.Identifier type() {
-            return SLConnectedTextureRule.TYPE_SAME_APPEARANCE_BLOCK;
         }
     }
     
@@ -258,7 +234,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_SAME_STATE;
         }
     }
@@ -276,7 +252,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_ORIGIN_STATE;
         }
     }
@@ -294,7 +270,7 @@ public final class SLConnectedTextureRules {
         }
         
         @Override
-        public net.minecraft.resources.Identifier type() {
+        public Identifier type() {
             return SLConnectedTextureRule.TYPE_NEIGHBOR_STATE;
         }
     }

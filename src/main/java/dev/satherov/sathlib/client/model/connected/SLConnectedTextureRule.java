@@ -83,7 +83,6 @@ public interface SLConnectedTextureRule extends ConnectedTexturePredicate {
         if (SLConnectedTextureRule.TYPE_ANY.equals(type)) return SLConnectedTextureRules.Any.CODEC(self);
         if (SLConnectedTextureRule.TYPE_NOT.equals(type)) return SLConnectedTextureRules.Not.CODEC(self);
         if (SLConnectedTextureRule.TYPE_SAME_BLOCK.equals(type)) return SLConnectedTextureRules.SameBlock.CODEC;
-        if (SLConnectedTextureRule.TYPE_SAME_APPEARANCE_BLOCK.equals(type)) return SLConnectedTextureRules.SameAppearanceBlock.CODEC;
         if (SLConnectedTextureRule.TYPE_SAME_STATE.equals(type)) return SLConnectedTextureRules.SameState.CODEC;
         if (SLConnectedTextureRule.TYPE_ORIGIN_STATE.equals(type)) return SLConnectedTextureRules.OriginState.CODEC;
         if (SLConnectedTextureRule.TYPE_NEIGHBOR_STATE.equals(type)) return SLConnectedTextureRules.NeighborState.CODEC;

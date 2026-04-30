@@ -129,14 +129,13 @@ public record ConnectedTextureFaceMasks(int down, int up, int north, int south, 
         final BlockState neighborState = level.getBlockState(neighborPos);
         final BlockState originAppearance = state.getAppearance(level, pos, faceDirection, neighborState, neighborPos);
         final BlockState neighborAppearance = neighborState.getAppearance(level, neighborPos, faceDirection, state, pos);
+        if (originAppearance.isAir() || neighborAppearance.isAir()) return false;
         
         return predicate.connects(new ConnectedTextureContext(
                 level,
                 pos,
-                state,
                 originAppearance,
                 neighborPos,
-                neighborState,
                 neighborAppearance,
                 faceDirection
         ));

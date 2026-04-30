@@ -92,15 +92,15 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
     }
     
     @Override
-    public @Nullable Object createGeometryKey(
+    public Object createGeometryKey(
             final BlockAndTintGetter level,
             final BlockPos pos,
             final BlockState state,
             final RandomSource random
     ) {
         final Object delegateKey = this.delegate.createGeometryKey(level, pos, state, random);
-        if (delegateKey == null) return null;
         return new GeometryKey(
+                this,
                 delegateKey,
                 this.predicate != null ? ConnectedTextureFaceMasks.resolve(level, pos, state, ConnectedTexturePredicateRegistry.resolve(this.predicate)) : null,
                 this.resolveConnections(level, pos, state)
@@ -155,9 +155,7 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
     }
     
     private boolean shouldRemapParticle(final TextureAtlasSprite sprite) {
-        if (this.predicate != null && this.connections.isEmpty()) {
-            return true;
-        }
+        if (this.predicate != null && this.connections.isEmpty()) return true;
         
         final Identifier spriteId = sprite.contents().name();
         
@@ -171,7 +169,8 @@ public final class ConnectedTextureBlockModel implements DynamicBlockStateModel 
     }
     
     private record GeometryKey(
-            Object delegateKey,
+            ConnectedTextureBlockModel model,
+            @Nullable Object delegateKey,
             @Nullable ConnectedTextureFaceMasks faceMasks,
             Map<Identifier, ConnectedTextureFaceMasks> spriteMasks
     ) { }
