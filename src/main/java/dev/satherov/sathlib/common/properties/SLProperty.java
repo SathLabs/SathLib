@@ -350,6 +350,326 @@ public class SLProperty<T, E extends BlockEntity> implements SLDisplayable {
     }
     
     ///
+    /// Updates the given BlockState from the given ItemStack or BlockEntity.
+    ///
+    /// @param state  block state to update
+    /// @param stack  item stack to get value from
+    /// @param entity block entity to get value from if the item stack does not contain a value
+    ///
+    public BlockState updateState(BlockState state, ItemStack stack, E entity) {
+        T value = this.extract(stack);
+        if (value == null) {
+            value = this.extract(entity);
+            if (value == null) return state;
+        }
+        return this.update(state, value);
+    }
+    
+    ///
+    /// Updates the given ItemStack from the given BlockState or BlockEntity.
+    ///
+    /// @param stack  item stack to update
+    /// @param state  block state to get value from
+    /// @param entity block entity to get value from if the block state does not contain a value
+    ///
+    public void updateStack(ItemStack stack, BlockState state, E entity) {
+        T value = this.extract(state);
+        if (value == null) {
+            value = this.extract(entity);
+            if (value == null) return;
+        }
+        this.update(stack, value);
+    }
+    
+    ///
+    /// Updates the given BlockEntity from the given BlockState or ItemStack.
+    ///
+    /// @param entity block entity to update
+    /// @param state  block state to get value from
+    /// @param stack  item stack to get value from if the block state does not contain a value
+    ///
+    public void updateEntity(E entity, BlockState state, ItemStack stack) {
+        T value = this.extract(state);
+        if (value == null) {
+            value = this.extract(stack);
+            if (value == null) return;
+        }
+        this.update(stack, value);
+    }
+
+    ///
+    /// Checks if the given BlockState matches the given ItemStack or BlockEntity.
+    ///
+    /// @param state  the BlockState to compare
+    /// @param stack  the ItemStack to compare against
+    /// @param entity the BlockEntity to compare against
+    ///
+    /// @return `true` if the BlockState matches either the ItemStack or the BlockEntity, `false` otherwise
+    ///
+    public boolean matches(BlockState state, ItemStack stack, E entity) {
+        return this.matches(state, stack) || this.matches(state, entity);
+    }
+
+    ///
+    /// Checks if the given ItemStack matches the given BlockState or BlockEntity.
+    ///
+    /// @param stack  the ItemStack to compare
+    /// @param state  the BlockState to compare against
+    /// @param entity the BlockEntity to compare against
+    ///
+    /// @return `true` if the ItemStack matches either the BlockState or the BlockEntity, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, BlockState state, E entity) {
+        return this.matches(stack, state) || this.matches(stack, entity);
+    }
+
+    ///
+    /// Checks if the given BlockEntity matches the given BlockState or ItemStack.
+    ///
+    /// @param entity the BlockEntity to compare
+    /// @param state  the BlockState to compare against
+    /// @param stack  the ItemStack to compare against
+    ///
+    /// @return `true` if the BlockEntity matches either the BlockState or the ItemStack, `false` otherwise
+    ///
+    public boolean matches(E entity, BlockState state, ItemStack stack) {
+        return this.matches(entity, state) || this.matches(entity, stack);
+    }
+
+    private boolean matchValues(@Nullable T value, @Nullable T other) {
+        return value != null && Objects.equals(value, other);
+    }
+
+    private boolean matchValuesOrNull(@Nullable T value, @Nullable T other) {
+        return value == null || other == null || Objects.equals(value, other);
+    }
+    
+    /// 
+    /// Checks if the two given BlockStates have equal values.
+    /// 
+    /// @param state the first BlockState
+    /// @param other the second BlockState
+    /// 
+    /// @return `true` if the two BlockStates have the same value, `false` otherwise
+    /// 
+    public boolean matches(BlockState state,  BlockState other) {
+        return this.matchValues(this.extract(state), this.extract(other));
+    }
+
+    ///
+    /// Checks if the two given BlockStates have equal values or if either value is unavailable.
+    ///
+    /// @param state the first BlockState
+    /// @param other the second BlockState
+    ///
+    /// @return `true` if the two BlockStates have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable BlockState other) {
+        if (state == null || other == null) return true;
+        return this.matchValuesOrNull(this.extract(state), this.extract(other));
+    }
+    
+    ///
+    /// Checks if the BlockState and ItemStack have equal values.
+    ///
+    /// @param state the BlockState
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockState and ItemStack have the same value, `false` otherwise
+    ///
+    public boolean matches(BlockState state, ItemStack stack) {
+        return this.matchValues(this.extract(state), this.extract(stack));
+    }
+
+    ///
+    /// Checks if the BlockState and ItemStack have equal values or if either value is unavailable.
+    ///
+    /// @param state the BlockState
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockState and ItemStack have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable ItemStack stack) {
+        if (state == null || stack == null) return true;
+        return this.matchValuesOrNull(this.extract(state), this.extract(stack));
+    }
+    
+    ///
+    /// Checks if the BlockState and BlockEntity have equal values.
+    ///
+    /// @param state the BlockState
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the BlockState and BlockEntity have the same value, `false` otherwise
+    ///
+    public boolean matches(BlockState state, E entity) {
+        return this.matchValues(this.extract(state), this.extract(entity));
+    }
+
+    ///
+    /// Checks if the BlockState and BlockEntity have equal values or if either value is unavailable.
+    ///
+    /// @param state the BlockState
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the BlockState and BlockEntity have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable E entity) {
+        if (state == null || entity == null) return true;
+        return this.matchValuesOrNull(this.extract(state), this.extract(entity));
+    }
+    
+    /// 
+    /// Checks if the two given ItemStacks have equal values.
+    /// 
+    /// @param stack the first ItemStack
+    /// @param other the second ItemStack
+    /// 
+    /// @return `true` if the two ItemStacks have the same value, `false` otherwise
+    /// 
+    public boolean matches(ItemStack stack, ItemStack other) {
+        return this.matchValues(this.extract(stack), this.extract(other));
+    }
+
+    ///
+    /// Checks if the two given ItemStacks have equal values or if either value is unavailable.
+    ///
+    /// @param stack the first ItemStack
+    /// @param other the second ItemStack
+    ///
+    /// @return `true` if the two ItemStacks have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable ItemStack other) {
+        if (stack == null || other == null) return true;
+        return this.matchValuesOrNull(this.extract(stack), this.extract(other));
+    }
+    
+    ///
+    /// Checks if the ItemStack and BlockState have equal values.
+    ///
+    /// @param stack the ItemStack
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the ItemStack and BlockState have the same value, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, BlockState state) {
+        return this.matchValues(this.extract(stack), this.extract(state));
+    }
+
+    ///
+    /// Checks if the ItemStack and BlockState have equal values or if either value is unavailable.
+    ///
+    /// @param stack the ItemStack
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the ItemStack and BlockState have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable BlockState state) {
+        if (stack == null || state == null) return true;
+        return this.matchValuesOrNull(this.extract(stack), this.extract(state));
+    }
+    
+    ///
+    /// Checks if the ItemStack and BlockEntity have equal values.
+    ///
+    /// @param stack the ItemStack
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the ItemStack and BlockEntity have the same value, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, E entity) {
+        return this.matchValues(this.extract(stack), this.extract(entity));
+    }
+
+    ///
+    /// Checks if the ItemStack and BlockEntity have equal values or if either value is unavailable.
+    ///
+    /// @param stack the ItemStack
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the ItemStack and BlockEntity have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable E entity) {
+        if (stack == null || entity == null) return true;
+        return this.matchValuesOrNull(this.extract(stack), this.extract(entity));
+    }
+    
+    /// 
+    /// Checks if the two given BlockEntities have equal values.
+    /// 
+    /// @param entity the first BlockEntity
+    /// @param other  the second BlockEntity
+    /// 
+    /// @return `true` if the two BlockEntities have the same value, `false` otherwise
+    /// 
+    public boolean matches(E entity, E other) {
+        return this.matchValues(this.extract(entity), this.extract(other));
+    }
+
+    ///
+    /// Checks if the two given BlockEntities have equal values or if either value is unavailable.
+    ///
+    /// @param entity the first BlockEntity
+    /// @param other  the second BlockEntity
+    ///
+    /// @return `true` if the two BlockEntities have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable E other) {
+        if (entity == null || other == null) return true;
+        return this.matchValuesOrNull(this.extract(entity), this.extract(other));
+    }
+    
+    ///
+    /// Checks if the BlockEntity and BlockState have equal values.
+    ///
+    /// @param entity the BlockEntity
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the BlockEntity and BlockState have the same value, `false` otherwise
+    ///
+    public boolean matches(E entity, BlockState state) {
+        return this.matchValues(this.extract(entity), this.extract(state));
+    }
+
+    ///
+    /// Checks if the BlockEntity and BlockState have equal values or if either value is unavailable.
+    ///
+    /// @param entity the BlockEntity
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the BlockEntity and BlockState have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable BlockState state) {
+        if (entity == null || state == null) return true;
+        return this.matchValuesOrNull(this.extract(entity), this.extract(state));
+    }
+    
+    ///
+    /// Checks if the BlockEntity and ItemStack have equal values.
+    ///
+    /// @param entity the BlockEntity
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockEntity and ItemStack have the same value, `false` otherwise
+    ///
+    public boolean matches(E entity, ItemStack stack) {
+        return this.matchValues(this.extract(entity), this.extract(stack));
+    }
+
+    ///
+    /// Checks if the BlockEntity and ItemStack have equal values or if either value is unavailable.
+    ///
+    /// @param entity the BlockEntity
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockEntity and ItemStack have the same value or either side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable ItemStack stack) {
+        if (entity == null || stack == null) return true;
+        return this.matchValuesOrNull(this.extract(entity), this.extract(stack));
+    }
+    
+    ///
     /// Builds the display component for this property.
     /// The first argument may be an {@link ItemStack}, {@link BlockState}, or compatible {@link BlockEntity}
     /// used to resolve the current property value.

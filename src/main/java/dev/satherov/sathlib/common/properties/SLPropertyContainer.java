@@ -155,6 +155,367 @@ public class SLPropertyContainer<B extends Block, I extends Item, E extends Bloc
         }
     }
     
+    ///
+    /// Updates the given BlockState from the given ItemStack or BlockEntity.
+    ///
+    /// @param state  block state to update
+    /// @param stack  item stack to get value from
+    /// @param entity block entity to get value from if the item stack does not contain a value
+    ///
+    public BlockState updateState(BlockState state, ItemStack stack, E entity) {
+        if (this.validate(stack, state, entity)) return state;
+        for (SLProperty<?, E> property : this.properties.values()) {
+            state = property.updateState(state, stack, entity);
+        }
+        return state;
+    }
+    
+    ///
+    /// Updates the given ItemStack from the given BlockState or BlockEntity.
+    ///
+    /// @param stack  item stack to update
+    /// @param state  block state to get value from
+    /// @param entity block entity to get value from if the block state does not contain a value
+    ///
+    public void updateStack(ItemStack stack, BlockState state, E entity) {
+        if (this.validate(stack, state, entity)) return;
+        for (SLProperty<?, E> property : this.properties.values()) {
+            property.updateStack(stack, state, entity);
+        }
+    }
+    
+    ///
+    /// Updates the given BlockEntity from the given BlockState or ItemStack.
+    ///
+    /// @param entity block entity to update
+    /// @param state  block state to get value from
+    /// @param stack  item stack to get value from if the block state does not contain a value
+    ///
+    public void updateEntity(E entity, BlockState state, ItemStack stack) {
+        if (this.validate(stack, state, entity)) return;
+        for (SLProperty<?, E> property : this.properties.values()) {
+            property.updateEntity(entity, state, stack);
+        }
+    }
+
+    ///
+    /// Checks if the given BlockState matches the given ItemStack or BlockEntity.
+    ///
+    /// @param state  the BlockState to compare
+    /// @param stack  the ItemStack to compare against
+    /// @param entity the BlockEntity to compare against
+    ///
+    /// @return `true` if every property of the BlockState matches either the ItemStack or the BlockEntity, `false` otherwise
+    ///
+    public boolean matches(BlockState state, ItemStack stack, E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(state, stack, entity)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the given ItemStack matches the given BlockState or BlockEntity.
+    ///
+    /// @param stack  the ItemStack to compare
+    /// @param state  the BlockState to compare against
+    /// @param entity the BlockEntity to compare against
+    ///
+    /// @return `true` if every property of the ItemStack matches either the BlockState or the BlockEntity, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, BlockState state, E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(stack, state, entity)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the given BlockEntity matches the given BlockState or ItemStack.
+    ///
+    /// @param entity the BlockEntity to compare
+    /// @param state  the BlockState to compare against
+    /// @param stack  the ItemStack to compare against
+    ///
+    /// @return `true` if every property of the BlockEntity matches either the BlockState or the ItemStack, `false` otherwise
+    ///
+    public boolean matches(E entity, BlockState state, ItemStack stack) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(entity, state, stack)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the two given BlockStates have equal values.
+    ///
+    /// @param state the first BlockState
+    /// @param other the second BlockState
+    ///
+    /// @return `true` if the two BlockStates have the same value, `false` otherwise
+    ///
+    public boolean matches(BlockState state,  BlockState other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(state, other)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the two given BlockStates have equal values or if either side is unavailable.
+    ///
+    /// @param state the first BlockState
+    /// @param other the second BlockState
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable BlockState other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(state, other)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the BlockState and ItemStack have equal values.
+    ///
+    /// @param state the BlockState
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockState and ItemStack have the same value, `false` otherwise
+    ///
+    public boolean matches(BlockState state, ItemStack stack) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(state, stack)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the BlockState and ItemStack have equal values or if either side is unavailable.
+    ///
+    /// @param state the BlockState
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable ItemStack stack) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(state, stack)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the BlockState and BlockEntity have equal values.
+    ///
+    /// @param state the BlockState
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the BlockState and BlockEntity have the same value, `false` otherwise
+    ///
+    public boolean matches(BlockState state, E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(state, entity)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the BlockState and BlockEntity have equal values or if either side is unavailable.
+    ///
+    /// @param state the BlockState
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable BlockState state, @Nullable E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(state, entity)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the two given ItemStacks have equal values.
+    ///
+    /// @param stack the first ItemStack
+    /// @param other the second ItemStack
+    ///
+    /// @return `true` if the two ItemStacks have the same value, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, ItemStack other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(stack, other)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the two given ItemStacks have equal values or if either side is unavailable.
+    ///
+    /// @param stack the first ItemStack
+    /// @param other the second ItemStack
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable ItemStack other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(stack, other)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the ItemStack and BlockState have equal values.
+    ///
+    /// @param stack the ItemStack
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the ItemStack and BlockState have the same value, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, BlockState state) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(stack, state)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the ItemStack and BlockState have equal values or if either side is unavailable.
+    ///
+    /// @param stack the ItemStack
+    /// @param state the BlockState
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable BlockState state) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(stack, state)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the ItemStack and BlockEntity have equal values.
+    ///
+    /// @param stack the ItemStack
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if the ItemStack and BlockEntity have the same value, `false` otherwise
+    ///
+    public boolean matches(ItemStack stack, E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(stack, entity)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the ItemStack and BlockEntity have equal values or if either side is unavailable.
+    ///
+    /// @param stack the ItemStack
+    /// @param entity the BlockEntity
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable ItemStack stack, @Nullable E entity) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(stack, entity)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the two given BlockEntities have equal values.
+    ///
+    /// @param entity the first BlockEntity
+    /// @param other  the second BlockEntity
+    ///
+    /// @return `true` if the two BlockEntities have the same value, `false` otherwise
+    ///
+    public boolean matches(E entity, E other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(entity, other)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the two given BlockEntities have equal values or if either side is unavailable.
+    ///
+    /// @param entity the first BlockEntity
+    /// @param other  the second BlockEntity
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable E other) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(entity, other)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the BlockEntity and BlockState have equal values.
+    ///
+    /// @param entity the BlockEntity
+    /// @param state the BlockState
+    ///
+    /// @return `true` if the BlockEntity and BlockState have the same value, `false` otherwise
+    ///
+    public boolean matches(E entity, BlockState state) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(entity, state)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the BlockEntity and BlockState have equal values or if either side is unavailable.
+    ///
+    /// @param entity the BlockEntity
+    /// @param state the BlockState
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable BlockState state) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(entity, state)) return false;
+        }
+        return true;
+    }
+    
+    ///
+    /// Checks if the BlockEntity and ItemStack have equal values.
+    ///
+    /// @param entity the BlockEntity
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if the BlockEntity and ItemStack have the same value, `false` otherwise
+    ///
+    public boolean matches(E entity, ItemStack stack) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matches(entity, stack)) return false;
+        }
+        return true;
+    }
+
+    ///
+    /// Checks if the BlockEntity and ItemStack have equal values or if either side is unavailable.
+    ///
+    /// @param entity the BlockEntity
+    /// @param stack the ItemStack
+    ///
+    /// @return `true` if all properties match or any compared side resolves to `null`
+    ///
+    public boolean matchOrNull(@Nullable E entity, @Nullable ItemStack stack) {
+        for (SLProperty<?, E> property : this.properties.values()) {
+            if (!property.matchOrNull(entity, stack)) return false;
+        }
+        return true;
+    }
+    
     @Override
     public Iterator<SLProperty<?, E>> iterator() {
         return this.properties.values().iterator();
