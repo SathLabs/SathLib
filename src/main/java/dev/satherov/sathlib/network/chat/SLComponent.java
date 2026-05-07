@@ -55,6 +55,17 @@ public class SLComponent implements Component {
         return new SLComponent(component);
     }
     
+    /// 
+    /// Creates a new component with the given string as literal-root
+    /// 
+    /// @param string literal string to wrap
+    /// 
+    /// @return component with the given string as literal-root
+    /// 
+    public static SLComponent string(String string) {
+        return new SLComponent(Component.literal(string));   
+    }
+    
     ///
     /// Appends a {@link Component} to the root
     ///
