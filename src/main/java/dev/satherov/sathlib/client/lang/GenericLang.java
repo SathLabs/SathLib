@@ -17,17 +17,19 @@ import java.util.function.BiConsumer;
 @SuppressWarnings("doclint:missing")
 public enum GenericLang implements SLTranslatable {
     // @formatter:off
-    ON      ("on",       "On"),
-    OFF     ("off",      "Off"),
-    ENABLED ("enabled",  "Enabled"),
-    DISABLED("disabled", "Disabled"),
-    ALLOW   ("allow",    "Allow"),
-    DENY    ("deny",     "Deny"),
-    ALLOWED ("allowed",  "Allowed"),
-    DENIED  ("denied",   "Denied"),
-    NONE    ("none",     "None"),
-    ALL     ("all",      "All"),
-    ANY     ("any",      "Any"),
+    ON         ("on",          "On"),
+    OFF        ("off",         "Off"),
+    ENABLED    ("enabled",     "Enabled"),
+    DISABLED   ("disabled",    "Disabled"),
+    ALLOW      ("allow",       "Allow"),
+    DENY       ("deny",        "Deny"),
+    ALLOWED    ("allowed",     "Allowed"),
+    DENIED     ("denied",      "Denied"),
+    NONE       ("none",        "None"),
+    ALL        ("all",         "All"),
+    ANY        ("any",         "Any"),
+    SUPPORTED  ("supported",   "Supported"),
+    UNSUPPORTED("unsupported", "Unsupported"),
     // @formatter:on
     ;
     

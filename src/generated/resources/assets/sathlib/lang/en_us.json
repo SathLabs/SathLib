@@ -13,6 +13,8 @@
   "generic.sathlib.none": "None",
   "generic.sathlib.off": "Off",
   "generic.sathlib.on": "On",
+  "generic.sathlib.supported": "Supported",
+  "generic.sathlib.unsupported": "Unsupported",
   "input.sathlib.wheel.down": "Wheel Down",
   "input.sathlib.wheel.up": "Wheel Up"
 }
