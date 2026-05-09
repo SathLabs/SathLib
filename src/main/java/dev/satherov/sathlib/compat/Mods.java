@@ -10,8 +10,7 @@ public enum Mods implements CompatMod {
     JADE("jade"),
     JEI("jei"),
     EMI("emi"),
-    FRAMED_BLOCKS("framedblocks")
-    ;
+    FRAMED_BLOCKS("framedblocks");
     
     private final String modId;
 }

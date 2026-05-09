@@ -11,7 +11,6 @@ import net.minecraft.core.Direction;
 ///
 @Getter
 @RequiredArgsConstructor
-@SuppressWarnings("doclint:missing")
 public enum ConnectionFace {
     ///
     ///  negative X Direction, West in world-space
@@ -40,6 +39,24 @@ public enum ConnectionFace {
     private final Direction face;
     private final Direction north;
     private final Direction east;
+    
+    ///
+    /// Resolves the connected face based on the world-space direction.
+    ///
+    /// @param face the world-space direction
+    ///
+    /// @return the face
+    ///
+    public static ConnectionFace of(final Direction face) {
+        return switch (face) {
+            case DOWN -> ConnectionFace.Y_NEG;
+            case UP -> ConnectionFace.Y_POS;
+            case NORTH -> ConnectionFace.Z_NEG;
+            case SOUTH -> ConnectionFace.Z_POS;
+            case WEST -> ConnectionFace.X_NEG;
+            case EAST -> ConnectionFace.X_POS;
+        };
+    }
     
     ///
     /// Returns the world-space direction opposite this face's local north direction.
@@ -84,23 +101,5 @@ public enum ConnectionFace {
         }
         
         return result;
-    }
-    
-    ///
-    /// Resolves the connected face based on the world-space direction.
-    ///
-    /// @param face the world-space direction
-    ///
-    /// @return the face
-    ///
-    public static ConnectionFace of(final Direction face) {
-        return switch (face) {
-            case DOWN -> ConnectionFace.Y_NEG;
-            case UP -> ConnectionFace.Y_POS;
-            case NORTH -> ConnectionFace.Z_NEG;
-            case SOUTH -> ConnectionFace.Z_POS;
-            case WEST -> ConnectionFace.X_NEG;
-            case EAST -> ConnectionFace.X_POS;
-        };
     }
 }

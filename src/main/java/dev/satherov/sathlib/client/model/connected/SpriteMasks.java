@@ -3,7 +3,6 @@ package dev.satherov.sathlib.client.model.connected;
 ///
 /// Bit-mask constants describing connected neighbors around a sprite tile.
 ///
-@SuppressWarnings("PointlessBitwiseExpression")
 public final class SpriteMasks {
     
     ///
@@ -14,7 +13,7 @@ public final class SpriteMasks {
     ///
     /// North connection bit.
     ///
-    public static final int N = 1 << 0;
+    public static final int N = 1;
     ///
     /// North-east connection bit.
     ///
@@ -82,17 +81,5 @@ public final class SpriteMasks {
         if (northWest) mask |= SpriteMasks.NW;
         
         return mask;
-    }
-    
-    ///
-    /// Returns whether a direction bit is present in the supplied mask.
-    ///
-    /// @param mask      sprite mask to inspect
-    /// @param direction direction bit to test
-    ///
-    /// @return `true` when the direction bit is set
-    ///
-    public static boolean has(int mask, int direction) {
-        return (mask & direction) != 0;
     }
 }

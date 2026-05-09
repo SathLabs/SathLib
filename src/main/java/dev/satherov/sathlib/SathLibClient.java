@@ -1,6 +1,8 @@
 package dev.satherov.sathlib;
 
 import dev.satherov.sathlib.client.model.SLModelLoaders;
+import dev.satherov.sathlib.client.model.conditional.ConditionalRules;
+import dev.satherov.sathlib.client.model.connected.ConnectionRules;
 import dev.satherov.sathlib.client.render.SLRenderPipelines;
 
 import net.neoforged.api.distmarker.Dist;
@@ -23,5 +25,8 @@ public class SathLibClient {
     public SathLibClient(final IEventBus bus, final FMLModContainer container) {
         SLModelLoaders.register(bus);
         SLRenderPipelines.register(bus);
+        
+        ConnectionRules.init();
+        ConditionalRules.init();
     }
 }

@@ -6,20 +6,34 @@ package dev.satherov.sathlib.client.model.connected;
 public final class SpriteSheet {
     
     ///
-    /// Number of horizontal partitions in the connected texture atlas.
+    /// Number of partitions in the connected texture atlas.
     ///
     public static final int SIZE = 8;
-    private static final int WIDTH = 8;
-    private static final int HEIGHT = 6;
     ///
     /// UV span of a single atlas tile relative to the full sprite.
     ///
     public static final float PARTITION = 1.0F / SpriteSheet.SIZE;
+    ///
+    /// UV size of one tile in the connected texture atlas.
+    ///
+    public static final float CTM_UV_SIZE = 16.0F * SpriteSheet.PARTITION;
     
+    private static final int WIDTH = 8;
+    private static final int HEIGHT = 6;
     private static final int[][] SPRITES = SpriteSheet.createSprites();
-    private static final SpriteSheet.Pos[] CACHE = SpriteSheet.createCache();
+    private static final Pos[] CACHE = SpriteSheet.createCache();
     
-    private SpriteSheet() { }
+    ///
+    /// Resolves the atlas position for a sprite mask.
+    ///
+    /// @param mask sprite connection mask
+    ///
+    /// @return atlas tile position for the mask
+    ///
+    public static Pos resolve(int mask) {
+        final Pos pos = SpriteSheet.CACHE[mask & 0xFF];
+        return pos != null ? pos : Pos.ORIGIN;
+    }
     
     private static int[][] createSprites() {
         final int[][] sprites = new int[SpriteSheet.HEIGHT][SpriteSheet.WIDTH];
@@ -82,32 +96,20 @@ public final class SpriteSheet {
         return sprites;
     }
     
-    private static SpriteSheet.Pos[] createCache() {
-        final SpriteSheet.Pos[] cache = new SpriteSheet.Pos[256];
+    private static Pos[] createCache() {
+        final Pos[] cache = new Pos[256];
         
-        cache[SpriteMasks.NONE] = SpriteSheet.Pos.ORIGIN;
+        cache[SpriteMasks.NONE] = Pos.ORIGIN;
         
         for (int y = 0; y < SpriteSheet.SPRITES.length; y++) {
             for (int x = 0; x < SpriteSheet.SPRITES[y].length; x++) {
                 if (x == 0 && y == 0) continue;
                 final int mask = SpriteSheet.SPRITES[y][x];
-                if (mask != SpriteMasks.NONE) cache[mask] = new SpriteSheet.Pos(x, y);
+                if (mask != SpriteMasks.NONE) cache[mask] = new Pos(x, y);
             }
         }
         
         return cache;
-    }
-    
-    ///
-    /// Resolves the atlas position for a sprite mask.
-    ///
-    /// @param mask sprite connection mask
-    ///
-    /// @return atlas tile position for the mask
-    ///
-    public static Pos resolve(int mask) {
-        final SpriteSheet.Pos pos = SpriteSheet.CACHE[mask & 0xFF];
-        return pos != null ? pos : Pos.ORIGIN;
     }
     
     ///

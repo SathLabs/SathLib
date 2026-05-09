@@ -94,8 +94,12 @@ repositories {
 dependencies {
     compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-26.1.2-neoforge:${jei_version}"
+    compileOnly files("../crystalix/libs/FramedBlocks-11.1.2.jar")
 
     implementation "maven.modrinth:jade:${jade_version}"
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -160,6 +164,10 @@ tasks.named('javadoc', Javadoc).configure {
 }
 
 tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+test {
     useJUnitPlatform()
 }
 
