@@ -1,7 +1,6 @@
 package dev.satherov.sathlib.client.input;
 
 import dev.satherov.sathlib.client.lang.SLTranslatable;
-import dev.satherov.sathlib.util.SLResourceUtils;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.InputEvent;

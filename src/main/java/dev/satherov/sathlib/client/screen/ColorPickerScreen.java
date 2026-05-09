@@ -13,7 +13,7 @@ import dev.satherov.sathlib.client.screen.node.UILeafNode;
 import dev.satherov.sathlib.client.screen.node.UINode;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.util.SLColorUtils;
-import dev.satherov.sathlib.util.SLNumberUtils;
+import dev.satherov.sathlib.util.SLMathUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -48,15 +48,12 @@ import java.util.function.IntConsumer;
 public class ColorPickerScreen extends SLScreen {
     
     private static final Component TITLE = Component.literal("Color Picker");
-    
+    private final @Nullable IntConsumer onChanged;
     private @Nullable HexFieldNode hexField;
-    
     private int rgb;
     private float hue;
     private float saturation;
     private float value;
-    
-    private final @Nullable IntConsumer onChanged;
     
     ///
     /// Creates a color picker initialized to red.
@@ -84,6 +81,45 @@ public class ColorPickerScreen extends SLScreen {
         super(ColorPickerScreen.TITLE);
         this.onChanged = onChanged;
         this.applyRgb(initialRgb & 0xFFFFFF, true);
+    }
+    
+    private static String sanitizeHexValue(@Nullable String value) {
+        String digits = SLMathUtils.sanitizeHex(value);
+        if (digits.isEmpty()) {
+            return "";
+        }
+        return "#" + digits;
+    }
+    
+    private static void drawInsetBox(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
+        graphics.fill(x, y, x + width, y + height, Palette.SOOT);
+        graphics.fillGradient(
+                x + 1,
+                y + 1,
+                x + width - 1,
+                y + height - 1,
+                Palette.VEIL,
+                Palette.CLEAR
+        );
+    }
+    
+    private static void drawOutline(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
+        ColorPickerScreen.drawOutline(graphics, x, y, width, height, color, 1);
+    }
+    
+    private static void drawOutline(
+            GuiGraphicsExtractor graphics,
+            int x,
+            int y,
+            int width,
+            int height,
+            int color,
+            int thickness
+    ) {
+        graphics.fill(x, y, x + width, y + thickness, color);
+        graphics.fill(x, y + height - thickness, x + width, y + height, color);
+        graphics.fill(x, y, x + thickness, y + height, color);
+        graphics.fill(x + width - thickness, y, x + width, y + height, color);
     }
     
     @Override
@@ -159,7 +195,7 @@ public class ColorPickerScreen extends SLScreen {
                 SLLength.pixels(Units.INFO_WIDTH),
                 SLLength.pixels(Units.FIELD_HEIGHT)
         );
-        hexFieldNode.setValueSilently(SLNumberUtils.rgbToHex(this.getRgb()));
+        hexFieldNode.setValueSilently(SLMathUtils.rgbToHex(this.getRgb()));
         this.hexField = hexFieldNode;
         rightColumn.addChild(hexFieldNode);
         
@@ -250,14 +286,14 @@ public class ColorPickerScreen extends SLScreen {
         if (this.hexField == null || this.hexField.isFocused()) {
             return;
         }
-        this.hexField.setValueSilently(SLNumberUtils.rgbToHex(this.getRgb()));
+        this.hexField.setValueSilently(SLMathUtils.rgbToHex(this.getRgb()));
     }
     
     private void commitHexValue(String value) {
-        Integer rgb = SLNumberUtils.tryPraseToHex(value);
+        Integer rgb = SLMathUtils.tryPraseToHex(value);
         if (rgb == null) {
             String paddedValue = value + "0".repeat(Math.max(0, 7 - value.length()));
-            rgb = SLNumberUtils.tryPraseToHex(paddedValue);
+            rgb = SLMathUtils.tryPraseToHex(paddedValue);
         }
         
         if (rgb == null) {
@@ -267,7 +303,7 @@ public class ColorPickerScreen extends SLScreen {
         
         this.applyRgb(rgb, true);
         if (this.hexField != null) {
-            this.hexField.setValueSilently(SLNumberUtils.rgbToHex(this.getRgb()));
+            this.hexField.setValueSilently(SLMathUtils.rgbToHex(this.getRgb()));
         }
         this.fireChanged();
     }
@@ -278,43 +314,74 @@ public class ColorPickerScreen extends SLScreen {
         }
     }
     
-    private static String sanitizeHexValue(@Nullable String value) {
-        String digits = SLNumberUtils.sanitizeHex(value);
-        if (digits.isEmpty()) {
-            return "";
+    ///
+    /// RGB channel selector used by the gradient sliders.
+    ///
+    private enum ColorChannel {
+        RED,
+        GREEN,
+        BLUE
+    }
+    
+    ///
+    /// Fixed layout constants used to assemble the picker UI.
+    ///
+    private static final class Units {
+        
+        private static final int PANEL_PADDING = 16;
+        private static final int TITLE_HEIGHT = 16;
+        private static final int ACCENT_Y = 8;
+        private static final int SV_SIZE = 184;
+        private static final int HUE_WIDTH = 18;
+        private static final int COLUMN_GAP = 14;
+        private static final int INFO_WIDTH = 116;
+        private static final int PREVIEW_SIZE = 82;
+        private static final int PREVIEW_FILL_SIZE = 72;
+        private static final int FIELD_HEIGHT = 18;
+        private static final int SLIDER_HEIGHT = 10;
+        private static final int SLIDER_GAP = 14;
+        private static final int SECTION_GAP = 16;
+        private static final int TEXT_PADDING = 4;
+        
+        private static int panelWidth() {
+            return (Units.PANEL_PADDING * 2) + Units.SV_SIZE + Units.HUE_WIDTH + Units.INFO_WIDTH + (Units.COLUMN_GAP * 2);
         }
-        return "#" + digits;
+        
+        private static int rightColumnHeight() {
+            return Units.PREVIEW_SIZE
+                    + Units.SECTION_GAP
+                    + (Units.SLIDER_HEIGHT * 3)
+                    + (Units.SLIDER_GAP * 2)
+                    + Units.SECTION_GAP
+                    + Units.FIELD_HEIGHT;
+        }
+        
+        private static int panelHeight() {
+            return (Units.PANEL_PADDING * 2) + Units.TITLE_HEIGHT + Math.max(Units.SV_SIZE, Units.rightColumnHeight());
+        }
     }
     
-    private static void drawInsetBox(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
-        graphics.fill(x, y, x + width, y + height, Palette.SOOT);
-        graphics.fillGradient(
-                x + 1,
-                y + 1,
-                x + width - 1,
-                y + height - 1,
-                Palette.VEIL,
-                Palette.CLEAR
-        );
-    }
-    
-    private static void drawOutline(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
-        ColorPickerScreen.drawOutline(graphics, x, y, width, height, color, 1);
-    }
-    
-    private static void drawOutline(
-            GuiGraphicsExtractor graphics,
-            int x,
-            int y,
-            int width,
-            int height,
-            int color,
-            int thickness
-    ) {
-        graphics.fill(x, y, x + width, y + thickness, color);
-        graphics.fill(x, y + height - thickness, x + width, y + height, color);
-        graphics.fill(x, y, x + thickness, y + height, color);
-        graphics.fill(x + width - thickness, y, x + width, y + height, color);
+    ///
+    /// Dark neutral palette copied from the older picker chrome.
+    ///
+    private static final class Palette {
+        
+        private static final int SHADOW = 0x24000000;
+        private static final int SCRIM = 0x7A07090C;
+        private static final int PITCH = 0xFF0B0D10;
+        private static final int SOOT = 0xCC080B0F;
+        private static final int CHARCOAL = 0xD10D1116;
+        private static final int ONYX = 0xF7101419;
+        private static final int GRAPHITE = 0xF71A1F26;
+        private static final int SLATE = 0xFF232A33;
+        private static final int STEEL = 0xFF46515F;
+        private static final int STORM = 0xFF6A869F;
+        private static final int ASH = 0xFF7F8A96;
+        private static final int VEIL = 0x22000000;
+        private static final int CLEAR = 0x00000000;
+        private static final int PEARL = 0xFFD6DEE7;
+        private static final int CLOUD = 0xFFE8EDF3;
+        private static final int SNOW = 0xFFFFFFFF;
     }
     
     ///
@@ -896,75 +963,5 @@ public class ColorPickerScreen extends SLScreen {
             }
             return this.value.substring(this.selectionStart(), this.selectionEnd());
         }
-    }
-    
-    ///
-    /// RGB channel selector used by the gradient sliders.
-    ///
-    private enum ColorChannel {
-        RED,
-        GREEN,
-        BLUE
-    }
-    
-    ///
-    /// Fixed layout constants used to assemble the picker UI.
-    ///
-    private static final class Units {
-        
-        private static final int PANEL_PADDING = 16;
-        private static final int TITLE_HEIGHT = 16;
-        private static final int ACCENT_Y = 8;
-        private static final int SV_SIZE = 184;
-        private static final int HUE_WIDTH = 18;
-        private static final int COLUMN_GAP = 14;
-        private static final int INFO_WIDTH = 116;
-        private static final int PREVIEW_SIZE = 82;
-        private static final int PREVIEW_FILL_SIZE = 72;
-        private static final int FIELD_HEIGHT = 18;
-        private static final int SLIDER_HEIGHT = 10;
-        private static final int SLIDER_GAP = 14;
-        private static final int SECTION_GAP = 16;
-        private static final int TEXT_PADDING = 4;
-        
-        private static int panelWidth() {
-            return (Units.PANEL_PADDING * 2) + Units.SV_SIZE + Units.HUE_WIDTH + Units.INFO_WIDTH + (Units.COLUMN_GAP * 2);
-        }
-        
-        private static int rightColumnHeight() {
-            return Units.PREVIEW_SIZE
-                    + Units.SECTION_GAP
-                    + (Units.SLIDER_HEIGHT * 3)
-                    + (Units.SLIDER_GAP * 2)
-                    + Units.SECTION_GAP
-                    + Units.FIELD_HEIGHT;
-        }
-        
-        private static int panelHeight() {
-            return (Units.PANEL_PADDING * 2) + Units.TITLE_HEIGHT + Math.max(Units.SV_SIZE, Units.rightColumnHeight());
-        }
-    }
-    
-    ///
-    /// Dark neutral palette copied from the older picker chrome.
-    ///
-    private static final class Palette {
-        
-        private static final int SHADOW = 0x24000000;
-        private static final int SCRIM = 0x7A07090C;
-        private static final int PITCH = 0xFF0B0D10;
-        private static final int SOOT = 0xCC080B0F;
-        private static final int CHARCOAL = 0xD10D1116;
-        private static final int ONYX = 0xF7101419;
-        private static final int GRAPHITE = 0xF71A1F26;
-        private static final int SLATE = 0xFF232A33;
-        private static final int STEEL = 0xFF46515F;
-        private static final int STORM = 0xFF6A869F;
-        private static final int ASH = 0xFF7F8A96;
-        private static final int VEIL = 0x22000000;
-        private static final int CLEAR = 0x00000000;
-        private static final int PEARL = 0xFFD6DEE7;
-        private static final int CLOUD = 0xFFE8EDF3;
-        private static final int SNOW = 0xFFFFFFFF;
     }
 }

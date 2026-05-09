@@ -26,6 +26,19 @@ import java.util.Optional;
 ///
 public class ConfigHandlers {
     
+    ///
+    /// All supported config types and their corresponding handlers.
+    ///
+    private static final Map<Class<?>, ConfigHandler> HANDLERS = ImmutableMap.<Class<?>, ConfigHandler>builder()
+            .put(String.class, new StringHandler())
+            .put(Boolean.class, new BooleanHandler())
+            .put(Integer.class, new IntegerHandler())
+            .put(Long.class, new LongHandler())
+            .put(Double.class, new DoubleHandler())
+            .put(Enum.class, new EnumHandler())
+            .put(List.class, new ListHandler())
+            .build();
+    
     private ConfigHandlers() { }
     
     ///
@@ -47,17 +60,37 @@ public class ConfigHandlers {
     }
     
     ///
-    /// All supported config types and their corresponding handlers.
+    /// Checks to make sure the given object is not null and of the given type.
     ///
-    private static final Map<Class<?>, ConfigHandler> HANDLERS = ImmutableMap.<Class<?>, ConfigHandler>builder()
-            .put(String.class, new StringHandler())
-            .put(Boolean.class, new BooleanHandler())
-            .put(Integer.class, new IntegerHandler())
-            .put(Long.class, new LongHandler())
-            .put(Double.class, new DoubleHandler())
-            .put(Enum.class, new EnumHandler())
-            .put(List.class, new ListHandler())
-            .build();
+    /// @param name   Name of the config entry.
+    /// @param object Object to check.
+    /// @param clazz  Class of the object.
+    ///
+    /// @return The given object cast to the given class.
+    ///
+    private static <T> T validate(String name, Object object, Class<T> clazz) throws IllegalArgumentException, NullPointerException {
+        if (object == null) {
+            throw new NullPointerException("Config value " + name + " is null");
+        }
+        
+        if (!clazz.isInstance(object)) {
+            throw new IllegalArgumentException("Config value " + name + " is not of type " + clazz.getName());
+        }
+        
+        return clazz.cast(object);
+    }
+    
+    ///
+    /// Adds the given comments to the config builder.
+    ///
+    /// @param builder      Builder for the config.
+    /// @param comments     Comments to add.
+    /// @param defaultValue Default value of the config entry.
+    ///
+    private static void comment(ModConfigSpec.Builder builder, List<String> comments, Object defaultValue) {
+        for (String comment : comments) builder.comment(" " + comment);
+        builder.comment(" Default: " + defaultValue);
+    }
     
     ///
     /// Functional interface for creating a {@link ModConfigSpec.ConfigValue} for a given field.
@@ -153,19 +186,6 @@ public class ConfigHandlers {
     @SuppressWarnings("rawtypes")
     private static class EnumHandler implements ConfigHandler {
         
-        @Override
-        public ModConfigSpec.ConfigValue<?> create(ModConfigSpec.Builder builder, String name, Field field, Object object, List<String> comments) {
-            Class<? extends Enum> clazz = field.getType().asSubclass(Enum.class);
-            Enum<?> value = ConfigHandlers.validate(name, object, clazz);
-            if (!(value instanceof ConfigEnum cfg)) {
-                throw new IllegalArgumentException("Enum " + clazz.getSimpleName() + " is not a Config Enum");
-            }
-            
-            ConfigHandlers.comment(builder, comments, value);
-            Arrays.stream(clazz.getEnumConstants()).forEach(e -> builder.comment(" " + e.name() + ": " + cfg.description()));
-            return EnumHandler.defineEnum(name, builder, value, clazz);
-        }
-        
         ///
         /// Handles the unchecked casts for the enum value.
         ///
@@ -204,6 +224,19 @@ public class ConfigHandlers {
                     clazz
             );
         }
+        
+        @Override
+        public ModConfigSpec.ConfigValue<?> create(ModConfigSpec.Builder builder, String name, Field field, Object object, List<String> comments) {
+            Class<? extends Enum> clazz = field.getType().asSubclass(Enum.class);
+            Enum<?> value = ConfigHandlers.validate(name, object, clazz);
+            if (!(value instanceof ConfigEnum cfg)) {
+                throw new IllegalArgumentException("Enum " + clazz.getSimpleName() + " is not a Config Enum");
+            }
+            
+            ConfigHandlers.comment(builder, comments, value);
+            Arrays.stream(clazz.getEnumConstants()).forEach(e -> builder.comment(" " + e.name() + ": " + cfg.description()));
+            return EnumHandler.defineEnum(name, builder, value, clazz);
+        }
     }
     
     ///
@@ -218,39 +251,6 @@ public class ConfigHandlers {
             ConfigHandlers.comment(builder, comments, value);
             return builder.defineList(name, value, null, _ -> true);
         }
-    }
-    
-    ///
-    /// Checks to make sure the given object is not null and of the given type.
-    ///
-    /// @param name   Name of the config entry.
-    /// @param object Object to check.
-    /// @param clazz  Class of the object.
-    ///
-    /// @return The given object cast to the given class.
-    ///
-    private static <T> T validate(String name, Object object, Class<T> clazz) throws IllegalArgumentException, NullPointerException {
-        if (object == null) {
-            throw new NullPointerException("Config value " + name + " is null");
-        }
-        
-        if (!clazz.isInstance(object)) {
-            throw new IllegalArgumentException("Config value " + name + " is not of type " + clazz.getName());
-        }
-        
-        return clazz.cast(object);
-    }
-    
-    ///
-    /// Adds the given comments to the config builder.
-    ///
-    /// @param builder      Builder for the config.
-    /// @param comments     Comments to add.
-    /// @param defaultValue Default value of the config entry.
-    ///
-    private static void comment(ModConfigSpec.Builder builder, List<String> comments, Object defaultValue) {
-        for (String comment : comments) builder.comment(" " + comment);
-        builder.comment(" Default: " + defaultValue);
     }
     
     ///

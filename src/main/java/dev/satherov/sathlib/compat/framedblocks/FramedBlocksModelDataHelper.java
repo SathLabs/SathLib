@@ -9,11 +9,11 @@ import net.neoforged.neoforge.model.data.ModelData;
 
 import org.jspecify.annotations.Nullable;
 
-import java.util.Objects;
-
 import io.github.xfacthd.framedblocks.api.model.data.AbstractFramedBlockData;
 import io.github.xfacthd.framedblocks.api.model.data.FramedBlockData;
 import io.github.xfacthd.framedblocks.api.model.data.ModelDataEntry;
+
+import java.util.Objects;
 
 ///
 /// FramedBlocks-specific model-data helpers.
@@ -48,7 +48,7 @@ public class FramedBlocksModelDataHelper {
     ///
     /// Resolves the given SathLib model property from the framed block data query payload.
     ///
-    /// @param property  SathLib model property to resolve
+    /// @param property   SathLib model property to resolve
     /// @param framedData framed block data to inspect
     ///
     /// @return resolved model property value, or `null`

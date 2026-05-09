@@ -17,16 +17,6 @@ package dev.satherov.sathlib.client.screen.layout;
 public record SLScalar(Mode mode, float value) {
     
     ///
-    /// Resolution modes supported by {@link SLScalar}.
-    ///
-    public enum Mode {
-        /// Resolve to a fixed pixel value.
-        FIXED,
-        /// Resolve to a fraction of the reference size.
-        PERCENT,
-    }
-    
-    ///
     /// Creates a fixed scalar in pixels.
     ///
     /// @param pixels fixed amount
@@ -69,5 +59,15 @@ public record SLScalar(Mode mode, float value) {
             case FIXED -> Math.round(this.value);
             case PERCENT -> Math.round(reference * this.value);
         };
+    }
+    
+    ///
+    /// Resolution modes supported by {@link SLScalar}.
+    ///
+    public enum Mode {
+        /// Resolve to a fixed pixel value.
+        FIXED,
+        /// Resolve to a fraction of the reference size.
+        PERCENT,
     }
 }

@@ -23,17 +23,6 @@ import java.util.function.Supplier;
 public interface PropertyApplicator<T, H extends PropertyHolder> {
     
     ///
-    /// Sets a value and then returns the modified property holder
-    ///
-    /// @param block the block property holder
-    /// @param item  the item property holder
-    /// @param value the value to set
-    ///
-    /// @return the modified property holder
-    ///
-    H apply(PropertyBlockHolder block, PropertyItemHolder item, T value);
-    
-    ///
     /// Creates a property applicator for setting a block state property.
     ///
     /// @param property the block state property to modify
@@ -94,4 +83,15 @@ public interface PropertyApplicator<T, H extends PropertyHolder> {
             return item;
         };
     }
+    
+    ///
+    /// Sets a value and then returns the modified property holder
+    ///
+    /// @param block the block property holder
+    /// @param item  the item property holder
+    /// @param value the value to set
+    ///
+    /// @return the modified property holder
+    ///
+    H apply(PropertyBlockHolder block, PropertyItemHolder item, T value);
 }

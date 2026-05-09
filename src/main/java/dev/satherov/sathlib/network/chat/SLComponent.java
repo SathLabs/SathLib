@@ -55,112 +55,15 @@ public class SLComponent implements Component {
         return new SLComponent(component);
     }
     
-    /// 
+    ///
     /// Creates a new component with the given string as literal-root
-    /// 
+    ///
     /// @param string literal string to wrap
-    /// 
+    ///
     /// @return component with the given string as literal-root
-    /// 
+    ///
     public static SLComponent string(String string) {
-        return new SLComponent(Component.literal(string));   
-    }
-    
-    ///
-    /// Appends a {@link Component} to the root
-    ///
-    /// @param component component to append
-    ///
-    /// @return self
-    ///
-    public SLComponent append(Component component) {
-        this.component.append(component);
-        return this;
-    }
-    
-    ///
-    /// Appends a {@link SLTranslatable} to the root
-    ///
-    /// @param translatable translation entry to append
-    ///
-    /// @return self
-    ///
-    public SLComponent append(SLTranslatable translatable) {
-        return this.append(translatable.translate());
-    }
-    
-    ///
-    /// Appends a literal string to the root
-    ///
-    /// @param text literal text to append
-    ///
-    /// @return self
-    ///
-    public SLComponent literal(String text) {
-        this.component.append(Component.literal(text));
-        return this;
-    }
-    
-    ///
-    /// Appends a translateable component to the root, using the given translation key
-    ///
-    /// @param translationKey translation key to append
-    ///
-    /// @return self
-    ///
-    public SLComponent translateable(String translationKey) {
-        this.component.append(Component.translatable(translationKey));
-        return this;
-    }
-    
-    ///
-    /// Appends a translateable component to the root, using the given translation key and
-    /// translation argument to be inferred by {@link SLComponent#identify(String, Object...)}
-    ///
-    /// @param translationKey translation key to append
-    /// @param args           translation arguments
-    ///
-    /// @return self
-    ///
-    public SLComponent translateable(String translationKey, Object... args) {
-        this.component.append(SLComponent.identify(translationKey, args));
-        return this;
-    }
-    
-    ///
-    /// Sets the style with the given {@link ChatFormatting}
-    ///
-    /// @param format style format to apply
-    ///
-    /// @return self
-    ///
-    public SLComponent style(ChatFormatting format) {
-        this.component.withStyle(format);
-        return this;
-    }
-    
-    ///
-    /// Sets the style with the given {@link ChatFormatting}s
-    ///
-    /// @param formats style formats to apply
-    ///
-    /// @return self
-    ///
-    public SLComponent style(ChatFormatting... formats) {
-        this.component.withStyle(formats);
-        return this;
-    }
-    
-    ///
-    /// Sets the style with the given {@link SLStyle} operator
-    ///
-    /// @param operator style mutator
-    ///
-    /// @return self
-    ///
-    public SLComponent style(UnaryOperator<SLStyle> operator) {
-        this.component.withStyle(operator.apply(new SLStyle()).create());
-        return this;
+        return new SLComponent(Component.literal(string));
     }
     
     ///
@@ -286,6 +189,102 @@ public class SLComponent implements Component {
         return FormattingLang.CURLY_BRACKETS.translate(component);
     }
     
+    ///
+    /// Appends a {@link Component} to the root
+    ///
+    /// @param component component to append
+    ///
+    /// @return self
+    ///
+    public SLComponent append(Component component) {
+        this.component.append(component);
+        return this;
+    }
+    
+    ///
+    /// Appends a {@link SLTranslatable} to the root
+    ///
+    /// @param translatable translation entry to append
+    ///
+    /// @return self
+    ///
+    public SLComponent append(SLTranslatable translatable) {
+        return this.append(translatable.translate());
+    }
+    
+    ///
+    /// Appends a literal string to the root
+    ///
+    /// @param text literal text to append
+    ///
+    /// @return self
+    ///
+    public SLComponent literal(String text) {
+        this.component.append(Component.literal(text));
+        return this;
+    }
+    
+    ///
+    /// Appends a translateable component to the root, using the given translation key
+    ///
+    /// @param translationKey translation key to append
+    ///
+    /// @return self
+    ///
+    public SLComponent translateable(String translationKey) {
+        this.component.append(Component.translatable(translationKey));
+        return this;
+    }
+    
+    ///
+    /// Appends a translateable component to the root, using the given translation key and
+    /// translation argument to be inferred by {@link SLComponent#identify(String, Object...)}
+    ///
+    /// @param translationKey translation key to append
+    /// @param args           translation arguments
+    ///
+    /// @return self
+    ///
+    public SLComponent translateable(String translationKey, Object... args) {
+        this.component.append(SLComponent.identify(translationKey, args));
+        return this;
+    }
+    
+    ///
+    /// Sets the style with the given {@link ChatFormatting}
+    ///
+    /// @param format style format to apply
+    ///
+    /// @return self
+    ///
+    public SLComponent style(ChatFormatting format) {
+        this.component.withStyle(format);
+        return this;
+    }
+    
+    ///
+    /// Sets the style with the given {@link ChatFormatting}s
+    ///
+    /// @param formats style formats to apply
+    ///
+    /// @return self
+    ///
+    public SLComponent style(ChatFormatting... formats) {
+        this.component.withStyle(formats);
+        return this;
+    }
+    
+    ///
+    /// Sets the style with the given {@link SLStyle} operator
+    ///
+    /// @param operator style mutator
+    ///
+    /// @return self
+    ///
+    public SLComponent style(UnaryOperator<SLStyle> operator) {
+        this.component.withStyle(operator.apply(new SLStyle()).create());
+        return this;
+    }
     
     @Override
     public Style getStyle() {

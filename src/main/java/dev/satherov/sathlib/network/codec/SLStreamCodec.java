@@ -24,8 +24,6 @@ import java.util.function.Supplier;
 @NothingNull
 public final class SLStreamCodec {
     
-    private SLStreamCodec() { }
-    
     ///
     /// Stream codec for {@link UUID} values.
     ///
@@ -38,11 +36,12 @@ public final class SLStreamCodec {
             FriendlyByteBuf.writeUUID(output, value);
         }
     };
-    
     ///
     /// Stream codec for {@link Instant} values encoded as epoch milliseconds.
     ///
     public static final StreamCodec<ByteBuf, Instant> INSTANT = StreamCodec.composite(ByteBufCodecs.LONG, Instant::toEpochMilli, Instant::ofEpochMilli);
+    
+    private SLStreamCodec() { }
     
     ///
     /// Creates an array list stream codec from the given value codec

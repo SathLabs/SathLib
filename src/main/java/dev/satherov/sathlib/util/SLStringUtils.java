@@ -1,6 +1,9 @@
 package dev.satherov.sathlib.util;
 
+import lombok.experimental.UtilityClass;
+
 import org.intellij.lang.annotations.PrintFormat;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -12,9 +15,8 @@ import java.util.Locale;
 ///
 /// General utils for Strings
 ///
+@UtilityClass
 public class SLStringUtils {
-    
-    private SLStringUtils() { }
     
     private static final Locale LOCALE = Locale.ROOT;
     
@@ -257,7 +259,8 @@ public class SLStringUtils {
     ///
     /// @return List of words.
     ///
-    private static List<String> words(@Nullable String input) {
+    @VisibleForTesting
+    static List<String> words(@Nullable String input) {
         if (input == null || input.isBlank()) return new ArrayList<>(0);
         
         String[] parts = input

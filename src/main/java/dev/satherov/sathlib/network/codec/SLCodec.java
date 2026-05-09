@@ -18,17 +18,16 @@ import java.util.function.Function;
 @NothingNull
 public final class SLCodec {
     
-    private SLCodec() { }
-    
     ///
     /// Codec for {@link UUID} values encoded as strings.
     ///
     public static final Codec<UUID> UUID = Codec.STRING.xmap(java.util.UUID::fromString, java.util.UUID::toString);
-    
     ///
     /// Codec for {@link Instant} values encoded as ISO-8601 strings.
     ///
     public static final Codec<Instant> INSTANT = Codec.STRING.xmap(Instant::parse, Instant::toString);
+    
+    private SLCodec() { }
     
     ///
     /// Creates a HasMap Codec with the given key and value codecs.

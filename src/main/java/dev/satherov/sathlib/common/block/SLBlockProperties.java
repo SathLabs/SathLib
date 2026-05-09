@@ -75,6 +75,62 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     }
     
     ///
+    /// Always true {@link BlockBehaviour.StateArgumentPredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    /// @param arg    additional predicate argument
+    /// @param <T>    additional predicate argument type
+    ///
+    /// @return true
+    ///
+    public static <T> boolean always(BlockState state, BlockGetter getter, BlockPos pos, T arg) {
+        return true;
+    }
+    
+    ///
+    /// Always false {@link BlockBehaviour.StateArgumentPredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    /// @param arg    additional predicate argument
+    /// @param <T>    additional predicate argument type
+    ///
+    /// @return false
+    ///
+    public static <T> boolean never(BlockState state, BlockGetter getter, BlockPos pos, T arg) {
+        return false;
+    }
+    
+    ///
+    /// Always true {@link BlockBehaviour.StatePredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    ///
+    /// @return true
+    ///
+    public static boolean always(BlockState state, BlockGetter getter, BlockPos pos) {
+        return true;
+    }
+    
+    ///
+    /// Always false {@link BlockBehaviour.StatePredicate}
+    ///
+    /// @param state  current block state
+    /// @param getter block view used for evaluation
+    /// @param pos    evaluated position
+    ///
+    /// @return false
+    ///
+    public static boolean never(BlockState state, BlockGetter getter, BlockPos pos) {
+        return false;
+    }
+    
+    ///
     /// Sets the map color of the block to the given {@link DyeColor}.
     /// Affects the color at which the given block is shown on a map.
     ///
@@ -751,61 +807,5 @@ public class SLBlockProperties extends BlockBehaviour.Properties {
     ///
     public SLBlockProperties fluid() {
         return this.noCollision().replaceable().liquid();
-    }
-    
-    ///
-    /// Always true {@link BlockBehaviour.StateArgumentPredicate}
-    ///
-    /// @param state  current block state
-    /// @param getter block view used for evaluation
-    /// @param pos    evaluated position
-    /// @param arg    additional predicate argument
-    /// @param <T>    additional predicate argument type
-    ///
-    /// @return true
-    ///
-    public static <T> boolean always(BlockState state, BlockGetter getter, BlockPos pos, T arg) {
-        return true;
-    }
-    
-    ///
-    /// Always false {@link BlockBehaviour.StateArgumentPredicate}
-    ///
-    /// @param state  current block state
-    /// @param getter block view used for evaluation
-    /// @param pos    evaluated position
-    /// @param arg    additional predicate argument
-    /// @param <T>    additional predicate argument type
-    ///
-    /// @return false
-    ///
-    public static <T> boolean never(BlockState state, BlockGetter getter, BlockPos pos, T arg) {
-        return false;
-    }
-    
-    ///
-    /// Always true {@link BlockBehaviour.StatePredicate}
-    ///
-    /// @param state  current block state
-    /// @param getter block view used for evaluation
-    /// @param pos    evaluated position
-    ///
-    /// @return true
-    ///
-    public static boolean always(BlockState state, BlockGetter getter, BlockPos pos) {
-        return true;
-    }
-    
-    ///
-    /// Always false {@link BlockBehaviour.StatePredicate}
-    ///
-    /// @param state  current block state
-    /// @param getter block view used for evaluation
-    /// @param pos    evaluated position
-    ///
-    /// @return false
-    ///
-    public static boolean never(BlockState state, BlockGetter getter, BlockPos pos) {
-        return false;
     }
 }

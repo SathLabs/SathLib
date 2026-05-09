@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.util;
 
+import lombok.experimental.UtilityClass;
+
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 
@@ -10,9 +12,8 @@ import com.google.common.math.IntMath;
 ///
 /// Experience point and level helpers for player entities.
 ///
+@UtilityClass
 public class SLExperienceUtil {
-    
-    private SLExperienceUtil() { }
     
     ///
     /// Adds or removes raw experience points and optionally fires NeoForge events.

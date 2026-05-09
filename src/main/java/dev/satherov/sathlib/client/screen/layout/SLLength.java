@@ -17,20 +17,6 @@ package dev.satherov.sathlib.client.screen.layout;
 public record SLLength(Mode mode, float value) {
     
     ///
-    /// Supported sizing modes.
-    ///
-    public enum Mode {
-        /// Use the node's measured content size.
-        CONTENT,
-        /// Use a fixed pixel size.
-        FIXED,
-        /// Use a fraction of the available space.
-        PERCENT,
-        /// Fill available space, optionally using a weight.
-        FILL,
-    }
-    
-    ///
     /// Uses the node's measured content size.
     ///
     /// @return content length
@@ -130,5 +116,19 @@ public record SLLength(Mode mode, float value) {
             case PERCENT -> Math.round(available * this.value);
             case FILL -> Math.max(0, available);
         };
+    }
+    
+    ///
+    /// Supported sizing modes.
+    ///
+    public enum Mode {
+        /// Use the node's measured content size.
+        CONTENT,
+        /// Use a fixed pixel size.
+        FIXED,
+        /// Use a fraction of the available space.
+        PERCENT,
+        /// Fill available space, optionally using a weight.
+        FILL,
     }
 }

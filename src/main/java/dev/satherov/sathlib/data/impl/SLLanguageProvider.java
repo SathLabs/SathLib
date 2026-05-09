@@ -1,4 +1,4 @@
-package dev.satherov.sathlib.data.provider;
+package dev.satherov.sathlib.data.impl;
 
 import dev.satherov.sathlib.SathLib;
 import dev.satherov.sathlib.client.lang.FormattingLang;

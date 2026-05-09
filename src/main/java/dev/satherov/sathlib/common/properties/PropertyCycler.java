@@ -12,17 +12,6 @@ package dev.satherov.sathlib.common.properties;
 public interface PropertyCycler<T> {
     
     ///
-    /// Cycles the value to the next or previous value in a sequence.
-    ///
-    /// @param forward  Whether to cycle forward or backward.
-    /// @param original The original value.
-    ///
-    /// @return The new value.
-    ///
-    T cycle(boolean forward, T original);
-    
-    
-    ///
     /// A cycler that cycles a boolean value by inverting the current value.
     ///
     PropertyCycler<Boolean> BOOLEAN = (_, val) -> !val;
@@ -134,4 +123,14 @@ public interface PropertyCycler<T> {
             return next;
         };
     }
+    
+    ///
+    /// Cycles the value to the next or previous value in a sequence.
+    ///
+    /// @param forward  Whether to cycle forward or backward.
+    /// @param original The original value.
+    ///
+    /// @return The new value.
+    ///
+    T cycle(boolean forward, T original);
 }

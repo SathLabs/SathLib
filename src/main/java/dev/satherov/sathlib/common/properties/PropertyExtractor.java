@@ -24,16 +24,6 @@ import java.util.function.Supplier;
 public interface PropertyExtractor<T> {
     
     ///
-    /// Extracts a value from a {@link PropertyHolder} and returns it.
-    ///
-    /// @param block The block property holder
-    /// @param item  The item property holder
-    ///
-    /// @return the extracted value
-    ///
-    T extract(PropertyBlockHolder block, PropertyItemHolder item);
-    
-    ///
     /// Extracts a value from a  {@link BlockState} via a {@link Property} or returns a default value if the property is not present.
     ///
     /// @param property     The property to extract
@@ -85,4 +75,14 @@ public interface PropertyExtractor<T> {
     static <T> PropertyExtractor<T> item(Supplier<DataComponentType<T>> component, T defaultValue) {
         return (_, item) -> item.stack().getOrDefault(component, defaultValue);
     }
+    
+    ///
+    /// Extracts a value from a {@link PropertyHolder} and returns it.
+    ///
+    /// @param block The block property holder
+    /// @param item  The item property holder
+    ///
+    /// @return the extracted value
+    ///
+    T extract(PropertyBlockHolder block, PropertyItemHolder item);
 }

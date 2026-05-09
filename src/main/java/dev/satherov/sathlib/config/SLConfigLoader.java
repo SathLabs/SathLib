@@ -48,22 +48,19 @@ import java.util.function.Consumer;
 @Slf4j
 public class SLConfigLoader {
     
-    private SLConfigLoader() { }
-    
     private static final Type CONFIG_HOLDER = Type.getType(ConfigHolder.class);
-    
     ///
     /// {@link VarHandle} for {@link FMLModContainer#scanResults}
     ///
     private static final VarHandle SCAN_RESULTS = SLReflectionUtils.findVarHandle(FMLModContainer.class, ModFileScanData.class, "scanResults");
-    
     ///
     /// {@link VarHandle} for {@link FMLModContainer#layer}
     ///
     private static final VarHandle LAYER = SLReflectionUtils.findVarHandle(FMLModContainer.class, Module.class, "layer");
-    
     private static final Set<String> HOOKED_MODS = ConcurrentHashMap.newKeySet();
     private static final Map<String, Map<ModConfigSpec, Cache>> CACHE = new ConcurrentHashMap<>();
+    
+    private SLConfigLoader() { }
     
     ///
     /// Generates the config file for the given mod container. Should be called within the mod constructor.

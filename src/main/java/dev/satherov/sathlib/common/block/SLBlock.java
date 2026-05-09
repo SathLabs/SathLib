@@ -190,6 +190,12 @@ public class SLBlock extends Block {
             return new StateBuilder();
         }
         
+        @SuppressWarnings("unchecked")
+        private static <T extends Comparable<T>> BlockState setUnchecked(BlockState state, Property<?> property, @Nullable Comparable<?> value) {
+            if (value == null) return state; // No default value, so we don't set anything
+            return state.setValue((Property<T>) property, (T) value);
+        }
+        
         ///
         /// Add a BlockProperty to this block.
         ///
@@ -220,12 +226,6 @@ public class SLBlock extends Block {
         
         private void createDefinition(StateDefinition.Builder<Block, BlockState> builder) {
             for (Property<?> property : this.properties.keySet()) builder.add(property);
-        }
-        
-        @SuppressWarnings("unchecked")
-        private static <T extends Comparable<T>> BlockState setUnchecked(BlockState state, Property<?> property, @Nullable Comparable<?> value) {
-            if (value == null) return state; // No default value, so we don't set anything
-            return state.setValue((Property<T>) property, (T) value);
         }
         
         private BlockState applyDefaults(BlockState state) {

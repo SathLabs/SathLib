@@ -1,7 +1,7 @@
 package dev.satherov.sathlib.data;
 
 import dev.satherov.sathlib.SathLib;
-import dev.satherov.sathlib.data.provider.SLLanguageProvider;
+import dev.satherov.sathlib.data.impl.SLLanguageProvider;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

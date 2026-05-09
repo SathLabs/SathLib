@@ -94,6 +94,27 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     }
     
     ///
+    /// Appends triangle vertices to the target buffer.
+    ///
+    /// @param target target vertex buffer
+    /// @param index  slice index
+    /// @param a      first vertex
+    /// @param b      second vertex
+    /// @param c      third vertex
+    ///
+    /// @return the next write index
+    ///
+    private static int putTriangle(float[] target, int index, Vector2d a, Vector2d b, Vector2d c) {
+        target[index++] = (float) a.x();
+        target[index++] = (float) a.y();
+        target[index++] = (float) b.x();
+        target[index++] = (float) b.y();
+        target[index++] = (float) c.x();
+        target[index++] = (float) c.y();
+        return index;
+    }
+    
+    ///
     /// Returns this screen as type T for method chaining.
     ///
     @SuppressWarnings("unchecked")
@@ -158,11 +179,11 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         }
     }
     
-    /// 
+    ///
     /// If this screen should pause the game in singleplayer and save the game.
-    /// 
+    ///
     /// @return `true` if the game should pause and save
-    /// 
+    ///
     public boolean isPauseScreen() {
         return false;
     }
@@ -688,27 +709,6 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
                 graphics.peekScissorStack(),
                 bounds
         ));
-    }
-    
-    ///
-    /// Appends triangle vertices to the target buffer.
-    ///
-    /// @param target target vertex buffer
-    /// @param index  slice index
-    /// @param a      first vertex
-    /// @param b      second vertex
-    /// @param c      third vertex
-    ///
-    /// @return the next write index
-    ///
-    private static int putTriangle(float[] target, int index, Vector2d a, Vector2d b, Vector2d c) {
-        target[index++] = (float) a.x();
-        target[index++] = (float) a.y();
-        target[index++] = (float) b.x();
-        target[index++] = (float) b.y();
-        target[index++] = (float) c.x();
-        target[index++] = (float) c.y();
-        return index;
     }
     
     ///

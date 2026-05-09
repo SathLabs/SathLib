@@ -14,28 +14,6 @@ import java.util.function.Consumer;
 public interface SLDeferredTask {
     
     ///
-    /// Executes one step of this task.
-    ///
-    /// @param server Running server
-    ///
-    void tick(MinecraftServer server);
-    
-    ///
-    /// Whether this task has completed and should be removed from the scheduler.
-    ///
-    /// @return {@code true} if this task no longer needs ticking
-    ///
-    boolean isDone();
-    
-    ///
-    /// Called when the task is removed from the scheduler.
-    ///
-    /// @param server Current server, may be {@code null} if unavailable
-    /// @param reason Reason for removal
-    ///
-    default void onRemoved(@Nullable MinecraftServer server, RemovalReason reason) { }
-    
-    ///
     /// Creates a functional deferred task from an executor and a completion condition.
     ///
     /// @param executor Work to execute every tick
@@ -64,6 +42,28 @@ public interface SLDeferredTask {
             }
         };
     }
+    
+    ///
+    /// Executes one step of this task.
+    ///
+    /// @param server Running server
+    ///
+    void tick(MinecraftServer server);
+    
+    ///
+    /// Whether this task has completed and should be removed from the scheduler.
+    ///
+    /// @return {@code true} if this task no longer needs ticking
+    ///
+    boolean isDone();
+    
+    ///
+    /// Called when the task is removed from the scheduler.
+    ///
+    /// @param server Current server, may be {@code null} if unavailable
+    /// @param reason Reason for removal
+    ///
+    default void onRemoved(@Nullable MinecraftServer server, RemovalReason reason) { }
     
     ///
     /// Name of the deferred task, can be used for debugging purposes.

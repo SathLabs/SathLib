@@ -1,17 +1,17 @@
 package dev.satherov.sathlib.util;
 
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import net.minecraft.util.Mth;
 
 import java.util.function.UnaryOperator;
 
 ///
-/// Small color helpers used by SathLib screens.
+/// Utility class for handling colors.
 ///
+@UtilityClass
 public class SLColorUtils {
-    
-    private SLColorUtils() { }
     
     /**
      * Extracts the alpha channel from a packed ARGB color.

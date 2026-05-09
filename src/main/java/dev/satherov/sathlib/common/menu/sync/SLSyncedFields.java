@@ -100,41 +100,6 @@ public final class SLSyncedFields {
         };
     }
     
-    private record FieldBinding(Class<?> owner, String name, VarHandle handle, FieldCodec codec) {
-    }
-    
-    private interface FieldCodec {
-        
-        int slotCount();
-        
-        int getPart(VarHandle handle, Object host, int idx);
-        
-        void setPart(VarHandle handle, Object host, int idx, int value);
-    }
-    
-    private static final class SyncedDataSlot extends DataSlot {
-        
-        private final Object host;
-        private final FieldBinding binding;
-        private final int partIndex;
-        
-        private SyncedDataSlot(Object host, FieldBinding binding, int partIndex) {
-            this.host = host;
-            this.binding = binding;
-            this.partIndex = partIndex;
-        }
-        
-        @Override
-        public int get() {
-            return this.binding.codec.getPart(this.binding.handle, this.host, this.partIndex);
-        }
-        
-        @Override
-        public void set(int value) {
-            this.binding.codec.setPart(this.binding.handle, this.host, this.partIndex, value);
-        }
-    }
-    
     private enum BooleanCodec implements FieldCodec {
         INSTANCE;
         
@@ -151,32 +116,6 @@ public final class SLSyncedFields {
         @Override
         public void setPart(VarHandle handle, Object host, int idx, int value) {
             handle.set(host, value != 0);
-        }
-    }
-    
-    private record IntLikeCodec(Class<?> type) implements FieldCodec {
-        
-        @Override
-        public int slotCount() {
-            return 1;
-        }
-        
-        @Override
-        public int getPart(VarHandle handle, Object host, int idx) {
-            return switch (this.type) {
-                case Class<?> clazz when clazz == byte.class -> (byte) handle.get(host);
-                case Class<?> clazz when clazz == short.class -> (short) handle.get(host);
-                default -> (int) handle.get(host);
-            };
-        }
-        
-        @Override
-        public void setPart(VarHandle handle, Object host, int idx, int value) {
-            switch (this.type) {
-                case Class<?> clazz when clazz == byte.class -> handle.set(host, (byte) value);
-                case Class<?> clazz when clazz == short.class -> handle.set(host, (short) value);
-                default -> handle.set(host, value);
-            }
         }
     }
     
@@ -246,6 +185,67 @@ public final class SLSyncedFields {
             if (idx == 0) nextRawValue = (currentRawValue & 0x00000000FFFFFFFFL) | ((long) value << 32);
             else nextRawValue = (currentRawValue & 0xFFFFFFFF00000000L) | (value & 0xFFFFFFFFL);
             handle.set(host, Double.longBitsToDouble(nextRawValue));
+        }
+    }
+    
+    private interface FieldCodec {
+        
+        int slotCount();
+        
+        int getPart(VarHandle handle, Object host, int idx);
+        
+        void setPart(VarHandle handle, Object host, int idx, int value);
+    }
+    
+    private record FieldBinding(Class<?> owner, String name, VarHandle handle, FieldCodec codec) {
+    }
+    
+    private static final class SyncedDataSlot extends DataSlot {
+        
+        private final Object host;
+        private final FieldBinding binding;
+        private final int partIndex;
+        
+        private SyncedDataSlot(Object host, FieldBinding binding, int partIndex) {
+            this.host = host;
+            this.binding = binding;
+            this.partIndex = partIndex;
+        }
+        
+        @Override
+        public int get() {
+            return this.binding.codec.getPart(this.binding.handle, this.host, this.partIndex);
+        }
+        
+        @Override
+        public void set(int value) {
+            this.binding.codec.setPart(this.binding.handle, this.host, this.partIndex, value);
+        }
+    }
+    
+    private record IntLikeCodec(Class<?> type) implements FieldCodec {
+        
+        @Override
+        public int slotCount() {
+            return 1;
+        }
+        
+        @Override
+        public int getPart(VarHandle handle, Object host, int idx) {
+            return switch (this.type) {
+                case Class<?> clazz when clazz == byte.class -> (byte) handle.get(host);
+                case Class<?> clazz when clazz == short.class -> (short) handle.get(host);
+                default -> (int) handle.get(host);
+            };
+        }
+        
+        @Override
+        public void setPart(VarHandle handle, Object host, int idx, int value) {
+            switch (this.type) {
+                case Class<?> clazz when clazz == byte.class -> handle.set(host, (byte) value);
+                case Class<?> clazz when clazz == short.class -> handle.set(host, (short) value);
+                default -> handle.set(host, value);
+            }
         }
     }
     

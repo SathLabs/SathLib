@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.client.render;
 
+import lombok.experimental.UtilityClass;
+
 import dev.satherov.sathlib.SathLib;
 
 import net.neoforged.bus.api.IEventBus;
@@ -14,9 +16,8 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 ///
 /// Render pipelines register
 ///
+@UtilityClass
 public class SLRenderPipelines {
-    
-    private SLRenderPipelines() { }
     
     ///
     /// Vertex-only GUI pipeline used by custom retained-mode rendering.

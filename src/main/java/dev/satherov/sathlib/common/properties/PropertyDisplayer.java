@@ -16,11 +16,6 @@ import dev.satherov.sathlib.network.chat.SLComponent;
 public interface PropertyDisplayer<T> {
     
     ///
-    /// Displays the value as a {@link SLComponent}.
-    ///
-    SLComponent display(T value);
-    
-    ///
     /// Displays a {@link SLComponent} directly, ignoring the value.
     ///
     /// @param component The component to display
@@ -115,4 +110,9 @@ public interface PropertyDisplayer<T> {
     static <T> PropertyDisplayer<T> empty() {
         return _ -> SLComponent.empty();
     }
+    
+    ///
+    /// Displays the value as a {@link SLComponent}.
+    ///
+    SLComponent display(T value);
 }
