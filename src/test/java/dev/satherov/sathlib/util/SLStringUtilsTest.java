@@ -113,8 +113,8 @@ public class SLStringUtilsTest {
     
     @Test
     public void testWords() {
-        List<String> words = SLStringUtils.words("Hello_world this-Is    aTest");
-        assertEquals(List.of("hello", "world", "this", "is", "a", "test"), words);
+        assertEquals(List.of("hello", "world", "this", "is", "a", "test"), SLStringUtils.words("Hello_world this-Is    aTest"));
+        assertEquals(List.of("hello", "world", "this", "is", "a", "test"), SLStringUtils.words("hello.world.this.is.a.test"));
         assertTrue(SLStringUtils.words("").isEmpty());
         assertTrue(SLStringUtils.words(null).isEmpty());
     }
