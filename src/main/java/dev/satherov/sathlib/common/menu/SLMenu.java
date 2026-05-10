@@ -44,6 +44,9 @@ import java.util.Objects;
 @NothingNull
 public abstract class SLMenu extends AbstractContainerMenu {
     
+    ///
+    /// Player inventory bound to this menu instance.
+    ///
     protected final Inventory playerInventory;
     private final Map<SLSlotSemantic, List<Slot>> slotsBySemantic = new LinkedHashMap<>();
     private final Map<Slot, SLSlotSemantic> semanticBySlot = new IdentityHashMap<>();

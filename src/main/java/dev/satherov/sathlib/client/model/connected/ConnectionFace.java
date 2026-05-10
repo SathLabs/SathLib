@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 ///
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("doclint:missing")
 public enum ConnectionFace {
     ///
     ///  negative X Direction, West in world-space

@@ -13,99 +13,99 @@ import java.util.function.UnaryOperator;
 @UtilityClass
 public class SLColorUtils {
     
-    /**
-     * Extracts the alpha channel from a packed ARGB color.
-     *
-     * @param color the packed color
-     *
-     * @return the alpha value
-     */
+    ///
+    /// Extracts the alpha channel from a packed ARGB color.
+    ///
+    /// @param color the packed color
+    ///
+    /// @return the alpha value
+    ///
     public static int alpha(int color) {
         return color >>> 24;
     }
     
-    /**
-     * Extracts the red channel from a packed ARGB or RGB color.
-     *
-     * @param color the packed color
-     *
-     * @return the red value
-     */
+    ///
+    /// Extracts the red channel from a packed ARGB or RGB color.
+    ///
+    /// @param color the packed color
+    ///
+    /// @return the red value
+    ///
     public static int red(int color) {
         return color >> 16 & 0xFF;
     }
     
-    /**
-     * Extracts the green channel from a packed ARGB or RGB color.
-     *
-     * @param color the packed color
-     *
-     * @return the green value
-     */
+    ///
+    /// Extracts the green channel from a packed ARGB or RGB color.
+    ///
+    /// @param color the packed color
+    ///
+    /// @return the green value
+    ///
     public static int green(int color) {
         return color >> 8 & 0xFF;
     }
     
-    /**
-     * Extracts the blue channel from a packed ARGB or RGB color.
-     *
-     * @param color the packed color
-     *
-     * @return the blue value
-     */
+    ///
+    /// Extracts the blue channel from a packed ARGB or RGB color.
+    ///
+    /// @param color the packed color
+    ///
+    /// @return the blue value
+    ///
     public static int blue(int color) {
         return color & 0xFF;
     }
     
-    /**
-     * Creates a packed ARGB color from the given channel values.
-     *
-     * @param alpha the alpha value
-     * @param red   the red value
-     * @param green the green value
-     * @param blue  the blue value
-     *
-     * @return the packed ARGB color
-     */
+    ///
+    /// Creates a packed ARGB color from the given channel values.
+    ///
+    /// @param alpha the alpha value
+    /// @param red   the red value
+    /// @param green the green value
+    /// @param blue  the blue value
+    ///
+    /// @return the packed ARGB color
+    ///
     public static int argb(int alpha, int red, int green, int blue) {
         return (alpha & 0xFF) << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
     }
     
-    /**
-     * Creates a packed ARGB color from the given RGB channel values with an alpha of {@code 255}.
-     *
-     * @param red   the red value
-     * @param green the green value
-     * @param blue  the blue value
-     *
-     * @return the packed ARGB color
-     */
+    ///
+    /// Creates a packed ARGB color from the given RGB channel values with an alpha of `255`.
+    ///
+    /// @param red   the red value
+    /// @param green the green value
+    /// @param blue  the blue value
+    ///
+    /// @return the packed ARGB color
+    ///
     public static int argb(int red, int green, int blue) {
         return 0xFF << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
     }
     
-    /**
-     * Creates a packed RGB color from the given channel values.
-     *
-     * @param red   the red value
-     * @param green the green value
-     * @param blue  the blue value
-     *
-     * @return the packed RGB color
-     */
+    ///
+    /// Creates a packed RGB color from the given channel values.
+    ///
+    /// @param red   the red value
+    /// @param green the green value
+    /// @param blue  the blue value
+    ///
+    /// @return the packed RGB color
+    ///
     public static int rgb(int red, int green, int blue) {
         return red << 16 | (green & 0xFF) << 8 | blue & 0xFF;
     }
     
-    /**
-     * Linearly interpolates between two packed ARGB colors.
-     *
-     * @param alpha the interpolation factor in the range {@code [0, 1]}
-     * @param from  the starting color
-     * @param to    the ending color
-     *
-     * @return the interpolated color
-     */
+    ///
+    /// Linearly interpolates between two packed ARGB colors.
+    ///
+    /// @param alpha the interpolation factor in the range `[0, 1]`
+    /// @param from  the starting color
+    /// @param to    the ending color
+    ///
+    /// @return the interpolated color
+    ///
     public static int lerp(float alpha, int from, int to) {
         final int a = Mth.lerpInt(alpha, SLColorUtils.alpha(from), SLColorUtils.alpha(to));
         final int r = Mth.lerpInt(alpha, SLColorUtils.red(from), SLColorUtils.red(to));
@@ -114,29 +114,29 @@ public class SLColorUtils {
         return SLColorUtils.argb(a, r, g, b);
     }
     
-    /**
-     * Converts an HSV color to a packed RGB color with a fully opaque alpha channel.
-     *
-     * @param hue        the hue component, wrapped to {@code [0, 1)}
-     * @param saturation the saturation component, clamped to {@code [0, 1]}
-     * @param value      the value component, clamped to {@code [0, 1]}
-     *
-     * @return the packed RGB color
-     */
+    ///
+    /// Converts an HSV color to a packed RGB color with a fully opaque alpha channel.
+    ///
+    /// @param hue        the hue component, wrapped to `[0, 1)`
+    /// @param saturation the saturation component, clamped to `[0, 1]`
+    /// @param value      the value component, clamped to `[0, 1]`
+    ///
+    /// @return the packed RGB color
+    ///
     public static int hsvToRgb(float hue, float saturation, float value) {
         return SLColorUtils.hsvToArgb(hue, saturation, value, 255);
     }
     
-    /**
-     * Converts an HSV color to a packed ARGB color.
-     *
-     * @param hue        the hue component, wrapped to {@code [0, 1)}
-     * @param saturation the saturation component, clamped to {@code [0, 1]}
-     * @param value      the value component, clamped to {@code [0, 1]}
-     * @param alpha      the alpha component, clamped to {@code [0, 255]}
-     *
-     * @return the packed ARGB color
-     */
+    ///
+    /// Converts an HSV color to a packed ARGB color.
+    ///
+    /// @param hue        the hue component, wrapped to `[0, 1)`
+    /// @param saturation the saturation component, clamped to `[0, 1]`
+    /// @param value      the value component, clamped to `[0, 1]`
+    /// @param alpha      the alpha component, clamped to `[0, 255]`
+    ///
+    /// @return the packed ARGB color
+    ///
     public static int hsvToArgb(float hue, float saturation, float value, int alpha) {
         float wrappedHue = SLColorUtils.wrapHue(hue);
         float clampedSat = Mth.clamp(saturation, 0.0F, 1.0F);
@@ -200,13 +200,13 @@ public class SLColorUtils {
         return SLColorUtils.argb(clampedAlpha, redInt, greenInt, blueInt);
     }
     
-    /**
-     * Wraps a hue value into the normalized range {@code [0, 1)}.
-     *
-     * @param hue the hue value to wrap
-     *
-     * @return the wrapped hue
-     */
+    ///
+    /// Wraps a hue value into the normalized range `[0, 1)`.
+    ///
+    /// @param hue the hue value to wrap
+    ///
+    /// @return the wrapped hue
+    ///
     public static float wrapHue(float hue) {
         float result = hue % 1.0F;
         if (result < 0.0F) result += 1.0F;
@@ -214,13 +214,13 @@ public class SLColorUtils {
         return result;
     }
     
-    /**
-     * Converts a packed RGB or ARGB color to HSV components.
-     *
-     * @param rgb the packed color
-     *
-     * @return an array containing hue, saturation, and value in that order
-     */
+    ///
+    /// Converts a packed RGB or ARGB color to HSV components.
+    ///
+    /// @param rgb the packed color
+    ///
+    /// @return an array containing hue, saturation, and value in that order
+    ///
     public static float[] rgbToHsv(int rgb) {
         float red = SLColorUtils.red(rgb) / 255.0F;
         float green = SLColorUtils.green(rgb) / 255.0F;
@@ -248,9 +248,9 @@ public class SLColorUtils {
         };
     }
     
-    /**
-     * A color channel extractor for packed colors.
-     */
+    ///
+    /// A color channel extractor for packed colors.
+    ///
     @RequiredArgsConstructor
     public enum Channel {
         /// Alpha channel extractor.
@@ -265,13 +265,13 @@ public class SLColorUtils {
         
         private final UnaryOperator<Integer> constructor;
         
-        /**
-         * Extracts this channel from the given packed color.
-         *
-         * @param packed the packed color
-         *
-         * @return the extracted channel value
-         */
+        ///
+        /// Extracts this channel from the given packed color.
+        ///
+        /// @param packed the packed color
+        ///
+        /// @return the extracted channel value
+        ///
         public int of(int packed) {
             return this.constructor.apply(packed);
         }

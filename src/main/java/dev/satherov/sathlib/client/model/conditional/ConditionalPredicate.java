@@ -9,6 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.mojang.serialization.MapCodec;
 
+///
+/// Represents a predicate that can determine if a given
+/// block model should be selected for rendering
+///
 public interface ConditionalPredicate {
     
     ///

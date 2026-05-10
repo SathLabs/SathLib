@@ -160,7 +160,6 @@ tasks.named('javadoc', Javadoc).configure {
     source = fileTree(layout.buildDirectory.dir('generated/sources/delombok/java/main'))
     classpath = sourceSets.main.compileClasspath + sourceSets.main.output
     failOnError = false
-    options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
 tasks.withType(Test).configureEach {

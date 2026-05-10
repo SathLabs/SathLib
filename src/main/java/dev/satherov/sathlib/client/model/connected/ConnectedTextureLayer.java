@@ -5,6 +5,12 @@ import net.minecraft.client.resources.model.sprite.Material;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+///
+/// One connected-texture layer binding.
+///
+/// @param texture texture atlas material to remap
+/// @param rule    connection rule that selects this layer
+///
 public record ConnectedTextureLayer(Material texture, ConnectionPredicate rule) {
     
     public static final Codec<ConnectedTextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(

@@ -180,6 +180,9 @@ public final class UI {
         private SLScalar offsetX = SLScalar.zero();
         private SLScalar offsetY = SLScalar.zero();
         
+        ///
+        /// Creates an empty UI builder.
+        ///
         protected Builder() { }
         
         ///
@@ -402,6 +405,9 @@ public final class UI {
         
         private final List<UINode<?>> children = new ArrayList<>();
         
+        ///
+        /// Creates an empty container builder.
+        ///
         protected ContainerBuilder() { }
         
         ///
@@ -445,6 +451,9 @@ public final class UI {
         private SLScalar gap = SLScalar.zero();
         private SLAlignment mainAxisAlignment = SLAlignment.START;
         
+        ///
+        /// Creates an empty flow builder.
+        ///
         protected FlowBuilder() { }
         
         ///

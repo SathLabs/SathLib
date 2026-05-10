@@ -213,16 +213,16 @@ public class SLStringUtils {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase(SLStringUtils.LOCALE);
     }
     
-    /**
-     * Formats a {@code double} as either a plain decimal string or scientific notation.
-     * Plain decimal format is used when the value fits within the requested precision;
-     * otherwise scientific notation is used.
-     *
-     * @param value     the number to format
-     * @param precision the maximum number of significant digits to keep
-     *
-     * @return the formatted number
-     */
+    ///
+    /// Formats a `double` as either a plain decimal string or scientific notation.
+    /// Plain decimal format is used when the value fits within the requested precision;
+    /// otherwise scientific notation is used.
+    ///
+    /// @param value     the number to format
+    /// @param precision the maximum number of significant digits to keep
+    ///
+    /// @return the formatted number
+    ///
     public static String scientific(double value, int precision) {
         if (Double.isNaN(value)) return "NaN";
         if (Double.isInfinite(value)) return value > 0 ? "∞" : "-∞";

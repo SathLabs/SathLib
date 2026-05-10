@@ -12,6 +12,13 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
+///
+/// Registered model-data property descriptor used by SathLib model rules.
+///
+/// @param <T>      value type stored in the model data
+/// @param id       registry identifier of the property
+/// @param property runtime NeoForge model-data key
+///
 public record SLModelProperty<T extends SLModelPropertyValue>(Identifier id, ModelProperty<T> property) {
     
     public static final Codec<SLModelProperty<?>> CODEC = Identifier.CODEC.comapFlatMap(
@@ -23,10 +30,27 @@ public record SLModelProperty<T extends SLModelPropertyValue>(Identifier id, Mod
             SLModelProperty::id
     );
     
+    ///
+    /// Registers a model property with the default permissive predicate.
+    ///
+    /// @param <T> value type stored in the property
+    /// @param id  property identifier
+    ///
+    /// @return registered property descriptor
+    ///
     public static <T extends SLModelPropertyValue> SLModelProperty<T> register(Identifier id) {
         return SLModelProperty.register(id, new ModelProperty<>());
     }
     
+    ///
+    /// Registers a model property with a custom runtime predicate.
+    ///
+    /// @param <T>       value type stored in the property
+    /// @param id        property identifier
+    /// @param predicate runtime validation predicate
+    ///
+    /// @return registered property descriptor
+    ///
     public static <T extends SLModelPropertyValue> SLModelProperty<T> register(Identifier id, Predicate<T> predicate) {
         return SLModelProperty.register(id, new ModelProperty<>(predicate));
     }
@@ -37,6 +61,13 @@ public record SLModelProperty<T extends SLModelPropertyValue>(Identifier id, Mod
         return registered;
     }
     
+    ///
+    /// Reads this property from model data.
+    ///
+    /// @param data model data to inspect
+    ///
+    /// @return stored value, or `null`
+    ///
     public @Nullable T get(final ModelData data) {
         return data.get(this.property);
     }

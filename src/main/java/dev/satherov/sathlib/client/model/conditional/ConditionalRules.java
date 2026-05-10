@@ -34,6 +34,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.UnaryOperator;
 
+///
+/// Utility class for all default conditional rules.
+///
 @UtilityClass
 public class ConditionalRules {
     
@@ -65,62 +68,150 @@ public class ConditionalRules {
     /// Identifier of the `model_property` rule.
     ///
     public static final Identifier MODEL_PROPERTY = SathLib.id("model_property");
+    
     private static final Map<Identifier, MapCodec<? extends ConditionalPredicate>> RULES = new ConcurrentHashMap<>();
+    
+    ///
+    /// Codec for all conditional rules.
+    ///
     public static final Codec<ConditionalPredicate> CODEC = Codec.recursive("conditional", _ -> Identifier.CODEC.partialDispatch(
             "type", rule -> DataResult.success(rule.type()), ConditionalRules::codec
     ));
     
+    ///
+    /// Initializes the conditional rules.
+    ///
     @ApiStatus.Internal
     public static void init() {
         ModLoader.postEvent(new SLRegisterConditionRulesEvent(ConditionalRules.RULES));
     }
     
+    ///
+    /// Returns a predicate that always matches.
+    ///
+    /// @return {@link Always#INSTANCE}
+    ///
     public static ConditionalPredicate always() {
         return Always.INSTANCE;
     }
     
+    ///
+    /// Returns a predicate that never matches.
+    ///
+    /// @return {@link Never#INSTANCE}
+    ///
     public static ConditionalPredicate never() {
         return Never.INSTANCE;
     }
     
+    ///
+    /// Returns a predicate that matches if all the given predicates match.
+    ///
+    /// @param predicates the predicates to check
+    ///
+    /// @return {@link All#All(List)}
+    ///
     public static ConditionalPredicate all(final ConditionalPredicate... predicates) {
         return new All(List.of(predicates));
     }
     
+    ///
+    /// Returns a predicate that matches if any of the given predicates match.
+    ///
+    /// @param predicates the predicates to check
+    ///
+    /// @return {@link Any#Any(List)}
+    ///
     public static ConditionalPredicate any(final ConditionalPredicate... predicates) {
         return new Any(List.of(predicates));
     }
     
+    ///
+    /// Returns a predicate that matches if the given predicate does not match.
+    ///
+    /// @param predicate the predicate to check
+    ///
+    /// @return {@link Not#Not(ConditionalPredicate)}
+    ///
     public static ConditionalPredicate not(final ConditionalPredicate predicate) {
         return new Not(predicate);
     }
     
+    ///
+    /// Returns a predicate that matches if the given block state matches.
+    ///
+    /// @param <T>      block-state property value type
+    /// @param property the property to check
+    /// @param value    the value to check
+    ///
+    /// @return {@link State#State(Map)}
+    ///
     public static <T extends Comparable<T>> ConditionalPredicate state(final Property<T> property, final T value) {
         return new State(Map.of(property.getName(), property.getName(value)));
     }
     
-    public static ConditionalPredicate state(final UnaryOperator<State.Builder> properties) {
-        return new State(properties.apply(new State.Builder()).build());
+    ///
+    /// Returns a predicate that matches if the given block state matches.
+    ///
+    /// @param operator the operator to apply to the builder
+    ///
+    /// @return {@link State#State(Map)}
+    ///
+    public static ConditionalPredicate state(final UnaryOperator<State.Builder> operator) {
+        return new State(operator.apply(new State.Builder()).build());
     }
     
+    ///
+    /// Returns a predicate that matches if the given model property matches.
+    ///
+    /// @param <T>      model property value type
+    /// @param property the property to check
+    /// @param value    the value to check
+    ///
+    /// @return {@link ModelProperties#ModelProperties(SLModelProperty, Map)}
+    ///
     public static <T extends SLModelPropertyValue> ConditionalPredicate modelProperty(final SLModelProperty<T> property, T value) {
         return new ModelProperties(property, value.serializeFields());
     }
     
+    ///
+    /// Resolves the given model property value.
+    /// If the property is not present in the model data, it will attempt to resolve it in a Framed Block.
+    ///
+    /// @param property the property to resolve
+    ///
+    /// @return the resolved value, or `null` if the property is not present in the model data
+    ///
     private static <T extends SLModelPropertyValue> @Nullable T resolveModelPropertyValue(final SLModelProperty<T> property, final ModelData data) {
         final T directValue = property.get(data);
         if (directValue != null) return directValue;
         return Mods.FRAMED_BLOCKS.run(() -> FramedBlocksModelDataHelper.resolveModelPropertyValue(property, data));
     }
     
+    ///
+    /// Returns a codec for the given conditional rule type.
+    ///
+    /// @param type the rule type
+    ///
+    /// @return the codec for the rule type, or an error if the type is not registered
+    ///
     private static DataResult<? extends MapCodec<? extends ConditionalPredicate>> codec(final Identifier type) {
         final MapCodec<? extends ConditionalPredicate> codec = ConditionalRules.RULES.get(type);
         return codec != null ? DataResult.success(codec) : DataResult.error(() -> "Unknown conditional rule type: " + type);
     }
     
+    ///
+    /// Predicate that always matches
+    ///
     public enum Always implements ConditionalPredicate {
+        ///
+        /// The `always` predicate instance
+        ///
         INSTANCE;
         
+        ///
+        /// Map codec for the `always` predicate
+        ///
         public static final MapCodec<Always> CODEC = MapCodec.unit(Always.INSTANCE);
         
         @Override
@@ -139,9 +230,18 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that never matches
+    ///
     public enum Never implements ConditionalPredicate {
+        ///
+        /// The `never` predicate instance
+        ///
         INSTANCE;
         
+        ///
+        /// Map codec for the `never` predicate
+        ///
         public static final MapCodec<Never> CODEC = MapCodec.unit(Never.INSTANCE);
         
         
@@ -161,6 +261,11 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that matches only when every nested predicate matches.
+    ///
+    /// @param rules predicates to evaluate
+    ///
     public record All(List<ConditionalPredicate> rules) implements ConditionalPredicate {
         
         public static final MapCodec<All> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -186,6 +291,11 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that matches when at least one nested predicate matches.
+    ///
+    /// @param rules predicates to evaluate
+    ///
     public record Any(List<ConditionalPredicate> rules) implements ConditionalPredicate {
         
         public static final MapCodec<Any> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -211,6 +321,11 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that inverts another predicate.
+    ///
+    /// @param rule predicate to negate
+    ///
     public record Not(ConditionalPredicate rule) implements ConditionalPredicate {
         
         public static final MapCodec<Not> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -233,6 +348,11 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that matches a set of serialized block-state properties.
+    ///
+    /// @param states serialized property-name to value map
+    ///
     public record State(Map<String, String> states) implements ConditionalPredicate {
         
         public static final MapCodec<State> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -262,10 +382,24 @@ public class ConditionalRules {
             return State.CODEC;
         }
         
+        ///
+        /// Builder for serialized state-property predicates.
+        ///
         public static class Builder {
             
             private final ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
             
+            private Builder() { }
+            
+            ///
+            /// Adds one required state-property value to the predicate.
+            ///
+            /// @param <T>      block-state property value type
+            /// @param property property to serialize
+            /// @param value    required property value
+            ///
+            /// @return this builder
+            ///
             public <T extends Comparable<T>> Builder put(Property<T> property, T value) {
                 this.builder.put(property.getName(), property.getName(value));
                 return this;
@@ -277,6 +411,12 @@ public class ConditionalRules {
         }
     }
     
+    ///
+    /// Predicate that matches serialized model-property fields.
+    ///
+    /// @param property model property to inspect
+    /// @param values   serialized field-name to value map
+    ///
     public record ModelProperties(SLModelProperty<?> property, Map<String, String> values) implements ConditionalPredicate {
         
         public static final MapCodec<ModelProperties> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

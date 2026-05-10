@@ -24,6 +24,7 @@ public class FramedBlocksModelDataHelper {
     ///
     /// Resolves the given SathLib model property from FramedBlocks nested query data.
     ///
+    /// @param <T>      model property value type
     /// @param property SathLib model property to resolve
     /// @param data     model data to inspect
     ///
@@ -48,6 +49,7 @@ public class FramedBlocksModelDataHelper {
     ///
     /// Resolves the given SathLib model property from the framed block data query payload.
     ///
+    /// @param <T>        model property value type
     /// @param property   SathLib model property to resolve
     /// @param framedData framed block data to inspect
     ///

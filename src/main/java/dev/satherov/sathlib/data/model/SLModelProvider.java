@@ -43,11 +43,20 @@ import java.util.stream.Stream;
 @SuppressWarnings("DataFlowIssue")
 public abstract class SLModelProvider implements DataProvider {
     
+    ///
+    /// Namespace this provider writes resources for.
+    ///
     public final String modId;
     private final PackOutput.PathProvider blockStatePathProvider;
     private final PackOutput.PathProvider itemInfoPathProvider;
     private final PackOutput.PathProvider modelPathProvider;
     
+    ///
+    /// Creates the model-data provider base.
+    ///
+    /// @param output pack output used for generated resources
+    /// @param modId  namespace this provider generates resources for
+    ///
     public SLModelProvider(PackOutput output, String modId) {
         this.blockStatePathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "blockstates");
         this.itemInfoPathProvider = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "items");
@@ -60,6 +69,9 @@ public abstract class SLModelProvider implements DataProvider {
     ///
     /// @param blockModels block models to register
     /// @param itemModels  item models to register
+    ///
+    /// @see SLBlockModelGenerators
+    /// @see SLItemModelGenerators
     ///
     protected abstract void registerModels(SLBlockModelGenerators blockModels, ItemModelGenerators itemModels);
     

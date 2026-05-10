@@ -13,11 +13,26 @@ import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
 
 
+///
+/// One named field inside a structured model-property value.
+///
+/// @param <T>         runtime field value type
+/// @param name        serialized field name
+/// @param codec       codec used for string/json conversion
+/// @param streamCodec codec used for network serialization
+///
 public record SLModelPropertyField<T>(
         String name,
         Codec<T> codec,
         StreamCodec<? extends ByteBuf, T> streamCodec
 ) {
+    ///
+    /// Deserializes a serialized field value.
+    ///
+    /// @param value serialized value to parse
+    ///
+    /// @return parsed value or an error result
+    ///
     public DataResult<T> deserialize(final String value) {
         if (value == null) return DataResult.error(() -> "Cannot deserialize null value for model property field " + this.name);
         
@@ -28,6 +43,14 @@ public record SLModelPropertyField<T>(
         }
     }
     
+    ///
+    /// Checks whether a runtime value matches one serialized representation.
+    ///
+    /// @param value           runtime value to compare
+    /// @param serializedValue serialized candidate value
+    ///
+    /// @return `true` when both values are equal
+    ///
     public boolean matchesSerialized(final T value, final String serializedValue) {
         return this.deserialize(serializedValue)
                 .result()
@@ -35,6 +58,13 @@ public record SLModelPropertyField<T>(
                 .isPresent();
     }
     
+    ///
+    /// Serializes a runtime field value.
+    ///
+    /// @param value value to serialize
+    ///
+    /// @return serialized field value
+    ///
     public String serialize(final T value) {
         return this.codec.encodeStart(JsonOps.INSTANCE, value)
                 .result()

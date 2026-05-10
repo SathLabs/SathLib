@@ -148,6 +148,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given block state properties must match with the model identifier to use in that case.
     ///
+    /// @param <T>      block-state property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model identifier
@@ -161,6 +162,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given block state properties must match with the model variant to use in that case.
     ///
+    /// @param <T>      block-state property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model variant
@@ -174,6 +176,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given block state properties must match with the model builder to use in that case.
     ///
+    /// @param <T>      block-state property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model builder
@@ -187,6 +190,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given block state properties must match with the model to use in that case.
     ///
+    /// @param <T>      block-state property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model
@@ -200,6 +204,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given model property must match with the model identifier to use in that case.
     ///
+    /// @param <T>      model property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model identifier
@@ -213,6 +218,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given model property must match with the model variant to use in that case.
     ///
+    /// @param <T>      model property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model variant
@@ -226,6 +232,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given model property must match with the model builder to use in that case.
     ///
+    /// @param <T>      model property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model builder
@@ -239,6 +246,7 @@ public final class SLConditionalModelBuilder extends CustomBlockStateModelBuilde
     ///
     /// Adds a conditional case to the builder where the given model property must match with the model to use in that case.
     ///
+    /// @param <T>      model property value type
     /// @param property property to match
     /// @param value    property value to match
     /// @param model    model

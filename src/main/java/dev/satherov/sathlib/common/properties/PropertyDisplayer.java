@@ -57,6 +57,8 @@ public interface PropertyDisplayer<T> {
     /// @param on  The translatable to display if the value is `true`
     /// @param off The translatable to display if the value is `false`
     ///
+    /// @return the property displayer
+    ///
     static PropertyDisplayer<Boolean> boolDisplayer(SLTranslatable on, SLTranslatable off) {
         return value -> value ? on.translate() : off.translate();
     }
@@ -113,6 +115,10 @@ public interface PropertyDisplayer<T> {
     
     ///
     /// Displays the value as a {@link SLComponent}.
+    ///
+    /// @param value the value to display
+    ///
+    /// @return rendered component
     ///
     SLComponent display(T value);
 }

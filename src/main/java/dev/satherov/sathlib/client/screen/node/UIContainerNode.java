@@ -30,6 +30,9 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     
     private final List<UINode<?>> children = new ArrayList<>();
     
+    ///
+    /// Creates an empty container node.
+    ///
     protected UIContainerNode() { }
     
     ///

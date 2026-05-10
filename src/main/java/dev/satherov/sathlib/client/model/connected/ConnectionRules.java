@@ -34,6 +34,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+///
+/// Utility class for the built-in connected-texture connection rules.
+///
 @UtilityClass
 public class ConnectionRules {
     
@@ -90,10 +93,16 @@ public class ConnectionRules {
     ///
     public static final Identifier NEIGHBOUR_MODEL_PROPERTY = SathLib.id("neighbour_model_property");
     private static final Map<Identifier, MapCodec<? extends ConnectionPredicate>> RULES = new ConcurrentHashMap<>();
+    ///
+    /// Codec for all registered connection rules.
+    ///
     public static final Codec<ConnectionPredicate> CODEC = Codec.recursive("connected_texture", _ -> Identifier.CODEC.partialDispatch(
             "type", rule -> DataResult.success(rule.type()), ConnectionRules::codec
     ));
     
+    ///
+    /// Initializes the built-in rule registrations.
+    ///
     @ApiStatus.Internal
     public static void init() {
         ModLoader.postEvent(new SLRegisterConnectionRulesEvent(ConnectionRules.RULES));
@@ -184,6 +193,7 @@ public class ConnectionRules {
     ///
     /// The `origin_state_property` rule. Will connect if the origin state has the given value for the given block state property.
     ///
+    /// @param <T>      block-state property value type
     /// @param property the property to check
     /// @param value    the value to check
     ///
@@ -195,6 +205,12 @@ public class ConnectionRules {
     
     ///
     /// The `neighbor_state_property` rule. Will connect if the neighbor state has the given value for the given block state property.
+    ///
+    /// @param <T>      block-state property value type
+    /// @param property the property to check
+    /// @param value    the value to check
+    ///
+    /// @return {@link NeighborStateProperty#NeighborStateProperty(String, String)}
     ///
     public static <T extends Comparable<T>> ConnectionPredicate neighborStateProperty(final Property<T> property, final T value) {
         return new NeighborStateProperty(property.getName(), property.getName(value));
@@ -215,6 +231,7 @@ public class ConnectionRules {
     ///
     /// The `origin_model_property` rule. Will connect if the origin model has the given value for the given model property.
     ///
+    /// @param <T>      model field value type
     /// @param property the property to check
     /// @param field    the field to check
     /// @param value    the value to check
@@ -228,6 +245,7 @@ public class ConnectionRules {
     ///
     /// The `neighbour_model_property` rule. Will connect if the origin model has the given value for the given model property.
     ///
+    /// @param <T>      model field value type
     /// @param property the property to check
     /// @param field    the field to check
     /// @param value    the value to check
@@ -260,9 +278,18 @@ public class ConnectionRules {
         return actualValue != null && field.matchesSerialized(actualValue, serializedValue);
     }
     
+    ///
+    /// Rule that always connects.
+    ///
     public enum Always implements ConnectionPredicate {
+        ///
+        /// Singleton instance of the rule.
+        ///
         INSTANCE;
         
+        ///
+        /// Codec for the rule.
+        ///
         public static final MapCodec<Always> CODEC = MapCodec.unit(Always.INSTANCE);
         
         @Override
@@ -281,9 +308,18 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that never connects.
+    ///
     public enum Never implements ConnectionPredicate {
+        ///
+        /// Singleton instance of the rule.
+        ///
         INSTANCE;
         
+        ///
+        /// Codec for the rule.
+        ///
         public static final MapCodec<Never> CODEC = MapCodec.unit(Never.INSTANCE);
         
         @Override
@@ -302,9 +338,18 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that connects only when both blocks are the same block type.
+    ///
     public enum SameBlock implements ConnectionPredicate {
+        ///
+        /// Singleton instance of the rule.
+        ///
         INSTANCE;
         
+        ///
+        /// Codec for the rule.
+        ///
         public static final MapCodec<SameBlock> CODEC = MapCodec.unit(SameBlock.INSTANCE);
         
         @Override
@@ -323,9 +368,18 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that connects only when all compared state properties match.
+    ///
     public enum SameState implements ConnectionPredicate {
+        ///
+        /// Singleton instance of the rule.
+        ///
         INSTANCE;
         
+        ///
+        /// Codec for the rule.
+        ///
         public static final MapCodec<SameState> CODEC = MapCodec.unit(SameState.INSTANCE);
         
         @Override
@@ -354,6 +408,11 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that requires every nested rule to connect.
+    ///
+    /// @param rules nested rules to evaluate
+    ///
     public record All(List<ConnectionPredicate> rules) implements ConnectionPredicate {
         
         public static final MapCodec<All> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -379,6 +438,11 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that requires at least one nested rule to connect.
+    ///
+    /// @param rules nested rules to evaluate
+    ///
     public record Any(List<ConnectionPredicate> rules) implements ConnectionPredicate {
         
         public static final MapCodec<Any> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -404,6 +468,11 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that negates another rule.
+    ///
+    /// @param rule rule to negate
+    ///
     public record Not(ConnectionPredicate rule) implements ConnectionPredicate {
         
         public static final MapCodec<Not> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -426,6 +495,11 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that compares one named state property between origin and neighbor.
+    ///
+    /// @param property serialized property name
+    ///
     public record SameStateProperty(String property) implements ConnectionPredicate {
         
         public static final MapCodec<SameStateProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -457,6 +531,12 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that checks a serialized state-property value on the origin block.
+    ///
+    /// @param property serialized property name
+    /// @param value    serialized property value
+    ///
     public record OriginStateProperty(String property, String value) implements ConnectionPredicate {
         
         public static final MapCodec<OriginStateProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -486,6 +566,12 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that checks a serialized state-property value on the neighbor block.
+    ///
+    /// @param property serialized property name
+    /// @param value    serialized property value
+    ///
     public record NeighborStateProperty(String property, String value) implements ConnectionPredicate {
         
         public static final MapCodec<NeighborStateProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -515,6 +601,12 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that compares one model-property field between origin and neighbor.
+    ///
+    /// @param property model property to inspect
+    /// @param field    field name to compare
+    ///
     public record SameModelProperty(SLModelProperty<?> property, String field) implements ConnectionPredicate {
         
         public static final MapCodec<SameModelProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -545,6 +637,13 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that checks one serialized model-property field value on the origin block.
+    ///
+    /// @param property model property to inspect
+    /// @param field    field name to compare
+    /// @param value    serialized field value
+    ///
     public record OriginModelProperty(SLModelProperty<?> property, String field, String value) implements ConnectionPredicate {
         
         public static final MapCodec<OriginModelProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -577,6 +676,13 @@ public class ConnectionRules {
         }
     }
     
+    ///
+    /// Rule that checks one serialized model-property field value on the neighbor block.
+    ///
+    /// @param property model property to inspect
+    /// @param field    field name to compare
+    /// @param value    serialized field value
+    ///
     public record NeighbourModelProperty(SLModelProperty<?> property, String field, String value) implements ConnectionPredicate {
         
         public static final MapCodec<NeighbourModelProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

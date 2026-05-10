@@ -8,6 +8,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 
+///
+/// Remaps texture UVs from a base sprite into a connected-texture tile.
+///
 @UtilityClass
 public class ConnectedTextureUvResolver {
     

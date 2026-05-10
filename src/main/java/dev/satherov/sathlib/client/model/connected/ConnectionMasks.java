@@ -52,7 +52,13 @@ public sealed interface ConnectionMasks permits ConnectionMasks.Empty, Connectio
     ///
     @Nullable ConnectionFaceMasks get(Identifier identifier);
     
+    ///
+    /// Empty connection-mask implementation.
+    ///
     enum Empty implements ConnectionMasks {
+        ///
+        /// Shared empty-mask instance.
+        ///
         INSTANCE;
         
         @Override
@@ -61,6 +67,12 @@ public sealed interface ConnectionMasks permits ConnectionMasks.Empty, Connectio
         }
     }
     
+    ///
+    /// Single-sprite connection-mask implementation.
+    ///
+    /// @param sprite     texture identifier
+    /// @param connection connection mask for the texture
+    ///
     record Single(Identifier sprite, ConnectionFaceMasks connection) implements ConnectionMasks {
         
         @Override
@@ -69,6 +81,11 @@ public sealed interface ConnectionMasks permits ConnectionMasks.Empty, Connectio
         }
     }
     
+    ///
+    /// Multi-sprite connection-mask implementation.
+    ///
+    /// @param connections connection masks indexed by texture identifier
+    ///
     record Multi(Map<Identifier, ConnectionFaceMasks> connections) implements ConnectionMasks {
         
         @Override

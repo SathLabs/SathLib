@@ -30,6 +30,11 @@ public abstract class SLScreen extends Screen {
     
     private final UIRoot root = new UIRoot();
     
+    ///
+    /// Creates a retained-mode screen with the given title.
+    ///
+    /// @param title screen title
+    ///
     protected SLScreen(Component title) {
         super(title);
     }

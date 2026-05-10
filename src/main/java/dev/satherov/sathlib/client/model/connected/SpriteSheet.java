@@ -23,6 +23,8 @@ public final class SpriteSheet {
     private static final int[][] SPRITES = SpriteSheet.createSprites();
     private static final Pos[] CACHE = SpriteSheet.createCache();
     
+    private SpriteSheet() { }
+    
     ///
     /// Resolves the atlas position for a sprite mask.
     ///

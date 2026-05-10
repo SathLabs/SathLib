@@ -43,6 +43,7 @@ public interface PropertyExtractor<T> {
     /// @param getter       The getter to extract the value from
     /// @param defaultValue The default value to return if the getter returns null
     /// @param <T>          the type of the value
+    /// @param <BE>         the type of the block entity
     ///
     /// @return the extracted or the default value
     ///

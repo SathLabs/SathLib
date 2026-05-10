@@ -13,8 +13,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+///
+/// Small extension of Mojang's block-model generator helpers.
+///
 public class SLBlockModelGenerators extends BlockModelGenerators {
     
+    ///
+    /// Creates the generator wrapper.
+    ///
+    /// @param blockStateOutput consumer that receives blockstate generators
+    /// @param itemModelOutput  item-model output sink
+    /// @param modelOutput      model-json output sink
+    ///
     public SLBlockModelGenerators(Consumer<BlockModelDefinitionGenerator> blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(blockStateOutput, itemModelOutput, modelOutput);
     }

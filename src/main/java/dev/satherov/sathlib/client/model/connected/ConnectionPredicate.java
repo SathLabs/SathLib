@@ -4,6 +4,9 @@ import net.minecraft.resources.Identifier;
 
 import com.mojang.serialization.MapCodec;
 
+///
+/// Predicate used to decide whether two connected-texture blocks should join.
+///
 public interface ConnectionPredicate {
     
     ///

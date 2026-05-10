@@ -37,6 +37,8 @@ public record PropertyBlockHolder(BlockState state, @Nullable BlockEntity blockE
     /// @param <T>      the return type
     /// @param <BE>     the block entity type
     ///
+    /// @return supplied value, or `null` when the block entity does not match
+    ///
     public <T, BE extends BlockEntity> @Nullable T supplyIfPresent(Class<BE> type, Function<BE, T> consumer) {
         if (type.isInstance(this.blockEntity)) return consumer.apply(type.cast(this.blockEntity));
         return null;

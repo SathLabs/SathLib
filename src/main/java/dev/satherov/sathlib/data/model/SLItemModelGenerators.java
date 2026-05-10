@@ -7,8 +7,17 @@ import net.minecraft.resources.Identifier;
 
 import java.util.function.BiConsumer;
 
+///
+/// Small extension of Mojang's item-model generator helpers.
+///
 public class SLItemModelGenerators extends ItemModelGenerators {
     
+    ///
+    /// Creates the generator wrapper.
+    ///
+    /// @param itemModelOutput item-model output sink
+    /// @param modelOutput     model-json output sink
+    ///
     public SLItemModelGenerators(ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(itemModelOutput, modelOutput);
     }

@@ -2,6 +2,9 @@ package dev.satherov.sathlib.client.model.connected;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
+///
+/// Sprite view for one tile inside a connected-texture atlas sprite.
+///
 public class ConnectedTextureAtlasSprite extends TextureAtlasSprite {
     
     private final TextureAtlasSprite delegate;
@@ -14,6 +17,12 @@ public class ConnectedTextureAtlasSprite extends TextureAtlasSprite {
     private final float v0;
     private final float v1;
     
+    ///
+    /// Creates a sprite view for one atlas tile.
+    ///
+    /// @param delegate source atlas sprite
+    /// @param tile     tile coordinates inside the connected-texture sheet
+    ///
     protected ConnectedTextureAtlasSprite(final TextureAtlasSprite delegate, final SpriteSheet.Pos tile) {
         
         // The size of a single sprite is the atlas size multiplied with the partition fraction of a tile

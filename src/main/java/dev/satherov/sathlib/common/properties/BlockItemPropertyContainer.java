@@ -24,8 +24,12 @@ import java.util.Map;
 ///
 /// Container for a collection of block item properties.
 ///
+/// @param <B> the block class
+/// @param <I> the item class
+///
 @Getter
 @NothingNull
+@SuppressWarnings("doclint:missing")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BlockItemPropertyContainer<B extends Block, I extends Item> implements Iterable<BlockItemProperty<?>> {
     
@@ -268,6 +272,12 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
         return this.blockClass.isInstance(state.getBlock());
     }
     
+    ///
+    /// Builder for {@link BlockItemPropertyContainer}
+    ///
+    /// @param <B> the block class
+    /// @param <I> the item class
+    ///
     @RequiredArgsConstructor
     public static final class Builder<B extends Block, I extends Item> {
         
@@ -275,11 +285,23 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
         private final Class<I> itemClass;
         private final ImmutableMap.Builder<Identifier, BlockItemProperty<?>> properties = new ImmutableMap.Builder<>();
         
+        ///
+        /// Adds a block item property to the container.
+        ///
+        /// @param property the property to add
+        ///
+        /// @return this builder
+        ///
         public Builder<B, I> property(BlockItemProperty<?> property) {
             this.properties.put(property.getIdentifier(), property);
             return this;
         }
         
+        ///
+        /// Builds the container.
+        ///
+        /// @return the built container
+        ///
         public BlockItemPropertyContainer<B, I> build() {
             return new BlockItemPropertyContainer<>(this.blockClass, this.itemClass, this.properties.build());
         }

@@ -33,6 +33,11 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     private SLScalar gap = SLScalar.zero();
     private SLAlignment mainAxisAlignment = SLAlignment.START;
     
+    ///
+    /// Creates a flow container for the given main axis.
+    ///
+    /// @param axis layout axis used to order children
+    ///
     protected SLFlowNode(SLAxis axis) {
         this.axis = axis;
     }

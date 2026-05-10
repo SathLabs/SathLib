@@ -54,5 +54,8 @@ public abstract class SLMenuNode {
         this.onAttached();
     }
     
+    ///
+    /// Hook invoked after the node is attached to a parent container.
+    ///
     protected void onAttached() { }
 }

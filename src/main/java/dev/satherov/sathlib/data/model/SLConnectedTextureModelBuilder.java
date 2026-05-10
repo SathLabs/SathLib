@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+///
+/// Builder for blockstate models with connected-texture overlays.
+///
 @NothingNull
 public class SLConnectedTextureModelBuilder extends CustomBlockStateModelBuilder {
     

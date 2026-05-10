@@ -12,9 +12,17 @@ import dev.satherov.sathlib.core.event.client.SLRegisterConnectionRulesEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.RegisterBlockStateModels;
 
+///
+/// Registers SathLib blockstate model loaders and built-in rule codecs.
+///
 @UtilityClass
 public class SLModelLoaders {
     
+    ///
+    /// Attaches all model-loader and rule-registration listeners.
+    ///
+    /// @param bus mod event bus
+    ///
     public static void register(final IEventBus bus) {
         
         bus.addListener(RegisterBlockStateModels.class, event -> {

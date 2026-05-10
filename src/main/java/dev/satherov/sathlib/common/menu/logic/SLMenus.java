@@ -142,6 +142,9 @@ public final class SLMenus {
         
         private final java.util.List<SLMenuNode> children = new java.util.ArrayList<>();
         
+        ///
+        /// Creates an empty container builder.
+        ///
         protected ContainerBuilder() { }
         
         ///

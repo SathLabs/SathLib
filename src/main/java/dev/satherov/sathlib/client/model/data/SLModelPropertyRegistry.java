@@ -10,10 +10,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+///
+/// Registry for SathLib model-property descriptors.
+///
 public class SLModelPropertyRegistry {
     
     private static final Map<Identifier, SLModelProperty<?>> PROPERTIES = new ConcurrentHashMap<>();
     private static final Set<Identifier> MISSING_PROPERTIES = ConcurrentHashMap.newKeySet();
+    
+    private SLModelPropertyRegistry() { }
     
     ///
     /// Registers a model property.
