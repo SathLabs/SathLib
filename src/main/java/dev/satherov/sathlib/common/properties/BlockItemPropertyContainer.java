@@ -77,7 +77,7 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
     public PropertyItemHolder applyToItem(ItemStack stack, BlockState state, @Nullable BlockEntity entity) {
         PropertyItemHolder item = new PropertyItemHolder(stack);
         if (!this.supports(stack, state)) return item;
-        for (BlockItemProperty<?> property : this) item = property.applyToItem(stack, state, entity);
+        for (BlockItemProperty<?> property : this) item = property.applyToItem(item.stack(), state, entity);
         return item;
     }
     
@@ -105,7 +105,7 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
     public PropertyBlockHolder applyToBlock(ItemStack stack, BlockState state, @Nullable BlockEntity entity) {
         PropertyBlockHolder block = new PropertyBlockHolder(state, entity);
         if (!this.supports(stack, state)) return block;
-        for (BlockItemProperty<?> property : this) block = property.applyToBlock(stack, state, entity);
+        for (BlockItemProperty<?> property : this) block = property.applyToBlock(stack, block.state(), block.blockEntity());
         return block;
     }
     
