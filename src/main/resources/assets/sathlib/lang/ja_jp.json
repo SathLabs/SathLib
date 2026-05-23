@@ -1,0 +1,20 @@
+{
+  "formatting.sathlib.curly_brackets": "｛%s｝",
+  "formatting.sathlib.round_brackets": "（%s）",
+  "formatting.sathlib.square_brackets": "［%s］",
+  "generic.sathlib.all": "すべて",
+  "generic.sathlib.allow": "許可",
+  "generic.sathlib.allowed": "許可",
+  "generic.sathlib.any": "すべて",
+  "generic.sathlib.denied": "拒否",
+  "generic.sathlib.deny": "拒否",
+  "generic.sathlib.disabled": "無効",
+  "generic.sathlib.enabled": "有効",
+  "generic.sathlib.none": "なし",
+  "generic.sathlib.off": "オフ",
+  "generic.sathlib.on": "オン",
+  "generic.sathlib.supported": "対応",
+  "generic.sathlib.unsupported": "非対応",
+  "input.sathlib.wheel.down": "下スクロール",
+  "input.sathlib.wheel.up": "上スクロール"
+}
