@@ -1,22 +1,32 @@
 package dev.satherov.sathlib.client.screen.node;
 
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
+
+import org.jspecify.annotations.Nullable;
+
 ///
 /// Convenience base class for nodes that never own child nodes.
 ///
 /// Leaf nodes follow the normal {@link UINode} lifecycle without any child
 /// management.
 ///
-/// - make custom one-class widgets simpler to implement
-///
-/// Extend this class for standalone widgets such as labels, buttons, progress
-/// bars, sliders, or bespoke custom controls.
-///
 /// @param <S> concrete leaf subtype used for fluent setters
 ///
 public abstract class UILeafNode<S extends UILeafNode<S>> extends UINode<S> {
     
     ///
-    /// Creates an empty leaf node.
+    /// Creates a leaf with the empty modifier.
     ///
-    protected UILeafNode() { }
+    protected UILeafNode() {
+        this(SLModifier.none());
+    }
+    
+    ///
+    /// Creates a leaf with an explicit modifier.
+    ///
+    /// @param modifier node modifier
+    ///
+    protected UILeafNode(@Nullable SLModifier modifier) {
+        super(modifier);
+    }
 }

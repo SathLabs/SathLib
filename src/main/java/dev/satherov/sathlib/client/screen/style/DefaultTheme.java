@@ -11,14 +11,9 @@ import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
 ///
-/// Default skin shipped with the SathLib UI framework.
+/// Default theme shipped with the SathLib UI framework.
 ///
 /// A single shared instance is usually enough for the whole mod session.
-///
-/// - provide a clean baseline visual language for built-in widgets
-/// - keep the built-in nodes readable without exposing raw colors everywhere
-///
-/// Replace this implementation when a project wants a different visual identity.
 ///
 public enum DefaultTheme implements UITheme {
     ///
@@ -26,25 +21,42 @@ public enum DefaultTheme implements UITheme {
     ///
     INSTANCE;
     
-    private static final int PANEL_FILL = 0xEE1D2431;
-    private static final int PANEL_BORDER = 0xFF55627C;
-    private static final int BUTTON_FILL = 0xFF314059;
-    private static final int BUTTON_HOVER = 0xFF3D5374;
-    private static final int BUTTON_PRESS = 0xFF28364C;
-    private static final int BUTTON_DISABLED = 0xFF202833;
-    private static final int BUTTON_BORDER = 0xFF90A4C4;
-    private static final int TRACK_FILL = 0xFF1A2230;
-    private static final int TRACK_BORDER = 0xFF617796;
-    private static final int ACCENT = 0xFF7CC4FF;
-    private static final int TEXT = 0xFFF4F7FB;
-    private static final int TEXT_DISABLED = 0xFF8B97AB;
+    private static final UIThemeColors COLORS = new UIThemeColors(
+            0x7A07090C,
+            0x24000000,
+            0xF71A1F26,
+            0xF7101419,
+            0xD10D1116,
+            0xFF46515F,
+            0xCC080B0F,
+            0xFF232A33,
+            0xFFD6DEE7,
+            0xFF7CC4FF,
+            0xFF6A869F,
+            0xFFE8EDF3,
+            0xFF7F8A96,
+            0xFF8B97AB,
+            0x666A869F,
+            0xFFFFFFFF
+    );
     
     DefaultTheme() { }
     
     @Override
+    public UIThemeColors colors() {
+        return DefaultTheme.COLORS;
+    }
+    
+    @Override
     public void renderPanel(SLRenderContext context, SLBounds bounds) {
-        context.fill(bounds, DefaultTheme.PANEL_FILL);
-        context.outline(bounds, DefaultTheme.PANEL_BORDER);
+        int shadowInset = 8;
+        context.fill(
+                new SLBounds(bounds.x() - shadowInset, bounds.y() - shadowInset, bounds.width() + (shadowInset * 2), bounds.height() + (shadowInset * 2)),
+                DefaultTheme.COLORS.panelShadow()
+        );
+        context.fillVerticalGradient(bounds, DefaultTheme.COLORS.panelFillTop(), DefaultTheme.COLORS.panelFillBottom());
+        context.fill(new SLBounds(bounds.x() + 1, bounds.y() + 1, Math.max(0, bounds.width() - 2), Math.max(0, bounds.height() - 2)), DefaultTheme.COLORS.panelInset());
+        context.outline(bounds, DefaultTheme.COLORS.panelBorder());
     }
     
     @Override
@@ -56,13 +68,17 @@ public enum DefaultTheme implements UITheme {
             boolean pressed,
             boolean enabled
     ) {
-        int fillColor = DefaultTheme.BUTTON_FILL;
-        if (!enabled) fillColor = DefaultTheme.BUTTON_DISABLED;
-        else if (pressed) fillColor = DefaultTheme.BUTTON_PRESS;
-        else if (hovered) fillColor = DefaultTheme.BUTTON_HOVER;
+        int fillColor = DefaultTheme.COLORS.panelFillTop();
+        if (!enabled) {
+            fillColor = SLColorUtils.lerp(0.45F, DefaultTheme.COLORS.panelFillTop(), DefaultTheme.COLORS.insetFill());
+        } else if (pressed) {
+            fillColor = SLColorUtils.lerp(0.35F, DefaultTheme.COLORS.panelFillTop(), DefaultTheme.COLORS.insetFill());
+        } else if (hovered) {
+            fillColor = SLColorUtils.lerp(0.22F, DefaultTheme.COLORS.panelFillTop(), DefaultTheme.COLORS.accent());
+        }
         
         context.fill(bounds, fillColor);
-        context.outline(bounds, DefaultTheme.BUTTON_BORDER);
+        context.outline(bounds, DefaultTheme.COLORS.panelBorder());
         context.centeredVisualText(text, bounds, this.labelColor(enabled), false);
     }
     
@@ -75,21 +91,51 @@ public enum DefaultTheme implements UITheme {
             boolean enabled
     ) {
         float clampedProgress = Mth.clamp(progress, 0.0F, 1.0F);
-        context.fill(bounds, DefaultTheme.TRACK_FILL);
-        context.outline(bounds, DefaultTheme.TRACK_BORDER);
+        context.fill(bounds, DefaultTheme.COLORS.insetFill());
+        context.outline(bounds, DefaultTheme.COLORS.insetBorder());
         
         int innerWidth = Math.max(0, bounds.width() - 2);
         int innerHeight = Math.max(0, bounds.height() - 2);
         int fillWidth = Math.round(innerWidth * clampedProgress);
         if (fillWidth > 0 && innerHeight > 0) {
-            int fillColor = enabled ? DefaultTheme.ACCENT : SLColorUtils.lerp(0.5F, DefaultTheme.ACCENT, DefaultTheme.TRACK_BORDER);
-            context.fill(
-                    new SLBounds(bounds.x() + 1, bounds.y() + 1, fillWidth, innerHeight),
-                    fillColor
-            );
+            int fillColor = enabled ? DefaultTheme.COLORS.accent() : SLColorUtils.lerp(0.5F, DefaultTheme.COLORS.accent(), DefaultTheme.COLORS.insetBorder());
+            context.fill(new SLBounds(bounds.x() + 1, bounds.y() + 1, fillWidth, innerHeight), fillColor);
         }
         
-        if (overlay != null) context.centeredText(overlay, bounds, this.labelColor(enabled), false);
+        if (overlay != null) {
+            context.centeredText(overlay, bounds, this.labelColor(enabled), false);
+        }
+    }
+    
+    @Override
+    public void renderTextField(SLRenderContext context, SLBounds bounds, SLTextFieldRenderState renderState) {
+        int outlineColor = renderState.focused() ? DefaultTheme.COLORS.insetStrong() : DefaultTheme.COLORS.panelBorder();
+        context.fill(bounds, DefaultTheme.COLORS.insetFill());
+        context.outline(bounds, outlineColor);
+        
+        String renderText = renderState.value().isEmpty() && renderState.placeholder() != null
+                ? renderState.placeholder()
+                : renderState.value();
+        int textColor = renderState.value().isEmpty()
+                ? DefaultTheme.COLORS.textMuted()
+                : this.labelColor(renderState.enabled());
+        int textX = bounds.x() + 4;
+        int textY = bounds.y() + ((bounds.height() - context.font().lineHeight) / 2);
+        
+        if (renderState.hasSelection() && !renderState.value().isEmpty()) {
+            int selectionStart = Math.min(renderState.selectionStart(), renderState.selectionEnd());
+            int selectionEnd = Math.max(renderState.selectionStart(), renderState.selectionEnd());
+            int highlightX = textX + context.font().width(renderState.value().substring(0, selectionStart));
+            int highlightRight = textX + context.font().width(renderState.value().substring(0, selectionEnd));
+            context.graphics().fill(highlightX, textY - 1, highlightRight, textY + context.font().lineHeight + 1, DefaultTheme.COLORS.selection());
+        }
+        
+        context.graphics().text(context.font(), renderText, textX, textY, textColor, false);
+        
+        if (renderState.focused()) {
+            int cursorX = textX + context.font().width(renderState.value().substring(0, renderState.cursor()));
+            context.graphics().fill(cursorX, textY, cursorX + 1, textY + context.font().lineHeight, DefaultTheme.COLORS.white());
+        }
     }
     
     @Override
@@ -100,19 +146,21 @@ public enum DefaultTheme implements UITheme {
             boolean hovered,
             boolean active
     ) {
-        if (!visuals.drawFrame()) return;
+        if (!visuals.drawFrame()) {
+            return;
+        }
         
         float inactiveBlend = active ? 0.0F : 0.45F;
         int fillColor = inactiveBlend > 0.0F
-                ? SLColorUtils.lerp(inactiveBlend, visuals.fillColor(), DefaultTheme.TRACK_FILL)
+                ? SLColorUtils.lerp(inactiveBlend, visuals.fillColor(), DefaultTheme.COLORS.insetFill())
                 : visuals.fillColor();
         int borderColor = inactiveBlend > 0.0F
-                ? SLColorUtils.lerp(inactiveBlend, visuals.borderColor(), DefaultTheme.TRACK_BORDER)
+                ? SLColorUtils.lerp(inactiveBlend, visuals.borderColor(), DefaultTheme.COLORS.insetBorder())
                 : visuals.borderColor();
         
         if (hovered) {
-            fillColor = SLColorUtils.lerp(0.18F, fillColor, DefaultTheme.ACCENT);
-            borderColor = SLColorUtils.lerp(0.22F, borderColor, DefaultTheme.ACCENT);
+            fillColor = SLColorUtils.lerp(0.18F, fillColor, DefaultTheme.COLORS.accent());
+            borderColor = SLColorUtils.lerp(0.22F, borderColor, DefaultTheme.COLORS.accent());
         }
         
         context.fill(bounds, fillColor);
@@ -121,11 +169,11 @@ public enum DefaultTheme implements UITheme {
     
     @Override
     public int labelColor(boolean enabled) {
-        return enabled ? DefaultTheme.TEXT : DefaultTheme.TEXT_DISABLED;
+        return enabled ? DefaultTheme.COLORS.textPrimary() : DefaultTheme.COLORS.textDisabled();
     }
     
     @Override
     public int accentColor() {
-        return DefaultTheme.ACCENT;
+        return DefaultTheme.COLORS.accent();
     }
 }

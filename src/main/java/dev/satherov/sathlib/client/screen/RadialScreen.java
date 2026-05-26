@@ -24,7 +24,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fc;
-import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.jspecify.annotations.Nullable;
 
@@ -98,19 +97,22 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     ///
     /// @param target target vertex buffer
     /// @param index  slice index
-    /// @param a      first vertex
-    /// @param b      second vertex
-    /// @param c      third vertex
+    /// @param ax     first vertex x
+    /// @param ay     first vertex y
+    /// @param bx     second vertex x
+    /// @param by     second vertex y
+    /// @param cx     third vertex x
+    /// @param cy     third vertex y
     ///
     /// @return the next write index
     ///
-    private static int putTriangle(float[] target, int index, Vector2d a, Vector2d b, Vector2d c) {
-        target[index++] = (float) a.x();
-        target[index++] = (float) a.y();
-        target[index++] = (float) b.x();
-        target[index++] = (float) b.y();
-        target[index++] = (float) c.x();
-        target[index++] = (float) c.y();
+    private static int putTriangle(float[] target, int index, float ax, float ay, float bx, float by, float cx, float cy) {
+        target[index++] = ax;
+        target[index++] = ay;
+        target[index++] = bx;
+        target[index++] = by;
+        target[index++] = cx;
+        target[index++] = cy;
         return index;
     }
     
@@ -165,17 +167,20 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         
         List<S> snapshot = List.copyOf(this.slices);
         final S hovered = this.hovered;
+        int hoveredIndex = -1;
         
         for (int index = 0; index < snapshot.size(); index++) {
             final S slice = snapshot.get(index);
-            if (slice == hovered) continue;
+            if (slice == hovered) {
+                hoveredIndex = index;
+                continue;
+            }
             
             slice.renderSlice(guiGraphics, this.createContext(slice, index, snapshot.size(), mouseX, mouseY));
         }
         
-        if (hovered != null) {
-            int idx = snapshot.indexOf(hovered);
-            if (idx >= 0) hovered.renderSlice(guiGraphics, this.createContext(hovered, idx, snapshot.size(), mouseX, mouseY));
+        if (hovered != null && hoveredIndex >= 0) {
+            hovered.renderSlice(guiGraphics, this.createContext(hovered, hoveredIndex, snapshot.size(), mouseX, mouseY));
         }
     }
     
@@ -501,20 +506,16 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     /// @return the slice render context
     ///
     protected SliceRenderContext<T, S> createContext(S slice, int index, int sliceCount, double mouseX, double mouseY) {
-        float sweep = this.getSliceSweepDegrees(sliceCount);
-        float spacing = this.getEffectiveSliceSpacingDegrees(sweep);
-        float startAngle = this.startAngleDegrees + (sweep * index) + (spacing * 0.5F);
-        float endAngle = this.startAngleDegrees + (sweep * (index + 1)) - (spacing * 0.5F);
-        float middleAngle = startAngle + ((endAngle - startAngle) * 0.5F);
+        SliceAngles angles = this.getSliceAngles(index, sliceCount);
         float hoverProgress = slice.getHoverProgress();
-        float hoverOffsetX = SLMathUtils.cos(middleAngle) * this.hoverOutwardOffset * hoverProgress;
-        float hoverOffsetY = SLMathUtils.sin(middleAngle) * this.hoverOutwardOffset * hoverProgress;
+        float hoverOffsetX = SLMathUtils.cos(angles.middle()) * this.hoverOutwardOffset * hoverProgress;
+        float hoverOffsetY = SLMathUtils.sin(angles.middle()) * this.hoverOutwardOffset * hoverProgress;
         
         return new SliceRenderContext<>(
                 this.self(), slice,
                 index, sliceCount, slice == this.hovered, hoverProgress,
                 this.centerX + hoverOffsetX, this.centerY + hoverOffsetY,
-                startAngle, middleAngle, endAngle,
+                angles.start(), angles.middle(), angles.end(),
                 this.sliceInnerRadius, this.sliceOuterRadius + (this.hoverExpandDistance * hoverProgress),
                 mouseX, mouseY
         );
@@ -608,6 +609,23 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     }
     
     ///
+    /// Resolves the angular bounds for one slice index.
+    ///
+    /// @param index      slice index
+    /// @param sliceCount total slice count
+    ///
+    /// @return resolved slice angles
+    ///
+    private SliceAngles getSliceAngles(int index, int sliceCount) {
+        float sweep = this.getSliceSweepDegrees(sliceCount);
+        float spacing = this.getEffectiveSliceSpacingDegrees(sweep);
+        float startAngle = this.startAngleDegrees + (sweep * index) + (spacing * 0.5F);
+        float endAngle = this.startAngleDegrees + (sweep * (index + 1)) - (spacing * 0.5F);
+        float middleAngle = startAngle + ((endAngle - startAngle) * 0.5F);
+        return new SliceAngles(startAngle, middleAngle, endAngle);
+    }
+    
+    ///
     /// Calculates the angular sweep assigned to each slice.
     ///
     /// @param sliceCount number of slices
@@ -640,60 +658,93 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
         float sweep = context.endAngle() - context.startAngle();
         float absoluteSweep = Math.abs(sweep);
         float outerArcLength = absoluteSweep * Mth.DEG_TO_RAD * context.outerRadius();
-        int countByDegrees = Mth.ceil(absoluteSweep / this.maxDegreesPerCurveSegment);
-        int countByArcLength = Mth.ceil(outerArcLength / this.maxPixelsPerCurveSegment);
-        int count = Math.max(1, Math.max(countByDegrees, countByArcLength));
-        List<Vector2d> outerVertices = new ArrayList<>(count + 1);
-        List<Vector2d> innerVertices = new ArrayList<>(count + 1);
+        int segmentsByDegrees = Mth.ceil(absoluteSweep / this.maxDegreesPerCurveSegment);
+        int segmentsByArcLength = Mth.ceil(outerArcLength / this.maxPixelsPerCurveSegment);
+        int segmentCount = Math.max(1, Math.max(segmentsByDegrees, segmentsByArcLength));
+        float[] triangleVertices = new float[segmentCount * 12];
+        int vertexIndex = 0;
         
-        for (int step = 0; step <= count; step++) {
-            float angle = Mth.lerp((float) step / count, context.startAngle(), context.endAngle());
-            outerVertices.add(SLMathUtils.getPointOnCircle(new Vector2d(context.centerX(), context.centerY()), angle, context.outerRadius()));
+        float minX = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxY = -Float.MAX_VALUE;
+        
+        float previousOuterX = 0.0F;
+        float previousOuterY = 0.0F;
+        float previousInnerX = 0.0F;
+        float previousInnerY = 0.0F;
+        
+        for (int step = 0; step <= segmentCount; step++) {
+            float angle = Mth.lerp((float) step / segmentCount, context.startAngle(), context.endAngle());
+            float cos = SLMathUtils.cos(angle);
+            float sin = SLMathUtils.sin(angle);
+            
+            float outerX = context.centerX() + (cos * context.outerRadius());
+            float outerY = context.centerY() + (sin * context.outerRadius());
+            float innerX = context.centerX() + (cos * context.innerRadius());
+            float innerY = context.centerY() + (sin * context.innerRadius());
+            
+            if (step > 0) {
+                vertexIndex = RadialScreen.putTriangle(
+                        triangleVertices,
+                        vertexIndex,
+                        previousOuterX,
+                        previousOuterY,
+                        previousInnerX,
+                        previousInnerY,
+                        outerX,
+                        outerY
+                );
+                vertexIndex = RadialScreen.putTriangle(
+                        triangleVertices,
+                        vertexIndex,
+                        outerX,
+                        outerY,
+                        previousInnerX,
+                        previousInnerY,
+                        innerX,
+                        innerY
+                );
+                
+                minX = Math.min(minX, Math.min(Math.min(previousOuterX, previousInnerX), Math.min(outerX, innerX)));
+                maxX = Math.max(maxX, Math.max(Math.max(previousOuterX, previousInnerX), Math.max(outerX, innerX)));
+                minY = Math.min(minY, Math.min(Math.min(previousOuterY, previousInnerY), Math.min(outerY, innerY)));
+                maxY = Math.max(maxY, Math.max(Math.max(previousOuterY, previousInnerY), Math.max(outerY, innerY)));
+            }
+            
+            previousOuterX = outerX;
+            previousOuterY = outerY;
+            previousInnerX = innerX;
+            previousInnerY = innerY;
         }
         
-        for (int step = 0; step <= count; step++) {
-            float angle = Mth.lerp((float) step / count, context.startAngle(), context.endAngle());
-            innerVertices.add(SLMathUtils.getPointOnCircle(new Vector2d(context.centerX(), context.centerY()), angle, context.innerRadius()));
+        if (vertexIndex == 0) {
+            return;
         }
         
-        this.submitSliceMesh(guiGraphics, outerVertices, innerVertices, color);
+        this.submitSliceMesh(guiGraphics, triangleVertices, color, minX, maxX, minY, maxY);
     }
     
     ///
     /// Submits a tessellated slice mesh for rendering.
     ///
-    /// @param graphics      graphics extractor for the current render pass
-    /// @param outerVertices outer arc vertices
-    /// @param innerVertices inner arc vertices
-    /// @param color         color value
+    /// @param graphics         graphics extractor for the current render pass
+    /// @param triangleVertices tessellated triangle vertices
+    /// @param color            color value
+    /// @param minX             resolved left edge
+    /// @param maxX             resolved right edge
+    /// @param minY             resolved top edge
+    /// @param maxY             resolved bottom edge
     ///
-    private void submitSliceMesh(GuiGraphicsExtractor graphics, List<Vector2d> outerVertices, List<Vector2d> innerVertices, int color) {
-        if (outerVertices.size() < 2 || innerVertices.size() < 2) return;
-        
-        float[] triangleVertices = new float[(outerVertices.size() - 1) * 12];
-        int vertexIndex = 0;
-        double minY = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        double minX = Double.MAX_VALUE;
-        double maxX = -Double.MAX_VALUE;
-        
-        for (int index = 0; index < outerVertices.size() - 1; index++) {
-            Vector2d outerStart = outerVertices.get(index);
-            Vector2d outerEnd = outerVertices.get(index + 1);
-            Vector2d innerStart = innerVertices.get(index);
-            Vector2d innerEnd = innerVertices.get(index + 1);
-            
-            vertexIndex = RadialScreen.putTriangle(triangleVertices, vertexIndex, outerStart, innerStart, outerEnd);
-            vertexIndex = RadialScreen.putTriangle(triangleVertices, vertexIndex, outerEnd, innerStart, innerEnd);
-            
-            minX = Math.min(minX, Math.min(Math.min(outerStart.x(), outerEnd.x()), Math.min(innerStart.x(), innerEnd.x())));
-            maxX = Math.max(maxX, Math.max(Math.max(outerStart.x(), outerEnd.x()), Math.max(innerStart.x(), innerEnd.x())));
-            minY = Math.min(minY, Math.min(Math.min(outerStart.y(), outerEnd.y()), Math.min(innerStart.y(), innerEnd.y())));
-            maxY = Math.max(maxY, Math.max(Math.max(outerStart.y(), outerEnd.y()), Math.max(innerStart.y(), innerEnd.y())));
-        }
-        
-        if (vertexIndex == 0) return;
-        
+    private void submitSliceMesh(
+            GuiGraphicsExtractor graphics,
+            float[] triangleVertices,
+            int color,
+            float minX,
+            float maxX,
+            float minY,
+            float maxY
+    ) {
         Matrix3x2f pose = new Matrix3x2f(graphics.pose());
         ScreenRectangle rawBounds = new ScreenRectangle(
                 Mth.floor(minX),
@@ -1049,4 +1100,13 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
             return TextureSetup.noTexture();
         }
     }
+    
+    ///
+    /// Immutable angular description for one rendered slice.
+    ///
+    /// @param start  slice start angle in degrees
+    /// @param middle slice middle angle in degrees
+    /// @param end    slice end angle in degrees
+    ///
+    private record SliceAngles(float start, float middle, float end) { }
 }

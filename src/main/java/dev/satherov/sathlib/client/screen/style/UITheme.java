@@ -11,16 +11,18 @@ import org.jspecify.annotations.Nullable;
 ///
 /// Defines the shared look of built-in SathLib UI components.
 ///
-/// A screen chooses one skin for its UI root. Built-in nodes delegate their
-/// visuals to that skin every frame.
-///
-/// - render common widgets consistently
-/// - centralize version-sensitive or style-sensitive drawing decisions
-///
-/// Custom screens can provide alternate skin implementations without changing
-/// node behavior.
+/// A screen chooses one theme for its UI root. Built-in nodes and custom
+/// widgets can read the same palette and render helpers from that shared theme
+/// instead of carrying their own screen-local color tables.
 ///
 public interface UITheme {
+    
+    ///
+    /// Returns the theme palette exposed to built-in and custom widgets.
+    ///
+    /// @return shared theme colors
+    ///
+    UIThemeColors colors();
     
     ///
     /// Renders a panel background and border.
@@ -67,6 +69,15 @@ public interface UITheme {
     );
     
     ///
+    /// Renders a text field using the shared theme chrome.
+    ///
+    /// @param context     render context
+    /// @param bounds      target bounds
+    /// @param renderState immutable text-field state
+    ///
+    void renderTextField(SLRenderContext context, SLBounds bounds, SLTextFieldRenderState renderState);
+    
+    ///
     /// Renders the shared frame for one menu slot.
     ///
     /// @param context render context
@@ -93,7 +104,7 @@ public interface UITheme {
     int labelColor(boolean enabled);
     
     ///
-    /// Returns the accent color used by helper nodes and example screens.
+    /// Returns the accent color used by helper nodes and custom widgets.
     ///
     /// @return ARGB accent color
     ///

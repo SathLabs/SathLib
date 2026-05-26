@@ -21,18 +21,11 @@ import org.jspecify.annotations.Nullable;
 /// node tree, then reuses that root for rendering and input until the screen is
 /// closed.
 ///
-/// - own the node tree
-/// - track invalidation and resolve layout only when needed
-/// - centralize hit testing, hover, press, and focus routing
-///
-/// Screens can swap the root node, viewport, or skin, but node behavior should
-/// remain inside the node classes themselves.
-///
 public final class UIRoot {
     
     private @Nullable UINode<?> content;
     private SLBounds viewport = SLBounds.EMPTY;
-    private UITheme skin = DefaultTheme.INSTANCE;
+    private UITheme theme = DefaultTheme.INSTANCE;
     private boolean layoutDirty = true;
     
     private @Nullable UINode<?> hoveredNode;
@@ -97,21 +90,41 @@ public final class UIRoot {
     }
     
     ///
-    /// Returns the active skin.
+    /// Returns the active theme.
     ///
-    /// @return active UI skin
+    /// @return active UI theme
     ///
-    public UITheme getSkin() {
-        return this.skin;
+    public UITheme getTheme() {
+        return this.theme;
     }
     
     ///
-    /// Updates the skin used by built-in widgets.
+    /// Updates the theme used by built-in widgets.
     ///
-    /// @param skin new active skin
+    /// @param theme new active theme
     ///
-    public void setSkin(UITheme skin) {
-        this.skin = skin;
+    public void setTheme(UITheme theme) {
+        this.theme = theme;
+    }
+    
+    ///
+    /// Returns the legacy theme accessor kept for compatibility.
+    ///
+    /// @return active UI theme
+    ///
+    @Deprecated(forRemoval = false)
+    public UITheme getSkin() {
+        return this.theme;
+    }
+    
+    ///
+    /// Updates the legacy theme setter kept for compatibility.
+    ///
+    /// @param theme new active theme
+    ///
+    @Deprecated(forRemoval = false)
+    public void setSkin(UITheme theme) {
+        this.setTheme(theme);
     }
     
     ///
@@ -157,7 +170,7 @@ public final class UIRoot {
             return;
         }
         
-        SLRenderContext renderContext = new SLRenderContext(graphics, font, this.skin, partialTick, mouseX, mouseY);
+        SLRenderContext renderContext = new SLRenderContext(graphics, font, this.theme, partialTick, mouseX, mouseY);
         this.content.renderTree(renderContext);
     }
     
@@ -330,6 +343,11 @@ public final class UIRoot {
         this.layoutDirty = false;
     }
     
+    ///
+    /// Updates the hovered node bookkeeping.
+    ///
+    /// @param nextHoveredNode newly hovered node, or {@code null}
+    ///
     private void updateHoveredNode(@Nullable UINode<?> nextHoveredNode) {
         if (this.hoveredNode == nextHoveredNode) {
             return;
@@ -346,6 +364,14 @@ public final class UIRoot {
         }
     }
     
+    ///
+    /// Finds the deepest input target at the given coordinates.
+    ///
+    /// @param mouseX pointer x position
+    /// @param mouseY pointer y position
+    ///
+    /// @return deepest input target, or {@code null}
+    ///
     private @Nullable UINode<?> findHitNode(double mouseX, double mouseY) {
         if (this.content == null) {
             return null;

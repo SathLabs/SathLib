@@ -18,17 +18,11 @@ import org.jspecify.annotations.Nullable;
 /// A new context is created for each UI render pass and discarded once drawing
 /// completes.
 ///
-/// - expose a stable drawing API to the retained-mode UI tree
-/// - keep raw Minecraft rendering calls localized to one place
-/// - provide shared access to the active skin and clip stack
-///
-/// Add more primitives here when multiple nodes need the same render behavior.
-///
 public final class SLRenderContext {
     
     private final GuiGraphicsExtractor graphics;
     private final Font font;
-    private final UITheme skin;
+    private final UITheme theme;
     private final float partialTick;
     private final int mouseX;
     private final int mouseY;
@@ -39,7 +33,7 @@ public final class SLRenderContext {
     ///
     /// @param graphics    graphics extractor
     /// @param font        active font
-    /// @param skin        active skin
+    /// @param theme       active UI theme
     /// @param partialTick partial tick value
     /// @param mouseX      current mouse x
     /// @param mouseY      current mouse y
@@ -47,14 +41,14 @@ public final class SLRenderContext {
     public SLRenderContext(
             GuiGraphicsExtractor graphics,
             Font font,
-            UITheme skin,
+            UITheme theme,
             float partialTick,
             int mouseX,
             int mouseY
     ) {
         this.graphics = graphics;
         this.font = font;
-        this.skin = skin;
+        this.theme = theme;
         this.partialTick = partialTick;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -80,12 +74,23 @@ public final class SLRenderContext {
     }
     
     ///
-    /// Exposes the active UI skin.
+    /// Exposes the active theme.
     ///
-    /// @return active skin
+    /// @return active theme
     ///
+    public UITheme theme() {
+        return this.theme;
+    }
+    
+    ///
+    /// Returns the legacy theme accessor kept for compatibility with older
+    /// widget code.
+    ///
+    /// @return active theme
+    ///
+    @Deprecated(forRemoval = false)
     public UITheme skin() {
-        return this.skin;
+        return this.theme;
     }
     
     ///
@@ -126,6 +131,17 @@ public final class SLRenderContext {
     }
     
     ///
+    /// Draws a vertical gradient across the given bounds.
+    ///
+    /// @param bounds     target bounds
+    /// @param startColor top color
+    /// @param endColor   bottom color
+    ///
+    public void fillVerticalGradient(SLBounds bounds, int startColor, int endColor) {
+        this.graphics.fillGradient(bounds.x(), bounds.y(), bounds.right(), bounds.bottom(), startColor, endColor);
+    }
+    
+    ///
     /// Draws a one-pixel outline around a bounds rectangle.
     ///
     /// @param bounds target bounds
@@ -133,6 +149,24 @@ public final class SLRenderContext {
     ///
     public void outline(SLBounds bounds, int color) {
         this.graphics.outline(bounds.x(), bounds.y(), bounds.width(), bounds.height(), color);
+    }
+    
+    ///
+    /// Draws a fixed-thickness outline around a bounds rectangle.
+    ///
+    /// @param bounds    target bounds
+    /// @param color     outline color
+    /// @param thickness outline thickness in pixels
+    ///
+    public void outline(SLBounds bounds, int color, int thickness) {
+        if (thickness <= 0 || bounds.width() <= 0 || bounds.height() <= 0) {
+            return;
+        }
+        
+        this.graphics.fill(bounds.x(), bounds.y(), bounds.right(), bounds.y() + thickness, color);
+        this.graphics.fill(bounds.x(), bounds.bottom() - thickness, bounds.right(), bounds.bottom(), color);
+        this.graphics.fill(bounds.x(), bounds.y(), bounds.x() + thickness, bounds.bottom(), color);
+        this.graphics.fill(bounds.right() - thickness, bounds.y(), bounds.right(), bounds.bottom(), color);
     }
     
     ///
@@ -164,7 +198,8 @@ public final class SLRenderContext {
     }
     
     ///
-    /// Draws centered text inside the bounds with padding
+    /// Draws centered text inside the bounds with the same visual alignment used
+    /// by vanilla-like buttons.
     ///
     /// @param text   text to draw
     /// @param bounds target bounds
@@ -179,7 +214,7 @@ public final class SLRenderContext {
     }
     
     ///
-    /// Calculates the vertical center position for text within the given bounds, with padding.
+    /// Calculates the vertical center position for text within the given bounds.
     ///
     /// @param bounds target bounds
     ///
@@ -187,7 +222,10 @@ public final class SLRenderContext {
     ///
     private int centeredVisualTextY(SLBounds bounds) {
         int lineHeight = this.font.lineHeight + 3;
-        if (bounds.height() < lineHeight) return bounds.y() + Math.max(0, (bounds.height() - lineHeight) / 2);
+        if (bounds.height() < lineHeight) {
+            return bounds.y() + Math.max(0, (bounds.height() - lineHeight) / 2);
+        }
+        
         int slack = bounds.height() - lineHeight;
         return bounds.y() + Math.floorDiv(slack + 1, 2) + 2;
     }
@@ -258,7 +296,7 @@ public final class SLRenderContext {
     }
     
     ///
-    /// Pops the current clip rectangle.
+    /// Pops the most recently pushed clip rectangle.
     ///
     public void popClip() {
         this.clipStack.pop();

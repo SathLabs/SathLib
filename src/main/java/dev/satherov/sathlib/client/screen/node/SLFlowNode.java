@@ -6,12 +6,16 @@ import dev.satherov.sathlib.client.screen.layout.SLBounds;
 import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.layout.SLLength;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.layout.SLScalar;
 
 import net.minecraft.client.gui.Font;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 ///
 /// Shared base class for ordered flow containers such as rows and columns.
@@ -19,27 +23,70 @@ import java.util.List;
 /// Flow containers measure children in order, then assign final bounds during
 /// layout using the configured axis, gap, and main-axis alignment.
 ///
-/// - measure ordered child content
-/// - distribute extra space across fill children
-/// - align the whole flow inside the available main-axis space
-///
-/// Concrete row and column nodes choose the axis through the constructor.
-///
 /// @param <S> concrete flow subtype used for fluent setters
 ///
 public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNode<S> {
     
     private final SLAxis axis;
-    private SLScalar gap = SLScalar.zero();
-    private SLAlignment mainAxisAlignment = SLAlignment.START;
+    private SLScalar gap;
+    private SLAlignment mainAxisAlignment;
     
     ///
-    /// Creates a flow container for the given main axis.
+    /// Creates a flow container with defaults.
     ///
     /// @param axis layout axis used to order children
     ///
     protected SLFlowNode(SLAxis axis) {
-        this.axis = axis;
+        this(SLModifier.none(), axis, List.of(), SLScalar.zero(), SLAlignment.START);
+    }
+    
+    ///
+    /// Creates a flow container with explicit configuration.
+    ///
+    /// @param modifier          node modifier
+    /// @param axis              layout axis used to order children
+    /// @param children          initial child list
+    /// @param gap               semantic gap between children
+    /// @param mainAxisAlignment alignment for unused main-axis space
+    ///
+    protected SLFlowNode(
+            @Nullable SLModifier modifier,
+            SLAxis axis,
+            List<UINode<?>> children,
+            @Nullable SLScalar gap,
+            @Nullable SLAlignment mainAxisAlignment
+    ) {
+        super(modifier, children);
+        this.axis = Objects.requireNonNull(axis);
+        this.gap = Objects.requireNonNullElse(gap, SLScalar.zero());
+        this.mainAxisAlignment = Objects.requireNonNullElse(mainAxisAlignment, SLAlignment.START);
+    }
+    
+    ///
+    /// Returns the ordered layout axis.
+    ///
+    /// @return flow axis
+    ///
+    public final SLAxis getAxis() {
+        return this.axis;
+    }
+    
+    ///
+    /// Returns the semantic gap between visible children.
+    ///
+    /// @return child gap
+    ///
+    public final SLScalar getGap() {
+        return this.gap;
+    }
+    
+    ///
+    /// Returns the main-axis alignment for unused space.
+    ///
+    /// @return flow alignment
+    ///
+    public final SLAlignment getMainAxisAlignment() {
+        return this.mainAxisAlignment;
     }
     
     ///
@@ -50,7 +97,12 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     /// @return this flow node for fluent runtime setup
     ///
     public final S gap(SLScalar gap) {
-        this.gap = gap;
+        SLScalar normalizedGap = Objects.requireNonNullElse(gap, SLScalar.zero());
+        if (this.gap.equals(normalizedGap)) {
+            return this.self();
+        }
+        
+        this.gap = normalizedGap;
         this.invalidateLayout();
         return this.self();
     }
@@ -64,7 +116,12 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     /// @return this flow node for fluent runtime setup
     ///
     public final S mainAxisAlignment(SLAlignment alignment) {
-        this.mainAxisAlignment = alignment;
+        SLAlignment normalizedAlignment = Objects.requireNonNullElse(alignment, SLAlignment.START);
+        if (this.mainAxisAlignment == normalizedAlignment) {
+            return this.self();
+        }
+        
+        this.mainAxisAlignment = normalizedAlignment;
         this.invalidateLayout();
         return this.self();
     }
@@ -77,9 +134,11 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
         int gapPixels = this.gap.resolve(this.axis == SLAxis.HORIZONTAL ? availableWidth : availableHeight);
         
         for (UINode<?> child : this.getChildren()) {
-            if (!child.isVisible()) continue;
+            if (!child.isVisible()) {
+                continue;
+            }
             
-            SLInsets margin = child.getLayoutSpec().margin();
+            SLInsets margin = child.getModifier().margin();
             int childAvailableWidth = Math.max(0, availableWidth - margin.horizontal(availableWidth));
             int childAvailableHeight = Math.max(0, availableHeight - margin.vertical(availableHeight));
             SLMeasuredSize childSize = child.measure(font, childAvailableWidth, childAvailableHeight);
@@ -94,6 +153,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             if (!firstVisibleChild) {
                 totalMain += gapPixels;
             }
+            
             totalMain += outerMain;
             maxCross = Math.max(maxCross, outerCross);
             firstVisibleChild = false;
@@ -102,6 +162,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
         if (this.axis == SLAxis.HORIZONTAL) {
             return new SLMeasuredSize(totalMain, maxCross);
         }
+        
         return new SLMeasuredSize(maxCross, totalMain);
     }
     
@@ -114,7 +175,9 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             }
         }
         
-        if (visibleChildren.isEmpty()) return;
+        if (visibleChildren.isEmpty()) {
+            return;
+        }
         
         int availableMain = this.axis == SLAxis.HORIZONTAL ? contentBounds.width() : contentBounds.height();
         int availableCross = this.axis == SLAxis.HORIZONTAL ? contentBounds.height() : contentBounds.width();
@@ -125,7 +188,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
         
         for (int childIndex = 0; childIndex < visibleChildren.size(); childIndex++) {
             UINode<?> child = visibleChildren.get(childIndex);
-            SLInsets margin = child.getLayoutSpec().margin();
+            SLInsets margin = child.getModifier().margin();
             SLMeasuredSize childSize = child.getMeasuredSize();
             
             if (childIndex > 0) {
@@ -137,8 +200,8 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
                     : childSize.height() + margin.vertical(contentBounds.height());
             
             SLLength mainLength = this.axis == SLAxis.HORIZONTAL
-                    ? child.getLayoutSpec().width()
-                    : child.getLayoutSpec().height();
+                    ? child.getModifier().width()
+                    : child.getModifier().height();
             totalFillWeight += mainLength.weight();
         }
         
@@ -154,7 +217,8 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
         
         for (int childIndex = 0; childIndex < visibleChildren.size(); childIndex++) {
             UINode<?> child = visibleChildren.get(childIndex);
-            SLInsets margin = child.getLayoutSpec().margin();
+            SLModifier childModifier = child.getModifier();
+            SLInsets margin = childModifier.margin();
             SLMeasuredSize childSize = child.getMeasuredSize();
             
             int marginStart = this.axis == SLAxis.HORIZONTAL ? margin.left(contentBounds.width()) : margin.top(contentBounds.height());
@@ -162,12 +226,8 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             int marginCrossStart = this.axis == SLAxis.HORIZONTAL ? margin.top(contentBounds.height()) : margin.left(contentBounds.width());
             int marginCrossEnd = this.axis == SLAxis.HORIZONTAL ? margin.bottom(contentBounds.height()) : margin.right(contentBounds.width());
             
-            SLLength mainLength = this.axis == SLAxis.HORIZONTAL
-                    ? child.getLayoutSpec().width()
-                    : child.getLayoutSpec().height();
-            SLLength crossLength = this.axis == SLAxis.HORIZONTAL
-                    ? child.getLayoutSpec().height()
-                    : child.getLayoutSpec().width();
+            SLLength mainLength = this.axis == SLAxis.HORIZONTAL ? childModifier.width() : childModifier.height();
+            SLLength crossLength = this.axis == SLAxis.HORIZONTAL ? childModifier.height() : childModifier.width();
             
             int additionalMain = 0;
             if (mainLength.isFill() && totalFillWeight > 0.0F) {
@@ -184,8 +244,8 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             
             int crossAvailable = Math.max(0, availableCross - marginCrossStart - marginCrossEnd);
             SLAlignment crossAlignment = this.axis == SLAxis.HORIZONTAL
-                    ? child.getLayoutSpec().verticalAlignment()
-                    : child.getLayoutSpec().horizontalAlignment();
+                    ? childModifier.verticalAlignment()
+                    : childModifier.horizontalAlignment();
             int preferredChildCross = this.axis == SLAxis.HORIZONTAL ? childSize.height() : childSize.width();
             int resolvedChildCross = crossLength.isFill()
                     ? crossAvailable
@@ -196,8 +256,8 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             int crossRegionAvailable = Math.max(0, availableCross - marginCrossStart - marginCrossEnd);
             int childCrossStart = crossAlignment.resolvePosition(crossRegionStart, crossRegionAvailable, resolvedChildCross);
             
-            int offsetX = child.getLayoutSpec().offsetX().resolve(contentBounds.width());
-            int offsetY = child.getLayoutSpec().offsetY().resolve(contentBounds.height());
+            int offsetX = childModifier.offsetX().resolve(contentBounds.width());
+            int offsetY = childModifier.offsetY().resolve(contentBounds.height());
             
             SLBounds childBounds = this.axis == SLAxis.HORIZONTAL
                     ? new SLBounds(childMainStart + offsetX, childCrossStart + offsetY, resolvedChildMain, resolvedChildCross)

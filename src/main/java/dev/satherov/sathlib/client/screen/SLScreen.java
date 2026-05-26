@@ -19,13 +19,6 @@ import net.minecraft.network.chat.Component;
 /// {@link UIRoot} for layout, rendering, and input until the screen closes or
 /// resizes.
 ///
-/// - host a retained-mode UI root
-/// - rebuild the node tree on init and resize
-/// - forward Minecraft input and rendering into the UI system
-///
-/// Subclasses implement {@link #create()} and optionally override
-/// {@link #createViewport()} or {@link #createSkin()}.
-///
 public abstract class SLScreen extends Screen {
     
     private final UIRoot root = new UIRoot();
@@ -49,6 +42,15 @@ public abstract class SLScreen extends Screen {
     }
     
     ///
+    /// Returns the active top-level theme for this screen.
+    ///
+    /// @return active theme
+    ///
+    protected final UITheme theme() {
+        return this.root.getTheme();
+    }
+    
+    ///
     /// Builds the runtime node tree for this screen.
     ///
     /// @return new root node
@@ -65,12 +67,23 @@ public abstract class SLScreen extends Screen {
     }
     
     ///
-    /// Returns the skin used by built-in widgets.
+    /// Returns the theme used by built-in widgets.
     ///
-    /// @return active skin
+    /// @return active theme
     ///
-    protected UITheme createSkin() {
+    protected UITheme createTheme() {
         return DefaultTheme.INSTANCE;
+    }
+    
+    ///
+    /// Returns the legacy theme factory kept for compatibility with older
+    /// subclasses.
+    ///
+    /// @return active theme
+    ///
+    @Deprecated(forRemoval = false)
+    protected UITheme createSkin() {
+        return this.createTheme();
     }
     
     @Override
@@ -108,48 +121,65 @@ public abstract class SLScreen extends Screen {
     
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (this.root.mouseClicked(this.font, event, doubleClick)) return true;
+        if (this.root.mouseClicked(this.font, event, doubleClick)) {
+            return true;
+        }
         return super.mouseClicked(event, doubleClick);
     }
     
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-        if (this.root.mouseDragged(this.font, event, deltaX, deltaY)) return true;
+        if (this.root.mouseDragged(this.font, event, deltaX, deltaY)) {
+            return true;
+        }
         return super.mouseDragged(event, deltaX, deltaY);
     }
     
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (this.root.mouseReleased(this.font, event)) return true;
+        if (this.root.mouseReleased(this.font, event)) {
+            return true;
+        }
         return super.mouseReleased(event);
     }
     
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (this.root.mouseScrolled(this.font, mouseX, mouseY, scrollX, scrollY)) return true;
+        if (this.root.mouseScrolled(this.font, mouseX, mouseY, scrollX, scrollY)) {
+            return true;
+        }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
     
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (this.root.keyPressed(event)) return true;
+        if (this.root.keyPressed(event)) {
+            return true;
+        }
         return super.keyPressed(event);
     }
     
     @Override
     public boolean keyReleased(KeyEvent event) {
-        if (this.root.keyReleased(event)) return true;
+        if (this.root.keyReleased(event)) {
+            return true;
+        }
         return super.keyReleased(event);
     }
     
     @Override
     public boolean charTyped(CharacterEvent event) {
-        if (this.root.charTyped(event)) return true;
+        if (this.root.charTyped(event)) {
+            return true;
+        }
         return super.charTyped(event);
     }
     
+    ///
+    /// Rebuilds the retained tree and reapplies the top-level theme.
+    ///
     private void rebuild() {
-        this.root.setSkin(this.createSkin());
+        this.root.setTheme(this.createTheme());
         this.root.setViewport(this.createViewport());
         this.root.setContent(this.create());
     }

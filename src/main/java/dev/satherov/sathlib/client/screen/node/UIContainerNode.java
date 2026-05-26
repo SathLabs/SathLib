@@ -2,6 +2,7 @@ package dev.satherov.sathlib.client.screen.node;
 
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLInsets;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 
 import org.jspecify.annotations.Nullable;
@@ -9,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 ///
 /// Base class for nodes that manage child nodes.
@@ -17,13 +19,6 @@ import java.util.List;
 /// lifecycle, and they participate in the normal measure, layout, render, and
 /// input passes.
 ///
-/// - own ordered child collections
-/// - propagate root attachment and detachment
-/// - provide shared child hit testing, ticking, and rendering behavior
-///
-/// Subclasses usually implement only layout behavior while inheriting the child
-/// lifecycle management from this class.
-///
 /// @param <S> concrete container subtype used for fluent setters
 ///
 public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINode<S> {
@@ -31,9 +26,22 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     private final List<UINode<?>> children = new ArrayList<>();
     
     ///
-    /// Creates an empty container node.
+    /// Creates an empty container with the empty modifier.
     ///
-    protected UIContainerNode() { }
+    protected UIContainerNode() {
+        this(SLModifier.none(), List.of());
+    }
+    
+    ///
+    /// Creates a container with explicit modifier and children.
+    ///
+    /// @param modifier node modifier
+    /// @param children initial child list
+    ///
+    protected UIContainerNode(@Nullable SLModifier modifier, List<UINode<?>> children) {
+        super(modifier);
+        this.children.addAll(List.copyOf(Objects.requireNonNullElse(children, List.of())));
+    }
     
     ///
     /// Returns an immutable view of the child list.
@@ -52,9 +60,10 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     /// @return this container
     ///
     public final S addChild(UINode<?> child) {
-        this.children.add(child);
+        UINode<?> normalizedChild = Objects.requireNonNull(child);
+        this.children.add(normalizedChild);
         if (this.getRoot() != null) {
-            child.attach(this.getRoot(), this);
+            normalizedChild.attach(this.getRoot(), this);
         }
         this.invalidateLayout();
         return this.self();
@@ -69,6 +78,7 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
         if (!this.children.remove(child)) {
             return;
         }
+        
         child.detach();
         this.invalidateLayout();
     }
@@ -94,7 +104,7 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     /// @return resolved margin
     ///
     protected final SLInsets childMargin(UINode<?> child) {
-        return child.getLayoutSpec().margin();
+        return child.getModifier().margin();
     }
     
     @Override
@@ -106,8 +116,7 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     
     @Override
     protected void onDetached() {
-        List<UINode<?>> detachedChildren = List.copyOf(this.children);
-        for (UINode<?> child : detachedChildren) {
+        for (UINode<?> child : List.copyOf(this.children)) {
             child.detach();
         }
     }

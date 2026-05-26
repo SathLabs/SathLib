@@ -1,8 +1,11 @@
 package dev.satherov.sathlib.client.screen.node;
 
-import dev.satherov.sathlib.client.screen.RadialScreen;
+import lombok.Builder;
+import lombok.Singular;
+
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.util.SLMathUtils;
 
@@ -15,31 +18,24 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 ///
-/// Custom radial action component used by {@link RadialScreen}.
+/// Custom radial action component used by radial-style screens.
 ///
 /// The node owns a list of entries, computes orbital button positions during
 /// rendering and hit testing, and invokes entry callbacks on activation.
-///
-/// - arrange entries around a center point
-/// - render each entry as a skinned action chip
-/// - handle pointer interaction without involving screen-level input code
-///
-/// Override {@link Entry#render(SLRenderContext, SLBounds, boolean, boolean, boolean)}
-/// for custom radial entry visuals while keeping the same layout and input
-/// behavior.
 ///
 public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     
     private final List<Entry> entries = new ArrayList<>();
     
-    private float startAngleDegrees = -90.0F;
+    private float startAngleDegrees;
     
-    private int ringRadius = 92;
-    private int buttonWidth = 76;
-    private int buttonHeight = 22;
-    private int hoverOffset = 8;
+    private int ringRadius;
+    private int buttonWidth;
+    private int buttonHeight;
+    private int hoverOffset;
     
     private int hoveredIndex = -1;
     private int pressedIndex = -1;
@@ -47,7 +43,73 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     ///
     /// Creates an empty radial menu node.
     ///
-    public RadialMenuNode() { }
+    public RadialMenuNode() {
+        this(SLModifier.none(), List.of(), -90.0F, 92, 76, 22, 8);
+    }
+    
+    ///
+    /// Creates a fully configured radial menu.
+    ///
+    /// @param modifier          node modifier
+    /// @param entries           initial entry list
+    /// @param startAngleDegrees starting angle for the first entry
+    /// @param ringRadius        orbit radius in pixels
+    /// @param buttonWidth       entry width in pixels
+    /// @param buttonHeight      entry height in pixels
+    /// @param hoverOffset       outward hover offset in pixels
+    ///
+    protected RadialMenuNode(
+            SLModifier modifier,
+            List<Entry> entries,
+            float startAngleDegrees,
+            int ringRadius,
+            int buttonWidth,
+            int buttonHeight,
+            int hoverOffset
+    ) {
+        super(modifier);
+        this.entries.addAll(List.copyOf(entries));
+        this.startAngleDegrees = startAngleDegrees;
+        this.ringRadius = Math.max(8, ringRadius);
+        this.buttonWidth = Math.max(10, buttonWidth);
+        this.buttonHeight = Math.max(10, buttonHeight);
+        this.hoverOffset = Math.max(0, hoverOffset);
+    }
+    
+    ///
+    /// Creates a builder-backed radial menu while normalizing omitted values to
+    /// the framework defaults.
+    ///
+    /// @param modifier          node modifier
+    /// @param entries           initial entry list
+    /// @param startAngleDegrees starting angle for the first entry
+    /// @param ringRadius        orbit radius in pixels
+    /// @param buttonWidth       entry width in pixels
+    /// @param buttonHeight      entry height in pixels
+    /// @param hoverOffset       outward hover offset in pixels
+    ///
+    /// @return configured radial-menu node
+    ///
+    @Builder(builderMethodName = "builder")
+    public static RadialMenuNode of(
+            SLModifier modifier,
+            @Singular("entry") List<Entry> entries,
+            Float startAngleDegrees,
+            Integer ringRadius,
+            Integer buttonWidth,
+            Integer buttonHeight,
+            Integer hoverOffset
+    ) {
+        return new RadialMenuNode(
+                Objects.requireNonNullElse(modifier, SLModifier.none()),
+                Objects.requireNonNullElse(entries, List.of()),
+                Objects.requireNonNullElse(startAngleDegrees, -90.0F),
+                Objects.requireNonNullElse(ringRadius, 92),
+                Objects.requireNonNullElse(buttonWidth, 76),
+                Objects.requireNonNullElse(buttonHeight, 22),
+                Objects.requireNonNullElse(hoverOffset, 8)
+        );
+    }
     
     ///
     /// Returns an immutable entry view.
@@ -66,9 +128,10 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     /// @return added entry
     ///
     public Entry addEntry(Entry entry) {
-        this.entries.add(entry);
+        Entry normalizedEntry = Objects.requireNonNull(entry);
+        this.entries.add(normalizedEntry);
         this.invalidateLayout();
-        return entry;
+        return normalizedEntry;
     }
     
     ///
@@ -140,7 +203,7 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         int centerX = bounds.x() + (bounds.width() / 2);
         int centerY = bounds.y() + (bounds.height() / 2);
         
-        context.graphics().fill(centerX - 2, centerY - 2, centerX + 2, centerY + 2, 0xCCECF2F8);
+        context.graphics().fill(centerX - 2, centerY - 2, centerX + 2, centerY + 2, context.theme().colors().textPrimary());
         
         for (int entryIndex = 0; entryIndex < this.entries.size(); entryIndex++) {
             Entry entry = this.entries.get(entryIndex);
@@ -168,7 +231,9 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         }
         
         this.hoveredIndex = this.entryIndexAt(event.x(), event.y());
-        if (this.hoveredIndex < 0) return false;
+        if (this.hoveredIndex < 0) {
+            return false;
+        }
         
         this.pressedIndex = this.hoveredIndex;
         this.setPressedState(true);
@@ -191,12 +256,12 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     }
     
     ///
-    /// Returns the node selected under the mouse coordinates
+    /// Returns the entry index under the cursor or {@code -1} when none is hit.
     ///
-    /// @param mouseX the x coordinate of the mouse cursor
-    /// @param mouseY the y coordinate of the mouse cursor
+    /// @param mouseX pointer x position
+    /// @param mouseY pointer y position
     ///
-    /// @return the entry index of the node under the cursor or `-1` if none is found
+    /// @return hit entry index, or {@code -1}
     ///
     private int entryIndexAt(double mouseX, double mouseY) {
         if (!this.getBounds().contains(mouseX, mouseY)) {
@@ -212,6 +277,13 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         return -1;
     }
     
+    ///
+    /// Resolves the bounds for one orbital entry.
+    ///
+    /// @param entryIndex entry index
+    ///
+    /// @return resolved entry bounds
+    ///
     private SLBounds entryBounds(int entryIndex) {
         int entryCount = Math.max(1, this.entries.size());
         float angle = this.startAngleDegrees + ((360.0F / entryCount) * entryIndex);
@@ -229,16 +301,6 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     ///
     /// Radial entry model with overridable rendering and activation hooks.
     ///
-    /// Entries are added to one radial menu node and reused for as long as that
-    /// node lives.
-    ///
-    /// - expose a label for the default radial rendering
-    /// - react when the user activates the entry
-    ///
-    /// Override {@link #render(SLRenderContext, SLBounds, boolean, boolean, boolean)}
-    /// to customize visuals or override {@link #activate()} for different action
-    /// behavior.
-    ///
     public static class Entry {
         
         private final Component label;
@@ -251,8 +313,8 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         /// @param action callback invoked when the entry is activated
         ///
         public Entry(Component label, Runnable action) {
-            this.label = label;
-            this.action = action;
+            this.label = Objects.requireNonNull(label);
+            this.action = Objects.requireNonNull(action);
         }
         
         ///
@@ -274,7 +336,7 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
         /// @param enabled whether the parent node is enabled
         ///
         public void render(SLRenderContext context, SLBounds bounds, boolean hovered, boolean pressed, boolean enabled) {
-            context.skin().renderButton(context, bounds, this.label, hovered, pressed, enabled);
+            context.theme().renderButton(context, bounds, this.label, hovered, pressed, enabled);
         }
         
         ///

@@ -1,7 +1,10 @@
 package dev.satherov.sathlib.client.screen.node;
 
+import lombok.Builder;
+
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.client.screen.state.UIState;
 
@@ -10,18 +13,13 @@ import net.minecraft.network.chat.Component;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 ///
-/// Built-in skinned progress bar node.
+/// Built-in themed progress bar node.
 ///
 /// Progress bars can be configured directly or bound to observable state and are
 /// rendered every frame without requiring manual drawing code in the screen.
-///
-/// - display normalized progress
-/// - optionally show overlay text
-/// - invalidate layout only when overlay text sizing changes
-///
-/// Extend this class when you want custom progress visuals but still want the
-/// same retained-mode lifecycle and bindings.
 ///
 public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     
@@ -35,7 +33,68 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     ///
     /// Creates an unbound progress bar node.
     ///
-    public SLProgressBarNode() { }
+    public SLProgressBarNode() {
+        this(SLModifier.none(), 0.0F, null, null, null);
+    }
+    
+    ///
+    /// Creates a fully configured progress bar.
+    ///
+    /// @param modifier         node modifier
+    /// @param progress         normalized progress value
+    /// @param overlayText      optional overlay text
+    /// @param progressState    optional observable progress binding
+    /// @param overlayTextState optional observable overlay binding
+    ///
+    protected SLProgressBarNode(
+            SLModifier modifier,
+            float progress,
+            @Nullable Component overlayText,
+            @Nullable UIState<Float> progressState,
+            @Nullable UIState<Component> overlayTextState
+    ) {
+        super(modifier);
+        this.progress = progress;
+        this.overlayText = overlayText;
+        this.progressState = progressState;
+        this.overlayTextState = overlayTextState;
+        
+        if (progressState != null) {
+            this.progress = progressState.get();
+        }
+        if (overlayTextState != null) {
+            this.overlayText = overlayTextState.get();
+        }
+    }
+    
+    ///
+    /// Creates a builder-backed progress bar while normalizing omitted values to
+    /// the framework defaults.
+    ///
+    /// @param modifier         node modifier
+    /// @param progress         normalized progress value
+    /// @param overlayText      optional overlay text
+    /// @param progressState    optional observable progress binding
+    /// @param overlayTextState optional observable overlay binding
+    ///
+    /// @return configured progress bar node
+    ///
+    @Builder(builderMethodName = "builder")
+    public static SLProgressBarNode of(
+            SLModifier modifier,
+            Float progress,
+            Component overlayText,
+            UIState<Float> progressState,
+            UIState<Component> overlayTextState
+    ) {
+        return new SLProgressBarNode(
+                Objects.requireNonNullElse(modifier, SLModifier.none()),
+                Objects.requireNonNullElse(progress, 0.0F),
+                overlayText,
+                progressState,
+                overlayTextState
+        );
+    }
     
     ///
     /// Sets the normalized progress value.
@@ -126,6 +185,6 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     
     @Override
     protected void renderSelf(SLRenderContext context) {
-        context.skin().renderProgressBar(context, this.getBounds(), this.progress, this.overlayText, this.isEnabled());
+        context.theme().renderProgressBar(context, this.getBounds(), this.progress, this.overlayText, this.isEnabled());
     }
 }

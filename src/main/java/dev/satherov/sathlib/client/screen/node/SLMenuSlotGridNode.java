@@ -1,8 +1,11 @@
 package dev.satherov.sathlib.client.screen.node;
 
+import lombok.Builder;
+
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.layout.SLScalar;
 
 import net.minecraft.client.gui.Font;
@@ -18,10 +21,6 @@ import java.util.Objects;
 /// visuals itself. Instead, it resolves concrete bounds for each slot so the
 /// screen can render and hit-test them without mutating vanilla slot state.
 ///
-/// - measure slot groups as semantic content
-/// - assign per-slot bounds during layout
-/// - keep slot positioning fully on the client side
-///
 public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
     
     /// Outer frame size for one slot in pixels.
@@ -35,17 +34,54 @@ public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
     private List<SLBounds> resolvedSlotBounds = List.of();
     
     private int columns;
-    private SLScalar gap = SLScalar.zero();
+    private SLScalar gap;
     
     ///
-    /// Creates a slot grid node for one ordered slot list.
+    /// Creates an empty slot grid node.
     ///
-    /// @param slots   slot list to position
-    /// @param columns amount of columns in the grid
+    public SLMenuSlotGridNode() {
+        this(SLModifier.none(), List.of(), 1, SLScalar.zero());
+    }
+    
     ///
-    public SLMenuSlotGridNode(List<Slot> slots, int columns) {
+    /// Creates a fully configured slot grid.
+    ///
+    /// @param modifier node modifier
+    /// @param slots    slot list to position
+    /// @param columns  grid column count
+    /// @param gap      semantic gap between slot frames
+    ///
+    protected SLMenuSlotGridNode(SLModifier modifier, List<Slot> slots, int columns, SLScalar gap) {
+        super(modifier);
         this.slots = List.copyOf(Objects.requireNonNull(slots));
         this.columns = Math.max(1, columns);
+        this.gap = Objects.requireNonNull(gap);
+    }
+    
+    ///
+    /// Creates a builder-backed slot grid while normalizing omitted values to
+    /// the framework defaults.
+    ///
+    /// @param modifier node modifier
+    /// @param slots    slot list to position
+    /// @param columns  grid column count
+    /// @param gap      semantic gap between slot frames
+    ///
+    /// @return configured slot grid node
+    ///
+    @Builder(builderMethodName = "builder")
+    public static SLMenuSlotGridNode of(
+            SLModifier modifier,
+            List<Slot> slots,
+            Integer columns,
+            SLScalar gap
+    ) {
+        return new SLMenuSlotGridNode(
+                Objects.requireNonNullElse(modifier, SLModifier.none()),
+                Objects.requireNonNullElse(slots, List.of()),
+                Objects.requireNonNullElse(columns, 1),
+                Objects.requireNonNullElse(gap, SLScalar.zero())
+        );
     }
     
     ///
@@ -59,9 +95,6 @@ public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
     
     ///
     /// Returns the resolved frame bounds for each slot.
-    ///
-    /// The bounds list matches the order of {@link #getSlots()} and is empty
-    /// until the node has been laid out.
     ///
     /// @return immutable per-slot frame bounds
     ///
@@ -90,7 +123,7 @@ public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
     /// @return this node
     ///
     public SLMenuSlotGridNode gap(SLScalar gap) {
-        this.gap = Objects.requireNonNull(gap);
+        this.gap = Objects.requireNonNullElse(gap, SLScalar.zero());
         this.invalidateLayout();
         return this.self();
     }
@@ -138,12 +171,7 @@ public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
             int row = slotIndex / this.columns;
             int cellX = contentBounds.x() + (column * (SLMenuSlotGridNode.SLOT_FRAME_SIZE + gapPixels));
             int cellY = contentBounds.y() + (row * (SLMenuSlotGridNode.SLOT_FRAME_SIZE + gapPixels));
-            resolvedBounds[slotIndex] = new SLBounds(
-                    cellX,
-                    cellY,
-                    SLMenuSlotGridNode.SLOT_FRAME_SIZE,
-                    SLMenuSlotGridNode.SLOT_FRAME_SIZE
-            );
+            resolvedBounds[slotIndex] = new SLBounds(cellX, cellY, SLMenuSlotGridNode.SLOT_FRAME_SIZE, SLMenuSlotGridNode.SLOT_FRAME_SIZE);
         }
         
         this.resolvedSlotBounds = List.of(resolvedBounds);
@@ -154,6 +182,10 @@ public class SLMenuSlotGridNode extends UILeafNode<SLMenuSlotGridNode> {
         this.clearResolvedSlotBounds();
     }
     
+    ///
+    /// Clears the resolved client-only bounds when the node is detached or
+    /// hidden.
+    ///
     private void clearResolvedSlotBounds() {
         this.resolvedSlotBounds = List.of();
     }

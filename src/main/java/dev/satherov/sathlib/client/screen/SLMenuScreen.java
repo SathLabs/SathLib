@@ -52,7 +52,7 @@ import java.util.Map;
 /// - centralize slot rendering and input so slot subclasses can stay polymorphic
 ///
 /// Subclasses implement {@link #create()} and can override
-/// {@link #createSkin()} or {@link #createViewport()} when a different layout
+/// {@link #createTheme()} or {@link #createViewport()} when a different layout
 /// region is required.
 ///
 /// @param <M> backing menu type
@@ -133,12 +133,23 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     ///
-    /// Returns the skin used by built-in retained-mode widgets and slot frames.
+    /// Returns the theme used by built-in retained-mode widgets and slot frames.
     ///
-    /// @return active skin
+    /// @return active theme
     ///
-    protected UITheme createSkin() {
+    protected UITheme createTheme() {
         return DefaultTheme.INSTANCE;
+    }
+    
+    ///
+    /// Returns the legacy theme factory kept for compatibility with older
+    /// subclasses.
+    ///
+    /// @return active theme
+    ///
+    @Deprecated(forRemoval = false)
+    protected UITheme createSkin() {
+        return this.createTheme();
     }
     
     @Override
@@ -540,7 +551,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private void rebuild() {
-        this.root.setSkin(this.createSkin());
+        this.root.setTheme(this.createTheme());
         this.root.setViewport(this.createViewport());
         this.root.setContent(this.create());
     }
@@ -578,7 +589,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private SLRenderContext createRenderContext(GuiGraphicsExtractor graphics, float partialTick, int mouseX, int mouseY) {
-        return new SLRenderContext(graphics, this.font, this.root.getSkin(), partialTick, mouseX, mouseY);
+        return new SLRenderContext(graphics, this.font, this.root.getTheme(), partialTick, mouseX, mouseY);
     }
     
     private void extractSlotHighlightBack(SLRenderContext context) {
@@ -640,7 +651,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
         }
         
         SLSlotRenderData renderData = this.createRenderData(slot, itemStack);
-        context.skin().renderSlotFrame(context, frameBounds, renderData.visuals(), slot == this.hoveredSlot, slot.isActive());
+        context.theme().renderSlotFrame(context, frameBounds, renderData.visuals(), slot == this.hoveredSlot, slot.isActive());
         
         if (renderData.displayStack().isEmpty() && slot.isActive()) {
             Identifier icon = renderData.emptyIcon();

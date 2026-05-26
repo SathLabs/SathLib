@@ -1,5 +1,6 @@
 package dev.satherov.sathlib.config;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import dev.satherov.sathlib.config.data.Config;
@@ -46,6 +47,7 @@ import java.util.function.Consumer;
 /// Static config discovery and reload integration for SathLib mods.
 ///
 @Slf4j
+@UtilityClass
 public class SLConfigLoader {
     
     private static final Type CONFIG_HOLDER = Type.getType(ConfigHolder.class);
@@ -59,8 +61,6 @@ public class SLConfigLoader {
     private static final VarHandle LAYER = SLReflectionUtils.findVarHandle(FMLModContainer.class, Module.class, "layer");
     private static final Set<String> HOOKED_MODS = ConcurrentHashMap.newKeySet();
     private static final Map<String, Map<ModConfigSpec, Cache>> CACHE = new ConcurrentHashMap<>();
-    
-    private SLConfigLoader() { }
     
     ///
     /// Generates the config file for the given mod container. Should be called within the mod constructor.

@@ -1,8 +1,11 @@
 package dev.satherov.sathlib.client.screen.node;
 
+import lombok.Builder;
+
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 import dev.satherov.sathlib.client.screen.state.UIState;
 
@@ -13,24 +16,18 @@ import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 ///
 /// Built-in clickable button node.
 ///
 /// Buttons measure themselves from their label, optionally bind text or enabled
-/// state, react to mouse input, and delegate their visuals to the active skin.
-///
-/// - display an actionable label
-/// - track hover and press state
-/// - invoke a callback when activated
-///
-/// Extend this class when you want specialized button behavior but still want
-/// the standard button rendering.
+/// state, react to mouse input, and delegate their visuals to the active theme.
 ///
 public class SLButtonNode extends UILeafNode<SLButtonNode> {
     
-    private Component text = Component.empty();
+    private Component text;
     private @Nullable Consumer<SLButtonNode> onPress;
     private @Nullable UIState<Component> textState;
     private @Nullable UIState<Boolean> enabledState;
@@ -41,7 +38,66 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     /// Creates a button node with the default built-in padding.
     ///
     public SLButtonNode() {
-        this.padding(SLInsets.symmetric(10, 5));
+        this(SLModifier.none().withPadding(SLInsets.symmetric(10, 5)), Component.empty(), null, null, null);
+    }
+    
+    ///
+    /// Creates a fully configured button.
+    ///
+    /// @param modifier     node modifier
+    /// @param text         button text
+    /// @param onPress      optional activation callback
+    /// @param textState    optional observable text binding
+    /// @param enabledState optional observable enabled binding
+    ///
+    protected SLButtonNode(
+            SLModifier modifier,
+            Component text,
+            @Nullable Consumer<SLButtonNode> onPress,
+            @Nullable UIState<Component> textState,
+            @Nullable UIState<Boolean> enabledState
+    ) {
+        super(modifier);
+        this.text = Objects.requireNonNull(text);
+        this.onPress = onPress;
+        this.textState = textState;
+        this.enabledState = enabledState;
+        
+        if (textState != null) {
+            this.text = textState.get();
+        }
+        if (enabledState != null) {
+            this.setEnabled(enabledState.get());
+        }
+    }
+    
+    ///
+    /// Creates a builder-backed button while normalizing omitted values to the
+    /// framework defaults.
+    ///
+    /// @param modifier     node modifier
+    /// @param text         button text
+    /// @param onPress      optional activation callback
+    /// @param textState    optional observable text binding
+    /// @param enabledState optional observable enabled binding
+    ///
+    /// @return configured button node
+    ///
+    @Builder(builderMethodName = "builder")
+    public static SLButtonNode of(
+            SLModifier modifier,
+            Component text,
+            Consumer<SLButtonNode> onPress,
+            UIState<Component> textState,
+            UIState<Boolean> enabledState
+    ) {
+        return new SLButtonNode(
+                Objects.requireNonNullElse(modifier, SLModifier.none().withPadding(SLInsets.symmetric(10, 5))),
+                Objects.requireNonNullElse(text, Component.empty()),
+                onPress,
+                textState,
+                enabledState
+        );
     }
     
     ///
@@ -52,7 +108,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     /// @return this button for fluent runtime setup
     ///
     public SLButtonNode text(Component text) {
-        this.text = text;
+        this.text = Objects.requireNonNullElse(text, Component.empty());
         this.invalidateLayout();
         return this;
     }
@@ -133,7 +189,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     
     @Override
     protected void renderSelf(SLRenderContext context) {
-        context.skin().renderButton(context, this.getBounds(), this.text, this.isHovered(), this.isPressed(), this.isEnabled());
+        context.theme().renderButton(context, this.getBounds(), this.text, this.isHovered(), this.isPressed(), this.isEnabled());
     }
     
     @Override
@@ -141,6 +197,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
         if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             return false;
         }
+        
         this.setPressedState(true);
         return true;
     }

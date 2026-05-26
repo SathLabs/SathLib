@@ -1,8 +1,5 @@
 package dev.satherov.sathlib.client.screen.node;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLAlignment;
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
@@ -10,6 +7,7 @@ import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.layout.SLLayoutSpec;
 import dev.satherov.sathlib.client.screen.layout.SLLength;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
+import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.layout.SLScalar;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
 
@@ -20,54 +18,134 @@ import net.minecraft.client.input.MouseButtonEvent;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 ///
 /// Base node for the retained-mode SathLib UI tree.
 ///
-/// Nodes are created during screen initialization, attached to a
+/// Nodes are configured with one immutable {@link SLModifier}, attached to a
 /// {@link UIRoot}, measured, laid out, rendered, and finally detached when the
 /// screen rebuilds or closes.
 ///
-/// - store shared node state such as layout, visibility, and interaction flags
-/// - provide measure, layout, render, and input hooks for subclasses
-/// - propagate layout invalidation back to the owning root
-///
-/// Custom components typically extend {@link UILeafNode} or
-/// {@link UIContainerNode} and override the protected hooks exposed here.
+/// The runtime tree stays mutable where interaction requires it, but layout
+/// configuration is always expressed through the modifier rather than through a
+/// parallel builder hierarchy.
 ///
 /// @param <S> concrete node subtype used for fluent setters
 ///
 @SuppressWarnings("doclint:missing")
 public abstract class UINode<S extends UINode<S>> {
     
-    private @Nullable @Getter UIContainerNode<?> parent;
-    private @Nullable @Getter UIRoot root;
+    private @Nullable UIContainerNode<?> parent;
+    private @Nullable UIRoot root;
     
-    private @Getter SLLayoutSpec layoutSpec = SLLayoutSpec.defaultSpec();
-    private @Getter SLMeasuredSize measuredSize = SLMeasuredSize.ZERO;
-    private @Getter SLBounds bounds = SLBounds.EMPTY;
+    private SLModifier modifier;
+    private SLMeasuredSize measuredSize = SLMeasuredSize.ZERO;
+    private SLBounds bounds = SLBounds.EMPTY;
     
-    private boolean layoutDirty = true;
+    private boolean visible = true;
+    private boolean enabled = true;
+    private boolean hovered;
+    private boolean pressed;
+    private boolean focused;
     
-    private @Getter boolean visible = true;
-    private @Getter @Setter boolean enabled = true;
-    private @Getter boolean hovered;
-    private @Getter boolean pressed;
-    private @Getter boolean focused;
+    ///
+    /// Creates a node with the empty modifier.
+    ///
+    protected UINode() {
+        this(SLModifier.none());
+    }
     
-    protected UINode() { }
+    ///
+    /// Creates a node with an explicit modifier.
+    ///
+    /// @param modifier node modifier
+    ///
+    protected UINode(@Nullable SLModifier modifier) {
+        this.modifier = Objects.requireNonNullElse(modifier, SLModifier.none());
+    }
     
+    ///
+    /// Returns the concrete self type for fluent runtime mutators.
+    ///
+    /// @return this node cast to its concrete type
+    ///
     @SuppressWarnings("unchecked")
     protected final S self() {
         return (S) this;
     }
     
     ///
-    /// Returns the resolved content bounds after padding is applied.
+    /// Returns the parent container, or {@code null} for the root node.
     ///
-    /// @return content bounds
+    /// @return parent container
     ///
-    public SLBounds getContentBounds() {
-        return this.bounds.inset(this.layoutSpec.padding());
+    public final @Nullable UIContainerNode<?> getParent() {
+        return this.parent;
+    }
+    
+    ///
+    /// Returns the owning root, or {@code null} while detached.
+    ///
+    /// @return owning root
+    ///
+    public final @Nullable UIRoot getRoot() {
+        return this.root;
+    }
+    
+    ///
+    /// Returns the current immutable modifier.
+    ///
+    /// @return node modifier
+    ///
+    public final SLModifier getModifier() {
+        return this.modifier;
+    }
+    
+    ///
+    /// Returns the legacy layout-spec view of the current modifier.
+    ///
+    /// @return compatibility layout spec
+    ///
+    @Deprecated(forRemoval = false)
+    public final SLLayoutSpec getLayoutSpec() {
+        return new SLLayoutSpec(
+                this.modifier.width(),
+                this.modifier.height(),
+                this.modifier.margin(),
+                this.modifier.padding(),
+                this.modifier.horizontalAlignment(),
+                this.modifier.verticalAlignment(),
+                this.modifier.offsetX(),
+                this.modifier.offsetY()
+        );
+    }
+    
+    ///
+    /// Returns the last measured size.
+    ///
+    /// @return measured size
+    ///
+    public final SLMeasuredSize getMeasuredSize() {
+        return this.measuredSize;
+    }
+    
+    ///
+    /// Returns the resolved bounds.
+    ///
+    /// @return node bounds
+    ///
+    public final SLBounds getBounds() {
+        return this.bounds;
+    }
+    
+    ///
+    /// Returns whether the node is visible.
+    ///
+    /// @return visibility flag
+    ///
+    public final boolean isVisible() {
+        return this.visible;
     }
     
     ///
@@ -76,39 +154,110 @@ public abstract class UINode<S extends UINode<S>> {
     /// @param visible new visibility state
     ///
     public void setVisible(boolean visible) {
-        if (this.visible == visible) return;
+        if (this.visible == visible) {
+            return;
+        }
+        
         this.visible = visible;
         this.invalidateLayout();
     }
     
     ///
-    /// Configures the node width.
+    /// Returns whether the node is enabled for interaction.
+    ///
+    /// @return enabled flag
+    ///
+    public final boolean isEnabled() {
+        return this.enabled;
+    }
+    
+    ///
+    /// Updates the enabled flag.
+    ///
+    /// @param enabled new enabled state
+    ///
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
+    ///
+    /// Returns whether the pointer is currently over the node.
+    ///
+    /// @return hover flag
+    ///
+    public final boolean isHovered() {
+        return this.hovered;
+    }
+    
+    ///
+    /// Returns whether the node is currently pressed.
+    ///
+    /// @return pressed flag
+    ///
+    public final boolean isPressed() {
+        return this.pressed;
+    }
+    
+    ///
+    /// Returns whether the node currently owns focus.
+    ///
+    /// @return focus flag
+    ///
+    public final boolean isFocused() {
+        return this.focused;
+    }
+    
+    ///
+    /// Returns the resolved content bounds after padding is applied.
+    ///
+    /// @return content bounds
+    ///
+    public SLBounds getContentBounds() {
+        return this.bounds.inset(this.modifier.padding());
+    }
+    
+    ///
+    /// Replaces the node modifier and invalidates layout.
+    ///
+    /// @param modifier new modifier
+    ///
+    /// @return this node
+    ///
+    public final S modifier(SLModifier modifier) {
+        SLModifier normalized = Objects.requireNonNullElse(modifier, SLModifier.none());
+        if (this.modifier.equals(normalized)) {
+            return this.self();
+        }
+        
+        this.modifier = normalized;
+        this.invalidateLayout();
+        return this.self();
+    }
+    
+    ///
+    /// Configures the node width through its modifier.
     ///
     /// @param width new width behavior
     ///
     /// @return this node
     ///
     public final S width(SLLength width) {
-        this.layoutSpec = this.layoutSpec.withWidth(width);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withWidth(width));
     }
     
     ///
-    /// Configures the node height.
+    /// Configures the node height through its modifier.
     ///
     /// @param height new height behavior
     ///
     /// @return this node
     ///
     public final S height(SLLength height) {
-        this.layoutSpec = this.layoutSpec.withHeight(height);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withHeight(height));
     }
     
     ///
-    /// Configures both node dimensions.
+    /// Configures both node dimensions through the modifier.
     ///
     /// @param width  new width behavior
     /// @param height new height behavior
@@ -116,39 +265,33 @@ public abstract class UINode<S extends UINode<S>> {
     /// @return this node
     ///
     public final S size(SLLength width, SLLength height) {
-        this.layoutSpec = this.layoutSpec.withWidth(width).withHeight(height);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withSize(width, height));
     }
     
     ///
-    /// Configures node margin.
+    /// Configures node margin through the modifier.
     ///
     /// @param margin new outside spacing
     ///
     /// @return this node
     ///
     public final S margin(SLInsets margin) {
-        this.layoutSpec = this.layoutSpec.withMargin(margin);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withMargin(margin));
     }
     
     ///
-    /// Configures node padding.
+    /// Configures node padding through the modifier.
     ///
     /// @param padding new inside spacing
     ///
     /// @return this node
     ///
     public final S padding(SLInsets padding) {
-        this.layoutSpec = this.layoutSpec.withPadding(padding);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withPadding(padding));
     }
     
     ///
-    /// Configures node alignment inside parent space.
+    /// Configures node alignment through the modifier.
     ///
     /// @param horizontalAlignment x-axis alignment
     /// @param verticalAlignment   y-axis alignment
@@ -156,13 +299,11 @@ public abstract class UINode<S extends UINode<S>> {
     /// @return this node
     ///
     public final S align(SLAlignment horizontalAlignment, SLAlignment verticalAlignment) {
-        this.layoutSpec = this.layoutSpec.withAlignment(horizontalAlignment, verticalAlignment);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withAlignment(horizontalAlignment, verticalAlignment));
     }
     
     ///
-    /// Configures node offsets applied after alignment.
+    /// Configures node offsets through the modifier.
     ///
     /// @param offsetX x-axis offset
     /// @param offsetY y-axis offset
@@ -170,17 +311,16 @@ public abstract class UINode<S extends UINode<S>> {
     /// @return this node
     ///
     public final S offset(SLScalar offsetX, SLScalar offsetY) {
-        this.layoutSpec = this.layoutSpec.withOffset(offsetX, offsetY);
-        this.invalidateLayout();
-        return this.self();
+        return this.modifier(this.modifier.withOffset(offsetX, offsetY));
     }
     
     ///
     /// Marks the node tree as requiring a fresh layout pass.
     ///
     public final void invalidateLayout() {
-        this.layoutDirty = true;
-        if (this.root != null) this.root.invalidateLayout();
+        if (this.root != null) {
+            this.root.invalidateLayout();
+        }
     }
     
     ///
@@ -202,6 +342,9 @@ public abstract class UINode<S extends UINode<S>> {
         this.onDetached();
         this.parent = null;
         this.root = null;
+        this.hovered = false;
+        this.pressed = false;
+        this.focused = false;
     }
     
     ///
@@ -216,14 +359,13 @@ public abstract class UINode<S extends UINode<S>> {
     public final SLMeasuredSize measure(Font font, int availableWidth, int availableHeight) {
         if (!this.visible) {
             this.measuredSize = SLMeasuredSize.ZERO;
-            this.layoutDirty = false;
             return this.measuredSize;
         }
         
         int clampedWidth = Math.max(0, availableWidth);
         int clampedHeight = Math.max(0, availableHeight);
-        int paddingWidth = this.layoutSpec.padding().horizontal(clampedWidth);
-        int paddingHeight = this.layoutSpec.padding().vertical(clampedHeight);
+        int paddingWidth = this.modifier.padding().horizontal(clampedWidth);
+        int paddingHeight = this.modifier.padding().vertical(clampedHeight);
         int contentAvailableWidth = Math.max(0, clampedWidth - paddingWidth);
         int contentAvailableHeight = Math.max(0, clampedHeight - paddingHeight);
         
@@ -232,8 +374,8 @@ public abstract class UINode<S extends UINode<S>> {
         int preferredHeight = measuredContent.height() + paddingHeight;
         
         this.measuredSize = new SLMeasuredSize(
-                Math.max(0, this.layoutSpec.width().resolvePreferred(clampedWidth, preferredWidth)),
-                Math.max(0, this.layoutSpec.height().resolvePreferred(clampedHeight, preferredHeight))
+                Math.max(0, this.modifier.width().resolvePreferred(clampedWidth, preferredWidth)),
+                Math.max(0, this.modifier.height().resolvePreferred(clampedHeight, preferredHeight))
         );
         return this.measuredSize;
     }
@@ -247,7 +389,6 @@ public abstract class UINode<S extends UINode<S>> {
     ///
     public final void layout(SLBounds bounds, Font font) {
         this.bounds = bounds;
-        this.layoutDirty = false;
         this.onLayout(font, this.getContentBounds());
     }
     
@@ -257,7 +398,10 @@ public abstract class UINode<S extends UINode<S>> {
     /// @param context render context
     ///
     public final void renderTree(SLRenderContext context) {
-        if (!this.visible) return;
+        if (!this.visible) {
+            return;
+        }
+        
         this.renderSelf(context);
         this.renderChildren(context);
     }
@@ -283,6 +427,7 @@ public abstract class UINode<S extends UINode<S>> {
         if (!this.visible || !this.enabled || !this.bounds.contains(mouseX, mouseY)) {
             return null;
         }
+        
         return this.isInputTarget() ? this : null;
     }
     
