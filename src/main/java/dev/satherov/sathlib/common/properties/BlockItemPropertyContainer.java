@@ -31,7 +31,7 @@ import java.util.Map;
 @NothingNull
 @SuppressWarnings("doclint:missing")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BlockItemPropertyContainer<B extends Block, I extends Item> implements Iterable<BlockItemProperty<?>> {
+public class BlockItemPropertyContainer<B, I> implements Iterable<BlockItemProperty<?>> {
     
     private final Class<B> blockClass;
     private final Class<I> itemClass;
@@ -47,7 +47,7 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
     ///
     /// @return the container builder
     ///
-    public static <B extends Block, I extends Item> Builder<B, I> builder(Class<B> blockClass, Class<I> itemClass) {
+    public static <B, I> Builder<B, I> builder(Class<B> blockClass, Class<I> itemClass) {
         return new Builder<>(blockClass, itemClass);
     }
     
@@ -279,7 +279,7 @@ public class BlockItemPropertyContainer<B extends Block, I extends Item> impleme
     /// @param <I> the item class
     ///
     @RequiredArgsConstructor
-    public static final class Builder<B extends Block, I extends Item> {
+    public static final class Builder<B, I> {
         
         private final Class<B> blockClass;
         private final Class<I> itemClass;
