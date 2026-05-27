@@ -98,9 +98,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     ///
     public final S gap(SLScalar gap) {
         SLScalar normalizedGap = Objects.requireNonNullElse(gap, SLScalar.zero());
-        if (this.gap.equals(normalizedGap)) {
-            return this.self();
-        }
+        if (this.gap.equals(normalizedGap)) return this.self();
         
         this.gap = normalizedGap;
         this.invalidateLayout();
@@ -117,9 +115,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     ///
     public final S mainAxisAlignment(SLAlignment alignment) {
         SLAlignment normalizedAlignment = Objects.requireNonNullElse(alignment, SLAlignment.START);
-        if (this.mainAxisAlignment == normalizedAlignment) {
-            return this.self();
-        }
+        if (this.mainAxisAlignment == normalizedAlignment) return this.self();
         
         this.mainAxisAlignment = normalizedAlignment;
         this.invalidateLayout();
@@ -127,6 +123,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
     }
     
     @Override
+    @SuppressWarnings("DuplicatedCode")
     protected SLMeasuredSize measureContent(Font font, int availableWidth, int availableHeight) {
         int totalMain = 0;
         int maxCross = 0;
@@ -134,9 +131,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
         int gapPixels = this.gap.resolve(this.axis == SLAxis.HORIZONTAL ? availableWidth : availableHeight);
         
         for (UINode<?> child : this.getChildren()) {
-            if (!child.isVisible()) {
-                continue;
-            }
+            if (!child.isVisible()) continue;
             
             SLInsets margin = child.getModifier().margin();
             int childAvailableWidth = Math.max(0, availableWidth - margin.horizontal(availableWidth));
@@ -159,10 +154,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             firstVisibleChild = false;
         }
         
-        if (this.axis == SLAxis.HORIZONTAL) {
-            return new SLMeasuredSize(totalMain, maxCross);
-        }
-        
+        if (this.axis == SLAxis.HORIZONTAL) return new SLMeasuredSize(totalMain, maxCross);
         return new SLMeasuredSize(maxCross, totalMain);
     }
     
@@ -175,9 +167,7 @@ public abstract class SLFlowNode<S extends SLFlowNode<S>> extends UIContainerNod
             }
         }
         
-        if (visibleChildren.isEmpty()) {
-            return;
-        }
+        if (visibleChildren.isEmpty()) return;
         
         int availableMain = this.axis == SLAxis.HORIZONTAL ? contentBounds.width() : contentBounds.height();
         int availableCross = this.axis == SLAxis.HORIZONTAL ? contentBounds.height() : contentBounds.width();

@@ -75,7 +75,7 @@ public class SLLabelNode extends UILeafNode<SLLabelNode> {
     ///
     /// @return configured label node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLLabelNode of(
             SLModifier modifier,
             Component text,

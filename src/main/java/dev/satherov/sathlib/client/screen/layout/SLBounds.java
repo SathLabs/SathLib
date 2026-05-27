@@ -68,6 +68,20 @@ public record SLBounds(int x, int y, int width, int height) {
     }
     
     ///
+    /// Insets this bounds rectangle uniformly on every side.
+    ///
+    /// @param inset inset size in pixels
+    ///
+    /// @return inset bounds, clamped to non-negative size
+    ///
+    public SLBounds inset(int inset) {
+        int normalizedInset = Math.max(0, inset);
+        int width = Math.max(0, this.width - (normalizedInset * 2));
+        int height = Math.max(0, this.height - (normalizedInset * 2));
+        return new SLBounds(this.x + normalizedInset, this.y + normalizedInset, width, height);
+    }
+    
+    ///
     /// Returns translated bounds with the same size.
     ///
     /// @param offsetX x offset

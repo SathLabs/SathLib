@@ -3,10 +3,10 @@ package dev.satherov.sathlib.common.menu.slot;
 import net.minecraft.world.entity.player.Inventory;
 
 ///
-/// Standard hotbar slot with SathLib visuals.
+/// Standard hotbar slot marker for SathLib menus.
 ///
-/// - keep hotbar slots distinct from the main inventory rows
-/// - allow hotbar visuals to diverge without screen-side branching
+/// The client can use the runtime type to choose a matching slot chrome, but
+/// the slot itself does not force any rendering style.
 ///
 public class SLHotbarSlot extends SLPlayerInventorySlot {
     
@@ -18,10 +18,5 @@ public class SLHotbarSlot extends SLPlayerInventorySlot {
     ///
     public SLHotbarSlot(Inventory inventory, int slotIndex) {
         super(inventory, slotIndex);
-    }
-    
-    @Override
-    protected SLSlotVisuals getSlotVisuals() {
-        return SLSlotVisuals.HOTBAR;
     }
 }

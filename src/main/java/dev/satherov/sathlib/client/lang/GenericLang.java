@@ -30,6 +30,13 @@ public enum GenericLang implements SLTranslatable {
     ANY        ("any",         "Any"),
     SUPPORTED  ("supported",   "Supported"),
     UNSUPPORTED("unsupported", "Unsupported"),
+    EMPTY      ("empty",       "Empty"),
+    FULL       ("full",        "Full"),
+    FILLED     ("filled",      "Filled"),
+    ENERGY     ("energy",      "Energy"),
+    FLUID      ("fluid",       "Fluid"),
+    ITEM       ("item",        "Item"),
+    ITEMS      ("items",       "Items"),
     // @formatter:on
     ;
     

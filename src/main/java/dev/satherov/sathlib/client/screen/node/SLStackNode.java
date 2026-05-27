@@ -26,9 +26,7 @@ public class SLStackNode extends UIContainerNode<SLStackNode> {
     ///
     /// Creates an empty stack container.
     ///
-    public SLStackNode() {
-        super();
-    }
+    public SLStackNode() { }
     
     ///
     /// Creates a fully configured stack.
@@ -49,7 +47,7 @@ public class SLStackNode extends UIContainerNode<SLStackNode> {
     ///
     /// @return configured stack node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLStackNode of(SLModifier modifier, @Singular("child") List<UINode<?>> children) {
         return new SLStackNode(
                 Objects.requireNonNullElse(modifier, SLModifier.none()),
@@ -58,14 +56,13 @@ public class SLStackNode extends UIContainerNode<SLStackNode> {
     }
     
     @Override
+    @SuppressWarnings("DuplicatedCode")
     protected SLMeasuredSize measureContent(Font font, int availableWidth, int availableHeight) {
         int maxWidth = 0;
         int maxHeight = 0;
         
         for (UINode<?> child : this.getChildren()) {
-            if (!child.isVisible()) {
-                continue;
-            }
+            if (!child.isVisible()) continue;
             
             SLInsets margin = child.getModifier().margin();
             int childAvailableWidth = Math.max(0, availableWidth - margin.horizontal(availableWidth));
@@ -82,9 +79,7 @@ public class SLStackNode extends UIContainerNode<SLStackNode> {
     @Override
     protected void onLayout(Font font, SLBounds contentBounds) {
         for (UINode<?> child : this.getChildren()) {
-            if (!child.isVisible()) {
-                continue;
-            }
+            if (!child.isVisible()) continue;
             
             SLModifier childModifier = child.getModifier();
             SLInsets margin = childModifier.margin();

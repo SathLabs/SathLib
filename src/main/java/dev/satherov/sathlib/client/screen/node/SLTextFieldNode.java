@@ -1,6 +1,7 @@
 package dev.satherov.sathlib.client.screen.node;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLMeasuredSize;
@@ -32,11 +33,14 @@ import java.util.function.UnaryOperator;
 ///
 public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
+    private static final int CURSOR_BLINK_HALF_PERIOD_TICKS = 6;
+    private static final int CURSOR_BLINK_PERIOD_TICKS = SLTextFieldNode.CURSOR_BLINK_HALF_PERIOD_TICKS * 2;
+    
     private final int maxLength;
     private final UnaryOperator<String> sanitizer;
     private final @Nullable IntPredicate acceptedCodepoint;
     private final @Nullable Consumer<String> onValueChanged;
-    private String value;
+    @Getter private String value;
     private @Nullable String placeholder;
     private @Nullable Consumer<String> onCommit;
     private @Nullable UIState<String> valueState;
@@ -44,6 +48,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
     private int cursor;
     private int selectionAnchor;
+    private int cursorBlinkTicks;
     private boolean wasFocused;
     
     ///
@@ -158,6 +163,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
         this.value = this.normalize(value);
         this.cursor = this.value.length();
         this.selectionAnchor = this.cursor;
+        this.resetCursorBlink();
         return this;
     }
     
@@ -234,6 +240,11 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
         if (this.wasFocused && !this.isFocused()) {
             this.commitValue();
         }
+        if (this.isFocused()) {
+            this.cursorBlinkTicks = (this.cursorBlinkTicks + 1) % SLTextFieldNode.CURSOR_BLINK_PERIOD_TICKS;
+        } else {
+            this.cursorBlinkTicks = 0;
+        }
         this.wasFocused = this.isFocused();
     }
     
@@ -249,6 +260,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
                         this.selectionStart(),
                         this.selectionEnd(),
                         this.isFocused(),
+                        this.isCursorVisible(),
                         this.isEnabled()
                 )
         );
@@ -256,9 +268,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
     @Override
     public boolean mousePressed(MouseButtonEvent event, boolean doubleClick) {
-        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         
         if (doubleClick) {
             this.selectAll();
@@ -271,10 +281,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-        if (!this.isPressed() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
-        
+        if (!this.isPressed() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         this.moveCursorTo(this.cursorAt(event.x()), true);
         return true;
     }
@@ -288,9 +295,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (!this.isFocused() || !this.isEnabled()) {
-            return false;
-        }
+        if (!this.isFocused() || !this.isEnabled()) return false;
         
         return switch (event.key()) {
             case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
@@ -338,9 +343,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
                 }
                 if (event.isCut()) {
                     Minecraft.getInstance().keyboardHandler.setClipboard(this.highlightedText());
-                    if (this.hasSelection()) {
-                        this.insertText("");
-                    }
+                    if (this.hasSelection()) this.insertText("");
                     yield true;
                 }
                 if (event.isPaste()) {
@@ -354,29 +357,14 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     
     @Override
     public boolean charTyped(CharacterEvent event) {
-        if (!this.isFocused() || !this.isEnabled()) {
-            return false;
-        }
+        if (!this.isFocused() || !this.isEnabled()) return false;
         
         int codepoint = event.codepoint();
-        if (this.acceptedCodepoint != null && !this.acceptedCodepoint.test(codepoint)) {
-            return false;
-        }
-        if (Character.isISOControl(codepoint)) {
-            return false;
-        }
+        if (this.acceptedCodepoint != null && !this.acceptedCodepoint.test(codepoint)) return false;
+        if (Character.isISOControl(codepoint)) return false;
         
         this.insertText(new String(Character.toChars(codepoint)));
         return true;
-    }
-    
-    ///
-    /// Returns the current stored value.
-    ///
-    /// @return current field value
-    ///
-    public String getValue() {
-        return this.value;
     }
     
     ///
@@ -396,10 +384,16 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     private void insertText(String insertedText) {
         int selectionStart = this.selectionStart();
         int selectionEnd = this.selectionEnd();
-        String combinedValue = this.value.substring(0, selectionStart) + insertedText + this.value.substring(selectionEnd);
-        this.value = this.normalize(combinedValue);
-        this.cursor = this.value.length();
+        String normalizedInsertedText = this.normalizeInsertedText(insertedText);
+        String prefix = this.value.substring(0, selectionStart);
+        String suffix = this.value.substring(selectionEnd);
+        String combinedValue = prefix + normalizedInsertedText + suffix;
+        String normalizedValue = this.normalize(combinedValue);
+        int targetCursor = this.normalize(prefix + normalizedInsertedText).length();
+        this.value = normalizedValue;
+        this.cursor = Math.min(targetCursor, this.value.length());
         this.selectionAnchor = this.cursor;
+        this.resetCursorBlink();
         this.fireValueChanged();
     }
     
@@ -413,9 +407,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
             this.insertText("");
             return;
         }
-        if (this.value.isEmpty()) {
-            return;
-        }
+        if (this.value.isEmpty()) return;
         
         int selectionStart = this.cursor;
         int selectionEnd = this.cursor;
@@ -430,6 +422,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
         this.value = this.normalize(this.value.substring(0, selectionStart) + this.value.substring(selectionEnd));
         this.cursor = Math.min(selectionStart, this.value.length());
         this.selectionAnchor = this.cursor;
+        this.resetCursorBlink();
         this.fireValueChanged();
     }
     
@@ -451,9 +444,8 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     ///
     private void moveCursorTo(int position, boolean keepSelection) {
         this.cursor = Mth.clamp(position, 0, this.value.length());
-        if (!keepSelection) {
-            this.selectionAnchor = this.cursor;
-        }
+        if (!keepSelection) this.selectionAnchor = this.cursor;
+        this.resetCursorBlink();
     }
     
     ///
@@ -462,6 +454,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     private void selectAll() {
         this.cursor = this.value.length();
         this.selectionAnchor = 0;
+        this.resetCursorBlink();
     }
     
     ///
@@ -475,9 +468,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
         Font font = Minecraft.getInstance().font;
         int textX = this.getBounds().x() + 4;
         int relativeX = (int) Math.round(mouseX) - textX;
-        if (relativeX <= 0) {
-            return 0;
-        }
+        if (relativeX <= 0) return 0;
         
         int closestCursor = this.value.length();
         int closestDistance = Integer.MAX_VALUE;
@@ -526,9 +517,7 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     /// @return highlighted text
     ///
     private String highlightedText() {
-        if (!this.hasSelection()) {
-            return this.value;
-        }
+        if (!this.hasSelection()) return this.value;
         return this.value.substring(this.selectionStart(), this.selectionEnd());
     }
     
@@ -542,10 +531,46 @@ public class SLTextFieldNode extends UILeafNode<SLTextFieldNode> {
     private String normalize(String value) {
         String normalized = Objects.requireNonNullElse(value, "");
         normalized = Objects.requireNonNullElse(this.sanitizer.apply(normalized), "");
-        if (normalized.length() > this.maxLength) {
-            normalized = normalized.substring(0, this.maxLength);
-        }
+        if (normalized.length() > this.maxLength) normalized = normalized.substring(0, this.maxLength);
         return normalized;
+    }
+    
+    ///
+    /// Filters inserted text through the accepted-codepoint policy before the
+    /// full field sanitizer runs.
+    ///
+    /// @param insertedText source inserted text
+    ///
+    /// @return filtered inserted text
+    ///
+    private String normalizeInsertedText(String insertedText) {
+        String text = Objects.requireNonNullElse(insertedText, "");
+        if (text.isBlank()) return "";
+        
+        StringBuilder builder = new StringBuilder(text.length());
+        text.codePoints().forEach(codepoint -> {
+            if (Character.isISOControl(codepoint)) return;
+            if (this.acceptedCodepoint == null || this.acceptedCodepoint.test(codepoint)) {
+                builder.appendCodePoint(codepoint);
+            }
+        });
+        return builder.toString();
+    }
+    
+    ///
+    /// Returns whether the caret should currently be rendered.
+    ///
+    /// @return {@code true} when the blinking caret is in its visible phase
+    ///
+    private boolean isCursorVisible() {
+        return !this.isFocused() || this.cursorBlinkTicks < SLTextFieldNode.CURSOR_BLINK_HALF_PERIOD_TICKS;
+    }
+    
+    ///
+    /// Restarts the caret blink cycle after local interaction.
+    ///
+    private void resetCursorBlink() {
+        this.cursorBlinkTicks = 0;
     }
     
     ///

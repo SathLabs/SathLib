@@ -2,12 +2,17 @@ package dev.satherov.sathlib.util;
 
 import lombok.experimental.UtilityClass;
 
+import net.neoforged.fml.loading.FMLEnvironment;
+
+import net.minecraft.client.Minecraft;
+
 import org.intellij.lang.annotations.PrintFormat;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +24,8 @@ import java.util.Locale;
 public class SLStringUtils {
     
     private static final Locale LOCALE = Locale.ROOT;
+    private static final String[] POSITIVE_PREFIXES = { "", "k", "M", "G", "T", "P", "E" };
+    private static final String[] NEGATIVE_PREFIXES = { "", "m", "µ", "n", "p", "f", "a" };
     
     ///
     /// Converts the given string to lowercase.
@@ -250,6 +257,130 @@ public class SLStringUtils {
         
         builder.append(exp);
         return builder.toString();
+    }
+    
+    ///
+    /// Displays the given `double` using the current system locale.
+    ///
+    /// Examples:
+    /// - `Locale.US` -> `1,234.5`
+    /// - `Locale.GERMANY` -> `1.234,5`
+    ///
+    /// @param value Number to display.
+    ///
+    /// @return Locale-formatted decimal string.
+    ///
+    public static String displayDecimal(double value) {
+        final NumberFormat formatter = NumberFormat.getNumberInstance(FMLEnvironment.getDist().isClient() ? Minecraft.getInstance().getLocale() : Locale.getDefault());
+        formatter.setGroupingUsed(true);
+        formatter.setMaximumFractionDigits(16);
+        formatter.setMinimumFractionDigits(0);
+        
+        return formatter.format(BigDecimal.valueOf(value));
+    }
+    
+    ///
+    /// Displays the given `float` using the current system locale.
+    ///
+    /// @param value Number to display.
+    ///
+    /// @return Locale-formatted decimal string.
+    ///
+    public static String displayDecimal(float value) {
+        return SLStringUtils.displayDecimal((double) value);
+    }
+    
+    ///
+    /// Displays the given `double` using the current system locale and appends an SI prefix.
+    ///
+    /// The number is scaled in steps of `1000`.
+    ///
+    /// Examples:
+    /// - `1500` -> `1.5k`
+    /// - `1200000` -> `1.2M`
+    /// - `0.0012` -> `1.2m`
+    /// - `0.0000012` -> `1.2µ`
+    ///
+    /// @param value Number to display.
+    ///
+    /// @return Locale-formatted number with an SI prefix.
+    ///
+    public static String displaySi(double value) {
+        return SLStringUtils.displaySi(value, false);
+    }
+    
+    ///
+    /// Displays the given `double` using the current system locale and appends an SI prefix.
+    ///
+    /// The number is scaled in steps of `1000`.
+    ///
+    /// Examples:
+    /// - `1500` -> `1.5k`
+    /// - `1200000` -> `1.2M`
+    /// - `0.0012` -> `1.2m`
+    /// - `0.0000012` -> `1.2µ`
+    ///
+    /// @param value           Number to display.
+    /// @param spaceBeforeUnit Whether to add a space between the number and the SI prefix.
+    ///
+    /// @return Locale-formatted number with an SI prefix.
+    ///
+    public static String displaySi(double value, boolean spaceBeforeUnit) {
+        if (Double.isNaN(value)) return "NaN";
+        if (Double.isInfinite(value)) return value > 0 ? "∞" : "-∞";
+        if (value == 0.0D) return "0";
+        
+        double scaledValue = value;
+        double absValue = Math.abs(value);
+        int prefixIndex = 0;
+        String[] prefixes = SLStringUtils.POSITIVE_PREFIXES;
+        
+        if (absValue >= 1.0D) {
+            while (absValue >= 1000.0D && prefixIndex < SLStringUtils.POSITIVE_PREFIXES.length - 1) {
+                scaledValue /= 1000.0D;
+                absValue /= 1000.0D;
+                prefixIndex++;
+            }
+        } else {
+            prefixes = SLStringUtils.NEGATIVE_PREFIXES;
+            
+            while (absValue < 1.0D && prefixIndex < SLStringUtils.NEGATIVE_PREFIXES.length - 1) {
+                scaledValue *= 1000.0D;
+                absValue *= 1000.0D;
+                prefixIndex++;
+            }
+        }
+        
+        String number = SLStringUtils.displayDecimal(scaledValue);
+        String prefix = prefixes[prefixIndex];
+        
+        if (prefix.isEmpty()) return number;
+        if (spaceBeforeUnit) return number + " " + prefix;
+        
+        return number + prefix;
+    }
+    
+    ///
+    /// Displays the given `float` using the current system locale and appends an SI prefix.
+    ///
+    /// @param value Number to display.
+    ///
+    /// @return Locale-formatted number with an SI prefix.
+    ///
+    public static String displaySi(float value) {
+        return SLStringUtils.displaySi((double) value, false);
+    }
+    
+    ///
+    /// Displays the given `float` using the current system locale and appends an SI prefix.
+    ///
+    /// @param value           Number to display.
+    /// @param spaceBeforeUnit Whether to add a space between the number and the SI prefix.
+    ///
+    /// @return Locale-formatted number with an SI prefix.
+    ///
+    public static String displaySi(float value, boolean spaceBeforeUnit) {
+        return SLStringUtils.displaySi((double) value, spaceBeforeUnit);
     }
     
     ///

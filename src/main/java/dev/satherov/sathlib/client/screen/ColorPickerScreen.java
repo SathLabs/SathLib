@@ -12,6 +12,7 @@ import dev.satherov.sathlib.client.screen.node.SLTextFieldNode;
 import dev.satherov.sathlib.client.screen.node.UINode;
 import dev.satherov.sathlib.client.screen.node.color.SLColorPreviewNode;
 import dev.satherov.sathlib.client.screen.node.color.SLHueSliderNode;
+import dev.satherov.sathlib.client.screen.node.color.SLHueStripNode;
 import dev.satherov.sathlib.client.screen.node.color.SLRgbSliderNode;
 import dev.satherov.sathlib.client.screen.node.color.SLSaturationValueNode;
 
@@ -25,9 +26,6 @@ import java.util.function.IntConsumer;
 
 ///
 /// Screen implementation that exposes linked HSV, RGB, and hex color controls.
-///
-/// The screen now delegates nearly all widget behavior to reusable retained-mode
-/// nodes so the screen itself is mostly composition and callback wiring.
 ///
 public class ColorPickerScreen extends SLScreen {
     
@@ -77,6 +75,7 @@ public class ColorPickerScreen extends SLScreen {
                                                 .padding(SLInsets.all(ColorPickerLayout.PANEL_PADDING))
                                 )
                                 .gap(SLScalar.pixels(ColorPickerLayout.TITLE_GAP))
+                                .child(this.createHueStripNode())
                                 .child(
                                         UI.row()
                                                 .gap(SLScalar.pixels(ColorPickerLayout.COLUMN_GAP))
@@ -198,6 +197,18 @@ public class ColorPickerScreen extends SLScreen {
                 .modifier(SLModifier.none().size(UI.px(ColorPickerLayout.HUE_WIDTH), UI.px(ColorPickerLayout.SATURATION_VALUE_SIZE)))
                 .model(this.model)
                 .onCommit(this::fireChanged)
+                .build();
+    }
+    
+    ///
+    /// Builds the thin hue strip shown at the top of the panel.
+    ///
+    /// @return hue strip node
+    ///
+    private SLHueStripNode createHueStripNode() {
+        return SLHueStripNode.builder()
+                .modifier(SLModifier.none().size(UI.px(ColorPickerLayout.CONTENT_WIDTH), UI.px(ColorPickerLayout.HUE_STRIP_HEIGHT)))
+                .model(this.model)
                 .build();
     }
     

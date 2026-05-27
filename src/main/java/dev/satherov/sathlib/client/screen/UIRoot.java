@@ -1,5 +1,8 @@
 package dev.satherov.sathlib.client.screen;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
 import dev.satherov.sathlib.client.screen.node.UINode;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
@@ -24,8 +27,9 @@ import org.jspecify.annotations.Nullable;
 public final class UIRoot {
     
     private @Nullable UINode<?> content;
-    private SLBounds viewport = SLBounds.EMPTY;
-    private UITheme theme = DefaultTheme.INSTANCE;
+    
+    private @Getter SLBounds viewport = SLBounds.EMPTY;
+    private @Getter @Setter UITheme theme = DefaultTheme.INSTANCE;
     private boolean layoutDirty = true;
     
     private @Nullable UINode<?> hoveredNode;
@@ -68,12 +72,12 @@ public final class UIRoot {
     }
     
     ///
-    /// Returns the current viewport used for layout.
+    /// Returns the node currently hovered by the pointer, if any.
     ///
-    /// @return layout viewport
+    /// @return hovered node, or {@code null}
     ///
-    public SLBounds getViewport() {
-        return this.viewport;
+    public @Nullable UINode<?> getHoveredNode() {
+        return this.hoveredNode;
     }
     
     ///
@@ -82,49 +86,9 @@ public final class UIRoot {
     /// @param viewport new root viewport
     ///
     public void setViewport(SLBounds viewport) {
-        if (this.viewport.equals(viewport)) {
-            return;
-        }
+        if (this.viewport.equals(viewport)) return;
         this.viewport = viewport;
         this.invalidateLayout();
-    }
-    
-    ///
-    /// Returns the active theme.
-    ///
-    /// @return active UI theme
-    ///
-    public UITheme getTheme() {
-        return this.theme;
-    }
-    
-    ///
-    /// Updates the theme used by built-in widgets.
-    ///
-    /// @param theme new active theme
-    ///
-    public void setTheme(UITheme theme) {
-        this.theme = theme;
-    }
-    
-    ///
-    /// Returns the legacy theme accessor kept for compatibility.
-    ///
-    /// @return active UI theme
-    ///
-    @Deprecated(forRemoval = false)
-    public UITheme getSkin() {
-        return this.theme;
-    }
-    
-    ///
-    /// Updates the legacy theme setter kept for compatibility.
-    ///
-    /// @param theme new active theme
-    ///
-    @Deprecated(forRemoval = false)
-    public void setSkin(UITheme theme) {
-        this.setTheme(theme);
     }
     
     ///
@@ -140,9 +104,7 @@ public final class UIRoot {
     /// @param node target node, or {@code null} to clear focus
     ///
     public void requestFocus(@Nullable UINode<?> node) {
-        if (this.focusedNode == node) {
-            return;
-        }
+        if (this.focusedNode == node) return;
         
         if (this.focusedNode != null) {
             this.focusedNode.setFocusedState(false);
@@ -166,21 +128,18 @@ public final class UIRoot {
     ///
     public void render(GuiGraphicsExtractor graphics, Font font, int mouseX, int mouseY, float partialTick) {
         this.resolveLayout(font);
-        if (this.content == null) {
-            return;
-        }
+        if (this.content == null) return;
         
         SLRenderContext renderContext = new SLRenderContext(graphics, font, this.theme, partialTick, mouseX, mouseY);
         this.content.renderTree(renderContext);
+        this.content.renderOverlayTree(renderContext);
     }
     
     ///
     /// Ticks the node tree once.
     ///
     public void tick() {
-        if (this.content == null) {
-            return;
-        }
+        if (this.content == null) return;
         this.content.tickTree();
     }
     
@@ -239,9 +198,7 @@ public final class UIRoot {
     ///
     public boolean mouseDragged(Font font, MouseButtonEvent event, double deltaX, double deltaY) {
         this.resolveLayout(font);
-        if (this.pressedNode == null) {
-            return false;
-        }
+        if (this.pressedNode == null) return false;
         return this.pressedNode.mouseDragged(event, deltaX, deltaY);
     }
     
@@ -255,9 +212,7 @@ public final class UIRoot {
     ///
     public boolean mouseReleased(Font font, MouseButtonEvent event) {
         this.resolveLayout(font);
-        if (this.pressedNode == null) {
-            return false;
-        }
+        if (this.pressedNode == null) return false;
         
         UINode<?> releasedNode = this.pressedNode;
         this.pressedNode = null;
@@ -280,9 +235,7 @@ public final class UIRoot {
     public boolean mouseScrolled(Font font, double mouseX, double mouseY, double scrollX, double scrollY) {
         this.resolveLayout(font);
         UINode<?> target = this.findHitNode(mouseX, mouseY);
-        if (target == null) {
-            return false;
-        }
+        if (target == null) return false;
         return target.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
     
@@ -294,9 +247,7 @@ public final class UIRoot {
     /// @return {@code true} when handled
     ///
     public boolean keyPressed(KeyEvent event) {
-        if (this.focusedNode == null) {
-            return false;
-        }
+        if (this.focusedNode == null) return false;
         return this.focusedNode.keyPressed(event);
     }
     
@@ -308,9 +259,7 @@ public final class UIRoot {
     /// @return {@code true} when handled
     ///
     public boolean keyReleased(KeyEvent event) {
-        if (this.focusedNode == null) {
-            return false;
-        }
+        if (this.focusedNode == null) return false;
         return this.focusedNode.keyReleased(event);
     }
     
@@ -322,9 +271,7 @@ public final class UIRoot {
     /// @return {@code true} when handled
     ///
     public boolean charTyped(CharacterEvent event) {
-        if (this.focusedNode == null) {
-            return false;
-        }
+        if (this.focusedNode == null) return false;
         return this.focusedNode.charTyped(event);
     }
     
@@ -334,10 +281,7 @@ public final class UIRoot {
     /// @param font active font
     ///
     public void resolveLayout(Font font) {
-        if (!this.layoutDirty || this.content == null) {
-            return;
-        }
-        
+        if (!this.layoutDirty || this.content == null) return;
         this.content.measure(font, this.viewport.width(), this.viewport.height());
         this.content.layout(this.viewport, font);
         this.layoutDirty = false;
@@ -349,9 +293,7 @@ public final class UIRoot {
     /// @param nextHoveredNode newly hovered node, or {@code null}
     ///
     private void updateHoveredNode(@Nullable UINode<?> nextHoveredNode) {
-        if (this.hoveredNode == nextHoveredNode) {
-            return;
-        }
+        if (this.hoveredNode == nextHoveredNode) return;
         
         if (this.hoveredNode != null) {
             this.hoveredNode.setHoveredState(false);
@@ -373,9 +315,9 @@ public final class UIRoot {
     /// @return deepest input target, or {@code null}
     ///
     private @Nullable UINode<?> findHitNode(double mouseX, double mouseY) {
-        if (this.content == null) {
-            return null;
-        }
+        if (this.content == null) return null;
+        UINode<?> overlayHitNode = this.content.hitTestOverlay(mouseX, mouseY);
+        if (overlayHitNode != null) return overlayHitNode;
         return this.content.hitTest(mouseX, mouseY);
     }
 }

@@ -1,16 +1,17 @@
 package dev.satherov.sathlib.client.screen;
 
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
-import dev.satherov.sathlib.client.screen.node.SLMenuSlotGridNode;
+import dev.satherov.sathlib.client.screen.node.SLTooltipProvider;
 import dev.satherov.sathlib.client.screen.node.UIContainerNode;
 import dev.satherov.sathlib.client.screen.node.UINode;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
+import dev.satherov.sathlib.client.screen.slot.SLResolvedSlot;
+import dev.satherov.sathlib.client.screen.slot.SLSlotLayoutNode;
 import dev.satherov.sathlib.client.screen.style.DefaultTheme;
 import dev.satherov.sathlib.client.screen.style.UITheme;
 import dev.satherov.sathlib.common.menu.SLMenu;
 import dev.satherov.sathlib.common.menu.slot.SLDisplaySlot;
 import dev.satherov.sathlib.common.menu.slot.SLSlotRenderData;
-import dev.satherov.sathlib.common.menu.slot.SLSlotVisuals;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -32,24 +33,18 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import org.joml.Vector2i;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 ///
-/// Base retained-mode menu screen for SathLib menus.
-///
-/// This screen owns both the retained UI tree and the slot presentation path.
-/// Menus stay purely logical, while the screen resolves slot bounds from UI
-/// nodes, renders slot contents generically, and routes vanilla-like container
-/// input without ever reading slot coordinates from the menu.
-///
-/// - rebuild and relayout the UI tree when the screen changes size
-/// - resolve slot bounds from retained layout nodes instead of reading stored slot coordinates
-/// - centralize slot rendering and input so slot subclasses can stay polymorphic
+/// Base retained-mode menu screen for all menus.
 ///
 /// Subclasses implement {@link #create()} and can override
 /// {@link #createTheme()} or {@link #createViewport()} when a different layout
@@ -65,7 +60,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     private static final float SNAPBACK_SPEED = 100.0F;
     
     private final UIRoot root = new UIRoot();
-    private final Map<Slot, SLBounds> slotBounds = new IdentityHashMap<>();
+    private final Map<Slot, SLResolvedSlot> resolvedSlots = new IdentityHashMap<>();
     private final List<ItemSlotMouseAction> itemSlotMouseActions = new ArrayList<>();
     
     private @Nullable Slot clickedSlot;
@@ -80,7 +75,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     private int quickCraftingButton;
     private boolean skipNextRelease = true;
     private int quickCraftingRemainder;
-    private boolean doubleclick;
+    private boolean doubleClick;
     private ItemStack lastQuickMoved = ItemStack.EMPTY;
     
     ///
@@ -141,21 +136,10 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
         return DefaultTheme.INSTANCE;
     }
     
-    ///
-    /// Returns the legacy theme factory kept for compatibility with older
-    /// subclasses.
-    ///
-    /// @return active theme
-    ///
-    @Deprecated(forRemoval = false)
-    protected UITheme createSkin() {
-        return this.createTheme();
-    }
-    
     @Override
-    protected void addItemSlotMouseAction(ItemSlotMouseAction itemSlotMouseAction) {
-        super.addItemSlotMouseAction(itemSlotMouseAction);
-        this.itemSlotMouseActions.add(itemSlotMouseAction);
+    protected void addItemSlotMouseAction(@NonNull ItemSlotMouseAction action) {
+        super.addItemSlotMouseAction(action);
+        this.itemSlotMouseActions.add(action);
     }
     
     @Override
@@ -175,11 +159,11 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     public void removed() {
         super.removed();
         this.root.setContent(null);
-        this.slotBounds.clear();
+        this.resolvedSlots.clear();
     }
     
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         this.extractContents(graphics, mouseX, mouseY, partialTick);
         this.extractCarriedItem(graphics, mouseX, mouseY);
         this.extractSnapbackItem(graphics);
@@ -187,13 +171,13 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         this.prepareLayout();
     }
     
     @Override
-    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractContents(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         this.prepareLayout();
         
         Slot previousHoveredSlot = this.hoveredSlot;
@@ -217,11 +201,9 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public void extractCarriedItem(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    public void extractCarriedItem(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         ItemStack carried = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
-        if (carried.isEmpty()) {
-            return;
-        }
+        if (carried.isEmpty()) return;
         
         int yOffset = this.draggingItem.isEmpty() ? 8 : 16;
         String itemCount = null;
@@ -240,10 +222,8 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public void extractSnapbackItem(GuiGraphicsExtractor graphics) {
-        if (this.snapbackData == null) {
-            return;
-        }
+    public void extractSnapbackItem(@NonNull GuiGraphicsExtractor graphics) {
+        if (this.snapbackData == null) return;
         
         float snapbackProgress = Mth.clamp((Util.getMillis() - this.snapbackData.time) / SLMenuScreen.SNAPBACK_SPEED, 0.0F, 1.0F);
         int deltaX = this.snapbackData.end.x - this.snapbackData.start.x;
@@ -261,18 +241,18 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    protected void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void extractTooltip(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (this.hoveredSlot == null) {
+            this.extractNodeTooltip(graphics, mouseX, mouseY);
             return;
         }
         
         ItemStack tooltipStack = this.createRenderData(this.hoveredSlot, this.hoveredSlot.getItem()).tooltipStack();
         if (tooltipStack == null || tooltipStack.isEmpty()) {
+            this.extractNodeTooltip(graphics, mouseX, mouseY);
             return;
         }
-        if (!this.menu.getCarried().isEmpty() && !this.showTooltipWithItemInHand(tooltipStack)) {
-            return;
-        }
+        if (!this.menu.getCarried().isEmpty() && !this.showTooltipWithItemInHand(tooltipStack)) return;
         
         graphics.setTooltipForNextFrame(
                 this.font,
@@ -298,16 +278,16 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
         this.prepareLayout();
         if (this.root.mouseClicked(this.font, event, doubleClick)) {
             return true;
         }
         
-        boolean cloning = this.minecraft.options.keyPickItem.matchesMouse(event) && this.minecraft.player.hasInfiniteMaterials();
+        boolean cloning = this.minecraft.options.keyPickItem.matchesMouse(event) && Objects.requireNonNull(this.minecraft.player).hasInfiniteMaterials();
         Slot slot = this.getHoveredSlot(event.x(), event.y());
         this.hoveredSlot = slot;
-        this.doubleclick = this.lastClickSlot == slot && doubleClick;
+        this.doubleClick = this.lastClickSlot == slot && doubleClick;
         this.skipNextRelease = false;
         
         if (event.button() != 0 && event.button() != 1 && !cloning) {
@@ -341,6 +321,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
                             boolean quickKey = slotId != AbstractContainerMenu.SLOT_CLICKED_OUTSIDE && event.hasShiftDown();
                             ContainerInput containerInput = ContainerInput.PICKUP;
                             if (quickKey) {
+                                //noinspection ConstantValue Slots can in fact be null
                                 this.lastQuickMoved = slot != null && slot.hasItem() ? slot.getItem().copy() : ItemStack.EMPTY;
                                 containerInput = ContainerInput.QUICK_MOVE;
                             } else if (slotId == AbstractContainerMenu.SLOT_CLICKED_OUTSIDE) {
@@ -372,11 +353,9 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+    public boolean mouseDragged(@NonNull MouseButtonEvent event, double deltaX, double deltaY) {
         this.prepareLayout();
-        if (this.root.mouseDragged(this.font, event, deltaX, deltaY)) {
-            return true;
-        }
+        if (this.root.mouseDragged(this.font, event, deltaX, deltaY)) return true;
         
         Slot slot = this.getHoveredSlot(event.x(), event.y());
         this.hoveredSlot = slot;
@@ -417,11 +396,9 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(@NonNull MouseButtonEvent event) {
         this.prepareLayout();
-        if (this.root.mouseReleased(this.font, event)) {
-            return true;
-        }
+        if (this.root.mouseReleased(this.font, event)) return true;
         
         Slot slot = this.getHoveredSlot(event.x(), event.y());
         this.hoveredSlot = slot;
@@ -431,15 +408,11 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
             slotId = AbstractContainerMenu.SLOT_CLICKED_OUTSIDE;
         }
         
-        if (this.doubleclick && slot != null && event.button() == 0 && this.menu.canTakeItemForPickAll(ItemStack.EMPTY, slot)) {
+        if (this.doubleClick && slot != null && event.button() == 0 && this.menu.canTakeItemForPickAll(ItemStack.EMPTY, slot)) {
             if (event.hasShiftDown()) {
                 if (!this.lastQuickMoved.isEmpty()) {
                     for (Slot target : this.menu.slots) {
-                        if (target != null
-                                && target.mayPickup(this.minecraft.player)
-                                && target.hasItem()
-                                && target.container == slot.container
-                                && AbstractContainerMenu.canItemQuickReplace(target, this.lastQuickMoved, true)) {
+                        if (target.mayPickup(Objects.requireNonNull(this.minecraft.player)) && target.hasItem() && target.container == slot.container && AbstractContainerMenu.canItemQuickReplace(target, this.lastQuickMoved, true)) {
                             this.slotClicked(target, target.index, event.button(), ContainerInput.QUICK_MOVE);
                         }
                     }
@@ -448,7 +421,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
                 this.slotClicked(slot, slotId, event.button(), ContainerInput.PICKUP_ALL);
             }
             
-            this.doubleclick = false;
+            this.doubleClick = false;
         } else {
             if (this.isQuickCrafting && this.quickCraftingButton != event.button()) {
                 this.isQuickCrafting = false;
@@ -527,19 +500,19 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    public boolean keyPressed(@NonNull KeyEvent event) {
         if (this.root.keyPressed(event)) return true;
         return super.keyPressed(event);
     }
     
     @Override
-    public boolean keyReleased(KeyEvent event) {
+    public boolean keyReleased(@NonNull KeyEvent event) {
         if (this.root.keyReleased(event)) return true;
         return super.keyReleased(event);
     }
     
     @Override
-    public boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(@NonNull CharacterEvent event) {
         if (this.root.charTyped(event)) return true;
         return super.charTyped(event);
     }
@@ -548,6 +521,12 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     public void clearDraggingState() {
         this.draggingItem = ItemStack.EMPTY;
         this.clickedSlot = null;
+    }
+    
+    @Override
+    protected void slotClicked(@Nullable Slot slot, int slotId, int buttonNum, @NonNull ContainerInput input) {
+        //noinspection DataFlowIssue Slots are allowed to be null here
+        super.slotClicked(slot, slotId, buttonNum, input);
     }
     
     private void rebuild() {
@@ -563,7 +542,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private void rebuildSlotBounds() {
-        this.slotBounds.clear();
+        this.resolvedSlots.clear();
         UINode<?> content = this.root.getContent();
         if (content == null) return;
         this.collectSlotBounds(content);
@@ -572,13 +551,8 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     private void collectSlotBounds(UINode<?> node) {
         if (!node.isVisible()) return;
         
-        if (node instanceof SLMenuSlotGridNode slotGridNode) {
-            List<Slot> slots = slotGridNode.getSlots();
-            List<SLBounds> resolvedBounds = slotGridNode.getResolvedSlotBounds();
-            int mappedSlots = Math.min(slots.size(), resolvedBounds.size());
-            for (int slotIndex = 0; slotIndex < mappedSlots; slotIndex++) {
-                this.slotBounds.put(slots.get(slotIndex), resolvedBounds.get(slotIndex));
-            }
+        if (node instanceof SLSlotLayoutNode slotLayoutNode) {
+            slotLayoutNode.collectResolvedSlots(this.resolvedSlots);
         }
         
         if (node instanceof UIContainerNode<?> containerNode) {
@@ -612,15 +586,19 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     
     private void extractSlots(SLRenderContext context) {
         for (Slot slot : this.menu.slots) {
-            if (!slot.isActive() || !this.slotBounds.containsKey(slot)) continue;
+            if (!slot.isActive() || !this.resolvedSlots.containsKey(slot)) continue;
             this.extractSlot(context, slot);
         }
     }
     
     private void extractSlot(SLRenderContext context, Slot slot) {
-        SLBounds frameBounds = this.slotBounds.get(slot);
-        SLBounds contentBounds = this.getSlotContentBounds(slot);
-        if (frameBounds == null || contentBounds == null) return;
+        SLResolvedSlot resolvedSlot = this.resolvedSlots.get(slot);
+        if (resolvedSlot == null) {
+            return;
+        }
+        
+        SLBounds frameBounds = resolvedSlot.frameBounds();
+        SLBounds contentBounds = resolvedSlot.contentBounds();
         
         ItemStack itemStack = slot.getItem();
         boolean quickCraftStack = false;
@@ -651,7 +629,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
         }
         
         SLSlotRenderData renderData = this.createRenderData(slot, itemStack);
-        context.theme().renderSlotFrame(context, frameBounds, renderData.visuals(), slot == this.hoveredSlot, slot.isActive());
+        context.theme().renderSlotFrame(context, frameBounds, resolvedSlot.chrome(), slot == this.hoveredSlot, slot.isActive());
         
         if (renderData.displayStack().isEmpty() && slot.isActive()) {
             Identifier icon = renderData.emptyIcon();
@@ -662,10 +640,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
         }
         
         if (done) return;
-        
-        if (quickCraftStack) {
-            context.fill(contentBounds, 0x80FFFFFF);
-        }
+        if (quickCraftStack) context.fill(contentBounds, 0x80FFFFFF);
         
         int seed = (contentBounds.x() - this.leftPos) + ((contentBounds.y() - this.topPos) * this.imageWidth);
         if (renderData.fakeStack()) {
@@ -689,9 +664,21 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
                 tooltipStack.isEmpty() ? null : tooltipStack,
                 null,
                 slot.isFake(),
-                stack.isEmpty() ? slot.getNoItemIcon() : null,
-                SLSlotVisuals.DEFAULT
+                stack.isEmpty() ? slot.getNoItemIcon() : null
         );
+    }
+    
+    ///
+    /// Extracts a retained-node tooltip when no slot tooltip is active.
+    ///
+    private void extractNodeTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        UINode<?> hoveredNode = this.root.getHoveredNode();
+        if (!(hoveredNode instanceof SLTooltipProvider tooltipProvider)) return;
+        
+        List<Component> tooltipLines = tooltipProvider.getTooltipLines();
+        if (tooltipLines == null || tooltipLines.isEmpty()) return;
+        
+        graphics.setTooltipForNextFrame(this.font, tooltipLines, Optional.empty(), mouseX, mouseY, null);
     }
     
     private void extractFloatingItem(SLRenderContext context, ItemStack carried, int x, int y, @Nullable String itemCount) {
@@ -717,42 +704,26 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private boolean isHovering(Slot slot, double mouseX, double mouseY) {
-        SLBounds frameBounds = this.slotBounds.get(slot);
-        if (frameBounds == null) {
-            return false;
-        }
-        
-        return frameBounds.contains(mouseX, mouseY);
+        SLResolvedSlot resolvedSlot = this.resolvedSlots.get(slot);
+        if (resolvedSlot == null) return false;
+        return resolvedSlot.frameBounds().contains(mouseX, mouseY);
     }
     
     private @Nullable SLBounds getSlotContentBounds(Slot slot) {
-        SLBounds frameBounds = this.slotBounds.get(slot);
-        if (frameBounds == null) {
-            return null;
-        }
-        
-        return new SLBounds(
-                frameBounds.x() + SLMenuSlotGridNode.SLOT_CONTENT_OFFSET,
-                frameBounds.y() + SLMenuSlotGridNode.SLOT_CONTENT_OFFSET,
-                SLMenuSlotGridNode.SLOT_CONTENT_SIZE,
-                SLMenuSlotGridNode.SLOT_CONTENT_SIZE
-        );
+        SLResolvedSlot resolvedSlot = this.resolvedSlots.get(slot);
+        if (resolvedSlot == null) return null;
+        return resolvedSlot.contentBounds();
     }
     
     private Vector2i getSnapbackTarget(Slot slot) {
         SLBounds contentBounds = this.getSlotContentBounds(slot);
-        if (contentBounds == null) {
-            return new Vector2i(this.leftPos, this.topPos);
-        }
-        
+        if (contentBounds == null) return new Vector2i(this.leftPos, this.topPos);
         return new Vector2i(contentBounds.x(), contentBounds.y());
     }
     
     private void recalculateQuickCraftRemaining() {
         ItemStack carried = this.menu.getCarried();
-        if (carried.isEmpty() || !this.isQuickCrafting) {
-            return;
-        }
+        if (carried.isEmpty() || !this.isQuickCrafting) return;
         
         if (this.quickCraftingType == AbstractContainerMenu.QUICKCRAFT_TYPE_CLONE) {
             this.quickCraftingRemainder = carried.getMaxStackSize();
@@ -773,9 +744,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private void onStopHovering(Slot slot) {
-        if (!slot.hasItem()) {
-            return;
-        }
+        if (!slot.hasItem()) return;
         
         for (ItemSlotMouseAction itemSlotMouseAction : this.itemSlotMouseActions) {
             if (itemSlotMouseAction.matches(slot)) {
@@ -785,9 +754,7 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     }
     
     private void checkHotbarMouseClicked(MouseButtonEvent event) {
-        if (this.hoveredSlot == null || !this.menu.getCarried().isEmpty()) {
-            return;
-        }
+        if (this.hoveredSlot == null || !this.menu.getCarried().isEmpty()) return;
         
         if (this.minecraft.options.keySwapOffhand.matchesMouse(event)) {
             this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, 40, ContainerInput.SWAP);
@@ -826,6 +793,5 @@ public abstract class SLMenuScreen<M extends SLMenu> extends AbstractContainerSc
     /// @param end   animation end position
     /// @param time  animation start time in milliseconds
     ///
-    private record SnapbackData(ItemStack item, Vector2i start, Vector2i end, long time) {
-    }
+    private record SnapbackData(ItemStack item, Vector2i start, Vector2i end, long time) { }
 }

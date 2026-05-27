@@ -2,6 +2,8 @@ package dev.satherov.sathlib.common.menu.logic;
 
 import net.minecraft.world.inventory.Slot;
 
+import java.util.Objects;
+
 ///
 /// Leaf node that contributes one runtime slot to a menu logic tree.
 ///
@@ -21,7 +23,7 @@ public final class SLMenuSlotNode extends SLMenuNode {
     /// @param slotFactory runtime slot factory
     ///
     public SLMenuSlotNode(SLMenuSlotFactory slotFactory) {
-        this.slotFactory = slotFactory;
+        this.slotFactory = Objects.requireNonNull(slotFactory);
     }
     
     ///

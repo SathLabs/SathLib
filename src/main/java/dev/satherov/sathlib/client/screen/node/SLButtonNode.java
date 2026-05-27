@@ -83,7 +83,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     ///
     /// @return configured button node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLButtonNode of(
             SLModifier modifier,
             Component text,
@@ -194,10 +194,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     
     @Override
     public boolean mousePressed(MouseButtonEvent event, boolean doubleClick) {
-        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
-        
+        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         this.setPressedState(true);
         return true;
     }
@@ -206,10 +203,7 @@ public class SLButtonNode extends UILeafNode<SLButtonNode> {
     public boolean mouseReleased(MouseButtonEvent event) {
         boolean wasPressed = this.isPressed();
         this.setPressedState(false);
-        
-        if (!wasPressed || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (!wasPressed || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         
         if (this.getBounds().contains(event.x(), event.y()) && this.isEnabled() && this.onPress != null) {
             this.onPress.accept(this);

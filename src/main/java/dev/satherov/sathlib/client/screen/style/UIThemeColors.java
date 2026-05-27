@@ -3,10 +3,6 @@ package dev.satherov.sathlib.client.screen.style;
 ///
 /// Shared color palette exposed by a UI theme.
 ///
-/// The palette is intentionally broad enough for built-in widgets and custom
-/// retained-mode controls such as the color picker without requiring per-screen
-/// color tables.
-///
 /// @param scrim           fullscreen backdrop color
 /// @param panelShadow     outer panel shadow color
 /// @param panelFillTop    primary surface fill at the top edge

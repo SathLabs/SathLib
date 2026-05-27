@@ -56,7 +56,7 @@ public class SLPanelNode extends SLFlowNode<SLPanelNode> {
     ///
     /// @return configured panel node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLPanelNode of(
             SLModifier modifier,
             @Singular("child") List<UINode<?>> children,

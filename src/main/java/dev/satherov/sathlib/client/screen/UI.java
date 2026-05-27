@@ -1,31 +1,38 @@
 package dev.satherov.sathlib.client.screen;
 
+import lombok.experimental.UtilityClass;
+
 import dev.satherov.sathlib.client.screen.layout.SLInsets;
 import dev.satherov.sathlib.client.screen.layout.SLLength;
 import dev.satherov.sathlib.client.screen.layout.SLModifier;
 import dev.satherov.sathlib.client.screen.layout.SLScalar;
 import dev.satherov.sathlib.client.screen.node.SLButtonNode;
+import dev.satherov.sathlib.client.screen.node.SLCheckboxNode;
 import dev.satherov.sathlib.client.screen.node.SLColumnNode;
+import dev.satherov.sathlib.client.screen.node.SLDividerNode;
+import dev.satherov.sathlib.client.screen.node.SLDropdownNode;
+import dev.satherov.sathlib.client.screen.node.SLEnergyBarNode;
+import dev.satherov.sathlib.client.screen.node.SLFluidTankNode;
 import dev.satherov.sathlib.client.screen.node.SLLabelNode;
 import dev.satherov.sathlib.client.screen.node.SLMenuSlotGridNode;
 import dev.satherov.sathlib.client.screen.node.SLPanelNode;
 import dev.satherov.sathlib.client.screen.node.SLProgressBarNode;
 import dev.satherov.sathlib.client.screen.node.SLRowNode;
+import dev.satherov.sathlib.client.screen.node.SLSliderNode;
 import dev.satherov.sathlib.client.screen.node.SLStackNode;
+import dev.satherov.sathlib.client.screen.node.SLSwitchNode;
+import dev.satherov.sathlib.client.screen.node.SLTabsNode;
+import dev.satherov.sathlib.client.screen.view.SLEnergyView;
+import dev.satherov.sathlib.client.screen.view.SLFluidTankView;
 import dev.satherov.sathlib.common.menu.SLMenu;
-import dev.satherov.sathlib.common.menu.logic.SLSlotSemantic;
-import dev.satherov.sathlib.common.menu.logic.SLSlotSemantics;
+import dev.satherov.sathlib.common.menu.logic.SLSlotKey;
+import dev.satherov.sathlib.common.menu.logic.SLSlotKeys;
 
 ///
-/// Thin UI entrypoint that exposes the real Lombok builders and layout helpers.
+/// Common UI entrypoint for all default component builders and layout helpers.
 ///
-/// The old duplicated runtime-vs-builder hierarchy has been removed. Callers
-/// now work directly with component builders and a shared {@link SLModifier}
-/// model.
-///
-public final class UI {
-    
-    private UI() { }
+@UtilityClass
+public class UI {
     
     ///
     /// Returns a new modifier builder.
@@ -230,6 +237,60 @@ public final class UI {
     }
     
     ///
+    /// Returns the real checkbox builder.
+    ///
+    /// @return checkbox builder
+    ///
+    public static SLCheckboxNode.SLCheckboxNodeBuilder checkbox() {
+        return SLCheckboxNode.builder();
+    }
+    
+    ///
+    /// Returns the real toggle-switch builder.
+    ///
+    /// @return switch builder
+    ///
+    public static SLSwitchNode.SLSwitchNodeBuilder toggle() {
+        return SLSwitchNode.builder();
+    }
+    
+    ///
+    /// Returns the real divider builder.
+    ///
+    /// @return divider builder
+    ///
+    public static SLDividerNode.SLDividerNodeBuilder divider() {
+        return SLDividerNode.builder();
+    }
+    
+    ///
+    /// Returns the real tab-strip builder.
+    ///
+    /// @return tab-strip builder
+    ///
+    public static SLTabsNode.SLTabsNodeBuilder tabs() {
+        return SLTabsNode.builder();
+    }
+    
+    ///
+    /// Returns the real dropdown builder.
+    ///
+    /// @return dropdown builder
+    ///
+    public static SLDropdownNode.SLDropdownNodeBuilder dropdown() {
+        return SLDropdownNode.builder();
+    }
+    
+    ///
+    /// Returns the real slider builder.
+    ///
+    /// @return slider builder
+    ///
+    public static SLSliderNode.SLSliderNodeBuilder slider() {
+        return SLSliderNode.builder();
+    }
+    
+    ///
     /// Returns the real progress-bar builder.
     ///
     /// @return progress-bar builder
@@ -239,27 +300,67 @@ public final class UI {
     }
     
     ///
-    /// Creates a slot-grid builder for one semantic slot group.
+    /// Returns the real energy-bar builder.
     ///
-    /// @param menu     backing menu
-    /// @param semantic semantic slot group to position
+    /// @return energy-bar builder
     ///
-    /// @return slot-grid builder
-    ///
-    public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder slots(SLMenu menu, SLSlotSemantic semantic) {
-        return SLMenuSlotGridNode.builder().slots(menu.getSlots(semantic));
+    public static SLEnergyBarNode.SLEnergyBarNodeBuilder energyBar() {
+        return SLEnergyBarNode.builder();
     }
     
     ///
-    /// Creates a single-slot builder for one semantic slot group.
+    /// Returns the real fluid-tank builder.
     ///
-    /// @param menu     backing menu
-    /// @param semantic semantic slot group to position
+    /// @return fluid-tank builder
+    ///
+    public static SLFluidTankNode.SLFluidTankNodeBuilder fluidTank() {
+        return SLFluidTankNode.builder();
+    }
+    
+    ///
+    /// Creates an energy-bar builder already bound to one energy view.
+    ///
+    /// @param energyView backing energy view
+    ///
+    /// @return energy-bar builder
+    ///
+    public static SLEnergyBarNode.SLEnergyBarNodeBuilder energy(SLEnergyView energyView) {
+        return UI.energyBar().energyView(energyView);
+    }
+    
+    ///
+    /// Creates a fluid-tank builder already bound to one fluid-tank view.
+    ///
+    /// @param fluidTankView backing fluid-tank view
+    ///
+    /// @return fluid-tank builder
+    ///
+    public static SLFluidTankNode.SLFluidTankNodeBuilder fluid(SLFluidTankView fluidTankView) {
+        return UI.fluidTank().fluidTankView(fluidTankView);
+    }
+    
+    ///
+    /// Creates a slot-grid builder for one logical slot group.
+    ///
+    /// @param menu    backing menu
+    /// @param slotKey logical slot group to position
     ///
     /// @return slot-grid builder
     ///
-    public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder slot(SLMenu menu, SLSlotSemantic semantic) {
-        return UI.slots(menu, semantic).columns(1);
+    public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder slots(SLMenu menu, SLSlotKey slotKey) {
+        return SLMenuSlotGridNode.builder().slots(menu.getSlots(slotKey));
+    }
+    
+    ///
+    /// Creates a single-slot builder for one logical slot group.
+    ///
+    /// @param menu    backing menu
+    /// @param slotKey logical slot group to position
+    ///
+    /// @return slot-grid builder
+    ///
+    public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder slot(SLMenu menu, SLSlotKey slotKey) {
+        return UI.slots(menu, slotKey).columns(1);
     }
     
     ///
@@ -270,7 +371,7 @@ public final class UI {
     /// @return slot-grid builder
     ///
     public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder playerInventory(SLMenu menu) {
-        return UI.slots(menu, SLSlotSemantics.PLAYER_INVENTORY).columns(9);
+        return UI.slots(menu, SLSlotKeys.PLAYER_INVENTORY).columns(9);
     }
     
     ///
@@ -281,6 +382,6 @@ public final class UI {
     /// @return slot-grid builder
     ///
     public static SLMenuSlotGridNode.SLMenuSlotGridNodeBuilder hotbar(SLMenu menu) {
-        return UI.slots(menu, SLSlotSemantics.PLAYER_HOTBAR).columns(9);
+        return UI.slots(menu, SLSlotKeys.PLAYER_HOTBAR).columns(9);
     }
 }

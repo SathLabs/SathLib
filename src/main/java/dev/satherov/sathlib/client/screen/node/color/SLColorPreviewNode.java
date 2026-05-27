@@ -41,7 +41,7 @@ public class SLColorPreviewNode extends UILeafNode<SLColorPreviewNode> {
     ///
     /// @return configured preview node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLColorPreviewNode of(SLModifier modifier, ColorPickerModel model) {
         return new SLColorPreviewNode(
                 Objects.requireNonNullElse(modifier, SLModifier.none()),

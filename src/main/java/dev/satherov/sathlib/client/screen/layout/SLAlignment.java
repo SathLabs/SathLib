@@ -31,7 +31,7 @@ public enum SLAlignment {
     ///
     public int resolveSize(int available, int preferred) {
         if (this == SLAlignment.FILL) return Math.max(0, available);
-        return Math.min(Math.max(0, preferred), Math.max(0, available));
+        return Math.clamp(preferred, 0, Math.max(0, available));
     }
     
     ///

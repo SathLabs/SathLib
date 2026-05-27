@@ -24,10 +24,10 @@ public final class ColorPickerModel {
     ///
     /// Creates a model initialized to the given RGB value.
     ///
-    /// @param initialRgb initial RGB color
+    /// @param initial initial RGB color
     ///
-    public ColorPickerModel(int initialRgb) {
-        this.applyRgb(initialRgb & 0xFFFFFF, true);
+    public ColorPickerModel(int initial) {
+        this.applyRgb(initial & 0xFFFFFF, true);
     }
     
     ///
@@ -39,9 +39,7 @@ public final class ColorPickerModel {
     ///
     public static String sanitizeHexValue(String value) {
         String digits = SLMathUtils.sanitizeHex(value);
-        if (digits.isEmpty()) {
-            return "";
-        }
+        if (digits.isEmpty()) return "";
         return "#" + digits;
     }
     
@@ -249,15 +247,9 @@ public final class ColorPickerModel {
         this.saturation = hsv[1];
         this.value = hsv[2];
         
-        if (!syncHue) {
-            return;
-        }
-        if (hsv[1] <= 0.0F) {
-            return;
-        }
-        if (hsv[0] == 0.0F && this.hue >= 1.0F) {
-            return;
-        }
+        if (!syncHue) return;
+        if (hsv[1] <= 0.0F) return;
+        if (hsv[0] == 0.0F && this.hue >= 1.0F) return;
         this.hue = hsv[0];
     }
     

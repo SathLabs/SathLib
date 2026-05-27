@@ -115,6 +115,31 @@ public class SLColorUtils {
     }
     
     ///
+    /// Replaces the alpha channel of one packed color.
+    ///
+    /// @param color the packed color
+    /// @param alpha the replacement alpha channel
+    ///
+    /// @return the recolored packed ARGB value
+    ///
+    public static int withAlpha(int color, int alpha) {
+        return SLColorUtils.argb(Mth.clamp(alpha, 0, 255), SLColorUtils.red(color), SLColorUtils.green(color), SLColorUtils.blue(color));
+    }
+    
+    ///
+    /// Scales the alpha channel of one packed color.
+    ///
+    /// @param color  the packed color
+    /// @param factor alpha scale factor
+    ///
+    /// @return the alpha-scaled packed ARGB value
+    ///
+    public static int multiplyAlpha(int color, float factor) {
+        int alpha = Math.clamp(Math.round(SLColorUtils.alpha(color) * factor), 0, 255);
+        return SLColorUtils.withAlpha(color, alpha);
+    }
+    
+    ///
     /// Converts an HSV color to a packed RGB color with a fully opaque alpha channel.
     ///
     /// @param hue        the hue component, wrapped to `[0, 1)`

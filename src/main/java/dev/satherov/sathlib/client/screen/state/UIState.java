@@ -14,9 +14,6 @@ import java.util.function.Consumer;
 /// - store the current value
 /// - notify listeners when the value changes
 ///
-/// Keep this class intentionally small. Add helpers only when multiple screens
-/// need the same state behavior.
-///
 /// @param <T> stored value type
 ///
 public final class UIState<T> {

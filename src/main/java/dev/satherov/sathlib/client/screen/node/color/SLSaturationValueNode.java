@@ -49,7 +49,7 @@ public class SLSaturationValueNode extends UILeafNode<SLSaturationValueNode> {
     ///
     /// @return configured saturation/value node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLSaturationValueNode of(SLModifier modifier, ColorPickerModel model, Runnable onCommit) {
         return new SLSaturationValueNode(
                 Objects.requireNonNullElse(modifier, SLModifier.none()),
@@ -101,9 +101,7 @@ public class SLSaturationValueNode extends UILeafNode<SLSaturationValueNode> {
     
     @Override
     public boolean mousePressed(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         this.updateSelection(event.x(), event.y());
         this.setPressedState(true);
         return true;
@@ -111,9 +109,7 @@ public class SLSaturationValueNode extends UILeafNode<SLSaturationValueNode> {
     
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-        if (!this.isPressed() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (!this.isPressed() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         this.updateSelection(event.x(), event.y());
         return true;
     }
@@ -122,9 +118,7 @@ public class SLSaturationValueNode extends UILeafNode<SLSaturationValueNode> {
     public boolean mouseReleased(MouseButtonEvent event) {
         boolean wasPressed = this.isPressed();
         this.setPressedState(false);
-        if (!wasPressed || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (!wasPressed || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         this.updateSelection(event.x(), event.y());
         this.onCommit.run();
         return true;

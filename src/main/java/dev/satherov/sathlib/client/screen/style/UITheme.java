@@ -2,14 +2,14 @@ package dev.satherov.sathlib.client.screen.style;
 
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
 import dev.satherov.sathlib.client.screen.render.SLRenderContext;
-import dev.satherov.sathlib.common.menu.slot.SLSlotVisuals;
+import dev.satherov.sathlib.client.screen.slot.SLSlotChrome;
 
 import net.minecraft.network.chat.Component;
 
 import org.jspecify.annotations.Nullable;
 
 ///
-/// Defines the shared look of built-in SathLib UI components.
+/// Defines the shared look of all built-in UI components.
 ///
 /// A screen chooses one theme for its UI root. Built-in nodes and custom
 /// widgets can read the same palette and render helpers from that shared theme
@@ -82,14 +82,14 @@ public interface UITheme {
     ///
     /// @param context render context
     /// @param bounds  resolved slot frame bounds
-    /// @param visuals client-neutral slot visual hints
+    /// @param chrome  client-side slot chrome
     /// @param hovered whether the slot is currently hovered
     /// @param active  whether the slot is currently active
     ///
     void renderSlotFrame(
             SLRenderContext context,
             SLBounds bounds,
-            SLSlotVisuals visuals,
+            SLSlotChrome chrome,
             boolean hovered,
             boolean active
     );

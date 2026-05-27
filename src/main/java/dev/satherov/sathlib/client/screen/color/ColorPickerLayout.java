@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.client.screen.color;
 
+import lombok.experimental.UtilityClass;
+
 ///
 /// Shared layout metrics for the retained-mode color picker.
 ///
@@ -7,7 +9,8 @@ package dev.satherov.sathlib.client.screen.color;
 /// controls are literal color surfaces, but the values live in one place rather
 /// than leaking throughout the screen.
 ///
-public final class ColorPickerLayout {
+@UtilityClass
+public class ColorPickerLayout {
     
     /// Outer content padding for the main panel.
     public static final int PANEL_PADDING = 16;
@@ -33,6 +36,8 @@ public final class ColorPickerLayout {
     public static final int SLIDER_GAP = 14;
     /// Gap between the preview, sliders, and hex field.
     public static final int SECTION_GAP = 16;
-    
-    private ColorPickerLayout() { }
+    /// Height of the hue strip shown near the top of the color picker.
+    public static final int HUE_STRIP_HEIGHT = 4;
+    /// Width of the full control row inside the panel.
+    public static final int CONTENT_WIDTH = ColorPickerLayout.SATURATION_VALUE_SIZE + ColorPickerLayout.HUE_WIDTH + ColorPickerLayout.SIDEBAR_WIDTH + (ColorPickerLayout.COLUMN_GAP * 2);
 }

@@ -79,7 +79,7 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     ///
     /// @return configured progress bar node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLProgressBarNode of(
             SLModifier modifier,
             Float progress,
@@ -150,9 +150,7 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     
     @Override
     protected void onAttached(UIRoot root) {
-        if (this.progressState != null) {
-            this.unsubscribeProgressState = this.progressState.listen(value -> this.progress = value);
-        }
+        if (this.progressState != null) this.unsubscribeProgressState = this.progressState.listen(value -> this.progress = value);
         if (this.overlayTextState != null) {
             this.unsubscribeOverlayState = this.overlayTextState.listen(value -> {
                 this.overlayText = value;
@@ -177,9 +175,7 @@ public class SLProgressBarNode extends UILeafNode<SLProgressBarNode> {
     protected SLMeasuredSize measureContent(Font font, int availableWidth, int availableHeight) {
         int preferredWidth = 96;
         int preferredHeight = 14;
-        if (this.overlayText != null) {
-            preferredWidth = Math.max(preferredWidth, font.width(this.overlayText) + 12);
-        }
+        if (this.overlayText != null) preferredWidth = Math.max(preferredWidth, font.width(this.overlayText) + 12);
         return new SLMeasuredSize(preferredWidth, preferredHeight);
     }
     

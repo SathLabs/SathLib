@@ -75,10 +75,7 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     /// @param child child node to remove
     ///
     public final void removeChild(UINode<?> child) {
-        if (!this.children.remove(child)) {
-            return;
-        }
-        
+        if (!this.children.remove(child)) return;
         child.detach();
         this.invalidateLayout();
     }
@@ -129,6 +126,13 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     }
     
     @Override
+    protected void renderChildrenOverlay(SLRenderContext context) {
+        for (UINode<?> child : this.children) {
+            child.renderOverlayTree(context);
+        }
+    }
+    
+    @Override
     protected void tickChildren() {
         for (UINode<?> child : this.children) {
             child.tickTree();
@@ -137,9 +141,7 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
     
     @Override
     public @Nullable UINode<?> hitTest(double mouseX, double mouseY) {
-        if (!this.isVisible() || !this.isEnabled() || !this.getBounds().contains(mouseX, mouseY)) {
-            return null;
-        }
+        if (!this.isVisible() || !this.isEnabled() || !this.getBounds().contains(mouseX, mouseY)) return null;
         
         for (int childIndex = this.children.size() - 1; childIndex >= 0; childIndex--) {
             UINode<?> child = this.children.get(childIndex);
@@ -150,5 +152,20 @@ public abstract class UIContainerNode<S extends UIContainerNode<S>> extends UINo
         }
         
         return super.hitTest(mouseX, mouseY);
+    }
+    
+    @Override
+    public @Nullable UINode<?> hitTestOverlay(double mouseX, double mouseY) {
+        if (!this.isVisible() || !this.isEnabled()) return null;
+        
+        for (int childIndex = this.children.size() - 1; childIndex >= 0; childIndex--) {
+            UINode<?> child = this.children.get(childIndex);
+            UINode<?> hitNode = child.hitTestOverlay(mouseX, mouseY);
+            if (hitNode != null) {
+                return hitNode;
+            }
+        }
+        
+        return null;
     }
 }

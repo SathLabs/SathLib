@@ -1,6 +1,7 @@
 package dev.satherov.sathlib.client.screen;
 
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
+import dev.satherov.sathlib.client.screen.node.SLTooltipProvider;
 import dev.satherov.sathlib.client.screen.node.UINode;
 import dev.satherov.sathlib.client.screen.style.DefaultTheme;
 import dev.satherov.sathlib.client.screen.style.UITheme;
@@ -11,6 +12,8 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 ///
 /// Base client-only screen for retained-mode SathLib UI trees.
@@ -111,6 +114,7 @@ public abstract class SLScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
         this.root.setViewport(this.createViewport());
         this.root.render(graphics, this.font, mouseX, mouseY, partialTick);
+        this.extractTooltip(graphics, mouseX, mouseY);
     }
     
     @Override
@@ -182,5 +186,22 @@ public abstract class SLScreen extends Screen {
         this.root.setTheme(this.createTheme());
         this.root.setViewport(this.createViewport());
         this.root.setContent(this.create());
+    }
+    
+    ///
+    /// Extracts the tooltip for the currently hovered retained node, if any.
+    ///
+    private void extractTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        UINode<?> hoveredNode = this.root.getHoveredNode();
+        if (!(hoveredNode instanceof SLTooltipProvider tooltipProvider)) {
+            return;
+        }
+        
+        List<Component> tooltipLines = tooltipProvider.getTooltipLines();
+        if (tooltipLines == null || tooltipLines.isEmpty()) {
+            return;
+        }
+        
+        graphics.setTooltipForNextFrame(this.font, tooltipLines, null, mouseX, mouseY, null);
     }
 }

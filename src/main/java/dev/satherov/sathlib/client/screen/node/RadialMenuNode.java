@@ -90,7 +90,7 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     ///
     /// @return configured radial-menu node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static RadialMenuNode of(
             SLModifier modifier,
             @Singular("entry") List<Entry> entries,
@@ -226,14 +226,10 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     
     @Override
     public boolean mousePressed(MouseButtonEvent event, boolean doubleClick) {
-        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            return false;
-        }
+        if (!this.isEnabled() || event.button() != GLFW.GLFW_MOUSE_BUTTON_LEFT) return false;
         
         this.hoveredIndex = this.entryIndexAt(event.x(), event.y());
-        if (this.hoveredIndex < 0) {
-            return false;
-        }
+        if (this.hoveredIndex < 0) return false;
         
         this.pressedIndex = this.hoveredIndex;
         this.setPressedState(true);
@@ -264,9 +260,7 @@ public class RadialMenuNode extends UILeafNode<RadialMenuNode> {
     /// @return hit entry index, or {@code -1}
     ///
     private int entryIndexAt(double mouseX, double mouseY) {
-        if (!this.getBounds().contains(mouseX, mouseY)) {
-            return -1;
-        }
+        if (!this.getBounds().contains(mouseX, mouseY)) return -1;
         
         for (int entryIndex = this.entries.size() - 1; entryIndex >= 0; entryIndex--) {
             if (this.entryBounds(entryIndex).contains(mouseX, mouseY)) {

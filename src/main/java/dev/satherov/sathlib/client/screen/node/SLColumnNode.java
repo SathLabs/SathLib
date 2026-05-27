@@ -54,7 +54,7 @@ public class SLColumnNode extends SLFlowNode<SLColumnNode> {
     ///
     /// @return configured column node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLColumnNode of(
             SLModifier modifier,
             @Singular("child") List<UINode<?>> children,

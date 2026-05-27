@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.client.screen.node;
 
+import lombok.Setter;
+
 import dev.satherov.sathlib.client.screen.UIRoot;
 import dev.satherov.sathlib.client.screen.layout.SLAlignment;
 import dev.satherov.sathlib.client.screen.layout.SLBounds;
@@ -44,7 +46,7 @@ public abstract class UINode<S extends UINode<S>> {
     private SLBounds bounds = SLBounds.EMPTY;
     
     private boolean visible = true;
-    private boolean enabled = true;
+    private @Setter boolean enabled = true;
     private boolean hovered;
     private boolean pressed;
     private boolean focused;
@@ -154,10 +156,7 @@ public abstract class UINode<S extends UINode<S>> {
     /// @param visible new visibility state
     ///
     public void setVisible(boolean visible) {
-        if (this.visible == visible) {
-            return;
-        }
-        
+        if (this.visible == visible) return;
         this.visible = visible;
         this.invalidateLayout();
     }
@@ -169,15 +168,6 @@ public abstract class UINode<S extends UINode<S>> {
     ///
     public final boolean isEnabled() {
         return this.enabled;
-    }
-    
-    ///
-    /// Updates the enabled flag.
-    ///
-    /// @param enabled new enabled state
-    ///
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
     
     ///
@@ -225,10 +215,7 @@ public abstract class UINode<S extends UINode<S>> {
     ///
     public final S modifier(SLModifier modifier) {
         SLModifier normalized = Objects.requireNonNullElse(modifier, SLModifier.none());
-        if (this.modifier.equals(normalized)) {
-            return this.self();
-        }
-        
+        if (this.modifier.equals(normalized)) return this.self();
         this.modifier = normalized;
         this.invalidateLayout();
         return this.self();
@@ -318,9 +305,7 @@ public abstract class UINode<S extends UINode<S>> {
     /// Marks the node tree as requiring a fresh layout pass.
     ///
     public final void invalidateLayout() {
-        if (this.root != null) {
-            this.root.invalidateLayout();
-        }
+        if (this.root != null) this.root.invalidateLayout();
     }
     
     ///
@@ -398,12 +383,20 @@ public abstract class UINode<S extends UINode<S>> {
     /// @param context render context
     ///
     public final void renderTree(SLRenderContext context) {
-        if (!this.visible) {
-            return;
-        }
-        
+        if (!this.visible) return;
         this.renderSelf(context);
         this.renderChildren(context);
+    }
+    
+    ///
+    /// Renders popup or overlay visuals after the main tree has finished.
+    ///
+    /// @param context render context
+    ///
+    public final void renderOverlayTree(SLRenderContext context) {
+        if (!this.visible) return;
+        this.renderOverlay(context);
+        this.renderChildrenOverlay(context);
     }
     
     ///
@@ -424,11 +417,21 @@ public abstract class UINode<S extends UINode<S>> {
     /// @return deepest interactive node, or {@code null}
     ///
     public @Nullable UINode<?> hitTest(double mouseX, double mouseY) {
-        if (!this.visible || !this.enabled || !this.bounds.contains(mouseX, mouseY)) {
-            return null;
-        }
-        
+        if (!this.visible || !this.enabled || !this.bounds.contains(mouseX, mouseY)) return null;
         return this.isInputTarget() ? this : null;
+    }
+    
+    ///
+    /// Performs hit testing for overlay or popup visuals rendered outside the
+    /// node's normal bounds.
+    ///
+    /// @param mouseX test x coordinate
+    /// @param mouseY test y coordinate
+    ///
+    /// @return deepest interactive overlay node, or {@code null}
+    ///
+    public @Nullable UINode<?> hitTestOverlay(double mouseX, double mouseY) {
+        return null;
     }
     
     ///
@@ -508,6 +511,20 @@ public abstract class UINode<S extends UINode<S>> {
     /// @param context render context
     ///
     protected void renderChildren(SLRenderContext context) { }
+    
+    ///
+    /// Renders child overlays.
+    ///
+    /// @param context render context
+    ///
+    protected void renderChildrenOverlay(SLRenderContext context) { }
+    
+    ///
+    /// Renders overlay or popup visuals owned by this node.
+    ///
+    /// @param context render context
+    ///
+    protected void renderOverlay(SLRenderContext context) { }
     
     ///
     /// Ticks child nodes.

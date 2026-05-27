@@ -6,6 +6,9 @@ import dev.satherov.sathlib.client.screen.style.UITheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -83,17 +86,6 @@ public final class SLRenderContext {
     }
     
     ///
-    /// Returns the legacy theme accessor kept for compatibility with older
-    /// widget code.
-    ///
-    /// @return active theme
-    ///
-    @Deprecated(forRemoval = false)
-    public UITheme skin() {
-        return this.theme;
-    }
-    
-    ///
     /// Returns the current partial tick.
     ///
     /// @return partial tick
@@ -159,10 +151,7 @@ public final class SLRenderContext {
     /// @param thickness outline thickness in pixels
     ///
     public void outline(SLBounds bounds, int color, int thickness) {
-        if (thickness <= 0 || bounds.width() <= 0 || bounds.height() <= 0) {
-            return;
-        }
-        
+        if (thickness <= 0 || bounds.width() <= 0 || bounds.height() <= 0) return;
         this.graphics.fill(bounds.x(), bounds.y(), bounds.right(), bounds.y() + thickness, color);
         this.graphics.fill(bounds.x(), bounds.bottom() - thickness, bounds.right(), bounds.bottom(), color);
         this.graphics.fill(bounds.x(), bounds.y(), bounds.x() + thickness, bounds.bottom(), color);
@@ -220,7 +209,7 @@ public final class SLRenderContext {
     ///
     /// @return the calculated y position
     ///
-    private int centeredVisualTextY(SLBounds bounds) {
+    public int centeredVisualTextY(SLBounds bounds) {
         int lineHeight = this.font.lineHeight + 3;
         if (bounds.height() < lineHeight) {
             return bounds.y() + Math.max(0, (bounds.height() - lineHeight) / 2);
@@ -241,6 +230,44 @@ public final class SLRenderContext {
     ///
     public void blitSprite(Identifier sprite, int x, int y, int width, int height) {
         this.graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, width, height);
+    }
+    
+    
+    ///
+    /// Renders a set amount of a sprite into the given rectangle.
+    ///
+    /// @param sprite the atlas sprite to render
+    /// @param x      the x-offset
+    /// @param y      the y-offset
+    /// @param width  the width of the rectangle
+    /// @param height the height of the rectangle
+    /// @param scale  the vertical amount to render
+    /// @param color  the color to tint the sprite with
+    ///
+    public void blitVerticalSprite(TextureAtlasSprite sprite, int x, int y, int width, int height, int scale, int color) {
+        SpriteContents spriteContents = sprite.contents();
+        GuiSpriteScaling.Tile scaling = new GuiSpriteScaling.Tile(spriteContents.width(), spriteContents.height());
+        y = y + height - scale;
+        
+        this.graphics.enableScissor(x, y, x + width, y + scale);
+        {
+            this.graphics.blitTiledSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    sprite,
+                    x,
+                    y,
+                    width,
+                    scale,
+                    0,
+                    0,
+                    scaling.width(),
+                    scaling.height(),
+                    scaling.width(),
+                    scaling.height(),
+                    color
+            );
+        }
+        this.graphics.disableScissor();
     }
     
     ///

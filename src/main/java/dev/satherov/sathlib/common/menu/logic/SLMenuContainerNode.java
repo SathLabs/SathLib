@@ -3,6 +3,7 @@ package dev.satherov.sathlib.common.menu.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 ///
 /// Container node for menu logic trees.
@@ -41,6 +42,7 @@ public class SLMenuContainerNode extends SLMenuNode {
     /// @return this container
     ///
     public SLMenuContainerNode addChild(SLMenuNode child) {
+        Objects.requireNonNull(child);
         child.attach(this);
         this.children.add(child);
         return this;

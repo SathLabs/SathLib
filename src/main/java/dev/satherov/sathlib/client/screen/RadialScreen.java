@@ -38,7 +38,6 @@ import java.util.List;
 /// @param <S> slice type rendered by the screen
 ///
 @NothingNull
-@SuppressWarnings({ "doclint:missing", "UnusedReturnValue", "SameParameterValue" })
 public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.RadialSlice<T, S>> extends Screen {
     
     private static final int DEFAULT_SLICE_COLOR = 0xC0202020;
@@ -644,7 +643,7 @@ public class RadialScreen<T extends RadialScreen<T, S>, S extends RadialScreen.R
     /// @return the effective spacing in degrees
     ///
     private float getEffectiveSliceSpacingDegrees(float sliceSweepDegrees) {
-        return Math.min(this.sliceSpacingDegrees, Math.max(0.0F, sliceSweepDegrees - 0.01F));
+        return Math.clamp(sliceSweepDegrees - 0.01F, 0.0F, this.sliceSpacingDegrees);
     }
     
     ///

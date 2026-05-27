@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 /// @param selectionStart selection start index
 /// @param selectionEnd   selection end index
 /// @param focused        whether the field currently owns focus
+/// @param cursorVisible  whether the caret should currently be drawn
 /// @param enabled        whether the field is enabled
 ///
 public record SLTextFieldRenderState(
@@ -20,6 +21,7 @@ public record SLTextFieldRenderState(
         int selectionStart,
         int selectionEnd,
         boolean focused,
+        boolean cursorVisible,
         boolean enabled
 ) {
     

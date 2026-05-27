@@ -54,7 +54,7 @@ public class SLRowNode extends SLFlowNode<SLRowNode> {
     ///
     /// @return configured row node
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLRowNode of(
             SLModifier modifier,
             @Singular("child") List<UINode<?>> children,
