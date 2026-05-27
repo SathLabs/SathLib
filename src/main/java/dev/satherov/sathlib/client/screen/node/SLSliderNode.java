@@ -97,7 +97,7 @@ public class SLSliderNode extends UILeafNode<SLSliderNode> {
     ///
     /// @return configured slider node
     ///
-    @Builder
+    @Builder(builderMethodName = "sliderBuilder")
     public static SLSliderNode of(
             SLModifier modifier,
             SLAxis axis,

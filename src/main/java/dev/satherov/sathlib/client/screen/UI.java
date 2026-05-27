@@ -287,7 +287,7 @@ public class UI {
     /// @return slider builder
     ///
     public static SLSliderNode.SLSliderNodeBuilder slider() {
-        return SLSliderNode.builder();
+        return SLSliderNode.sliderBuilder();
     }
     
     ///

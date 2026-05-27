@@ -44,7 +44,7 @@ public class SLHueSliderNode extends SLSliderNode {
     ///
     /// @return configured hue slider
     ///
-    @Builder(builderMethodName = "builder")
+    @Builder
     public static SLHueSliderNode of(SLModifier modifier, ColorPickerModel model, Runnable onCommit) {
         return new SLHueSliderNode(
                 Objects.requireNonNullElse(modifier, SLModifier.none()),

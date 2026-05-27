@@ -1,5 +1,7 @@
 package dev.satherov.sathlib.common.menu.logic;
 
+import lombok.experimental.UtilityClass;
+
 import dev.satherov.sathlib.SathLib;
 
 import net.minecraft.resources.Identifier;
@@ -10,7 +12,8 @@ import net.minecraft.resources.Identifier;
 /// Mods can define their own keys through {@link #create(Identifier, boolean)}
 /// whenever a menu needs a more specific slot grouping.
 ///
-public final class SLSlotKeys {
+@UtilityClass
+public class SLSlotKeys {
     
     /// Slot key for the player's main inventory rows.
     public static final SLSlotKey PLAYER_INVENTORY = SLSlotKeys.create("player_inventory", true);
