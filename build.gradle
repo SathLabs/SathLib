@@ -1,4 +1,5 @@
 plugins {
+    id 'checkstyle'
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.141'
@@ -12,6 +13,13 @@ tasks.named('wrapper', Wrapper).configure {
 
 version = mod_version + "+" + minecraft_version
 group = mod_group_id
+
+sourceSets {
+    testmod {
+        java.srcDir('src/testmod/java')
+        resources.srcDir('src/testmod/resources')
+    }
+}
 
 sourceSets.main.resources {
     srcDir('src/generated/resources')
@@ -30,34 +38,61 @@ java {
     withJavadocJar()
 }
 
+def delombokMainDir = layout.buildDirectory.dir('generated/sources/delombok/java/main')
+def preparedJavadocMainDir = layout.buildDirectory.dir('generated/sources/javadoc/java/main')
+def mainJavaDir = layout.projectDirectory.dir('src/main/java').asFile
+def topLevelTypePattern = ~/(?m)^(?:public\s+|protected\s+|private\s+|abstract\s+|final\s+|sealed\s+|non-sealed\s+|static\s+)*(?:class|interface|enum|record|@interface)\b/
+
+checkstyle {
+    configDirectory = layout.projectDirectory.dir('config/checkstyle')
+    toolVersion = '13.4.2'
+}
+
 neoForge {
     version = project.neo_version
 
     accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+    addModdingDependenciesTo sourceSets.testmod
+    
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+        
+        testmod {
+            sourceSet(sourceSets.testmod)
+        }
+    }
 
     runs {
         client {
             client()
             gameDirectory = project.file('runs/client')
+            loadedMods = [mods."${mod_id}", mods.testmod]
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
             server()
             programArgument '--nogui'
+            sourceSet = sourceSets.testmod
             gameDirectory = project.file('runs/server')
+            loadedMods = [mods."${mod_id}", mods.testmod]
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         gameTestServer {
             type = "gameTestServer"
+            sourceSet = sourceSets.testmod
             gameDirectory = project.file('runs/gametest')
+            loadedMods = [mods."${mod_id}"]
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
             clientData()
             gameDirectory = project.file('runs/data')
+            loadedMods = [mods."${mod_id}"]
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
@@ -67,35 +102,39 @@ neoForge {
         }
     }
 
-    mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
-        }
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
     }
 }
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    testmodCompileOnly.extendsFrom compileOnly
+    testmodImplementation.extendsFrom implementation
+    testmodRuntimeOnly.extendsFrom runtimeOnly, localRuntime
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://cursemaven.com"
+        url = uri("https://cursemaven.com")
         content {
             includeGroup "curse.maven"
         }
     }
     maven { // JEI
-        url "https://maven.blamejared.com/"
+        url = uri("https://maven.blamejared.com/")
     }
     maven { // Jade
-        url "https://api.modrinth.com/maven"
+        url = uri("https://api.modrinth.com/maven")
     }
 }
 
 dependencies {
+    testmodImplementation sourceSets.main.output
+    
     compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-26.1.2-neoforge:${jei_version}"
 
@@ -122,7 +161,25 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     into "build/generated/sources/modMetadata"
 }
 
+var generateTestModMetadata = tasks.register("generateTestModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            mod_id                 : "testmod",
+            mod_name               : "Test Mod",
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            library_mod_id         : mod_id,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/testmod/templates"
+    into "build/generated/sources/testmodModMetadata"
+}
+
 sourceSets.main.resources.srcDir generateModMetadata
+sourceSets.testmod.resources.srcDir generateTestModMetadata
 neoForge.ideSyncTask generateModMetadata
 
 publishing {
@@ -159,15 +216,87 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.named('javadoc', Javadoc).configure {
+def prepareJavadocSources = tasks.register('prepareJavadocSources', Sync) {
     dependsOn tasks.named('delombok')
-    source = fileTree(layout.buildDirectory.dir('generated/sources/delombok/java/main'))
+    from(delombokMainDir)
+    into(preparedJavadocMainDir)
+    inputs.dir(layout.projectDirectory.dir('src/main/java'))
+
+    doLast {
+        def outputDir = preparedJavadocMainDir.get().asFile
+
+        // Delombok strips Lombok annotations, so add doclint suppression to Lombok-using types before Javadoc runs.
+        mainJavaDir.eachFileRecurse(groovy.io.FileType.FILES) { sourceFile ->
+            if (!sourceFile.name.endsWith('.java')) {
+                return
+            }
+
+            def sourceText = sourceFile.getText('UTF-8')
+            if (!sourceText.contains('import lombok') && !sourceText.contains('@lombok.')) {
+                return
+            }
+
+            def relativePath = mainJavaDir.toPath().relativize(sourceFile.toPath()).toString()
+            def outputFile = new File(outputDir, relativePath)
+            if (!outputFile.isFile()) {
+                return
+            }
+
+            def outputText = outputFile.getText('UTF-8')
+            if (outputText.contains('doclint:missing')) {
+                return
+            }
+
+            def matcher = topLevelTypePattern.matcher(outputText)
+            if (!matcher.find()) {
+                return
+            }
+
+            def prefix = outputText.substring(0, matcher.start())
+            def suppressStart = prefix.lastIndexOf('@SuppressWarnings(')
+            if (suppressStart >= 0) {
+                def suppressEnd = prefix.indexOf(')', suppressStart)
+                if (suppressEnd >= 0) {
+                    def currentValue = outputText.substring(suppressStart + '@SuppressWarnings('.length(), suppressEnd)
+                    def replacementValue = currentValue.trim().startsWith('{')
+                            ? currentValue.replaceFirst(/}\s*\u0024/, ', "doclint:missing" }')
+                            : '{ ' + currentValue.trim() + ', "doclint:missing" }'
+                    outputFile.setText(
+                            outputText.substring(0, suppressStart)
+                                    + '@SuppressWarnings(' + replacementValue + ')'
+                                    + outputText.substring(suppressEnd + 1),
+                            'UTF-8'
+                    )
+                    return
+                }
+            }
+
+            outputFile.setText(
+                    new StringBuilder(outputText)
+                            .insert(matcher.start(), '@SuppressWarnings("doclint:missing")\n')
+                            .toString(),
+                    'UTF-8'
+            )
+        }
+    }
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    dependsOn prepareJavadocSources
+    source = fileTree(preparedJavadocMainDir)
     classpath = sourceSets.main.compileClasspath + sourceSets.main.output
     failOnError = false
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+    }
 }
 
 test {
